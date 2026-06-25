@@ -1,0 +1,36 @@
+{
+  "title": "Small Language Model Training: A Beginner's Guide",
+  "domain": "GenAI",
+  "tech_stack": [
+    "Python",
+    "Hugging Face Transformers",
+    "PyTorch",
+    "Datasets (HF)",
+    "PEFT / LoRA",
+    "Jupyter Notebooks"
+  ],
+  "difficulty": "beginner",
+  "prerequisites": [
+    "Basic Python programming knowledge",
+    "Familiarity with fundamental machine learning concepts (e.g., what a model is, training vs inference)",
+    "No prior deep learning or NLP experience required"
+  ],
+  "estimated_hours": 10,
+  "modules": 7,
+  "lessons": 18,
+  "version": "1.0",
+  "created_at": "2026-06-25",
+  "author": "Vinod Seth",
+  "tags": [
+    "SLM",
+    "Small Language Models",
+    "Model Training",
+    "Hugging Face",
+    "NLP",
+    "Fine-Tuning",
+    "Transformers",
+    "PEFT",
+    "Generative AI",
+    "Python"
+  ]
+}
