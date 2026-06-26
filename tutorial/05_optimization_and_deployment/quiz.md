@@ -6,9 +6,9 @@ Test your understanding of Optimization and Deployment.
 
 ## Questions
 
-**Q1: A robotics team needs to run a fine-tuned SLM on a Raspberry Pi 5 with no internet connection. The model currently loads at 1.2 GB in float32. Which quantization strategy gives the best balance of size reduction and inference quality for this constraint?**
+**Q1: A robotics team needs to run a fine-tuned <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLM</abbr> on a Raspberry Pi 5 with no internet connection. The model currently loads at 1.2 GB in float32. Which <abbr title="The process of reducing weight precision (e.g. from 16-bit to 4-bit) to shrink model size and speed up inference.">quantization</abbr> strategy gives the best balance of size reduction and <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr> quality for this constraint?**
 
-- A) GPTQ 8-bit with a GPU calibration dataset
+- A) GPTQ 8-bit with a <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr> calibration dataset
 - B) INT4 weight-only quantization using GGUF/llama.cpp
 - C) BFloat16 mixed precision with `torch.autocast`
 - D) Dynamic range quantization applied only to attention layers
@@ -18,7 +18,7 @@ Test your understanding of Optimization and Deployment.
 
 **Correct: B**
 
-GGUF with llama.cpp targets CPU-only inference and supports INT4 weight-only quantization, reducing a 1.2 GB float32 model to roughly 300–400 MB while maintaining acceptable perplexity. GPTQ (A) requires a CUDA GPU for calibration and runtime. BFloat16 (C) halves memory but still demands hardware with BF16 support, which Raspberry Pi does not provide. Layer-selective dynamic quantization (D) yields marginal size savings and is not an established SLM deployment pattern.
+GGUF with llama.cpp targets <abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr>-only inference and supports INT4 weight-only quantization, reducing a 1.2 GB float32 model to roughly 300–400 MB while maintaining acceptable <abbr title="A metric measuring how well a probability model predicts a sample; lower perplexity indicates higher confidence and quality.">perplexity</abbr>. GPTQ (A) requires a CUDA GPU for calibration and runtime. BFloat16 (C) halves memory but still demands hardware with BF16 support, which Raspberry Pi does not provide. Layer-selective dynamic quantization (D) yields marginal size savings and is not an established SLM deployment pattern.
 
 </details>
 
@@ -63,7 +63,7 @@ The endpoint accepts arbitrary-length `text` with no guard. A 12,000-token input
 
 - A) It re-trains the model weights; a poor choice is a dataset from a different language
 - B) It measures activation ranges so scale factors can be fixed; a poor choice is a dataset that does not represent production inputs
-- C) It selects which layers to quantize; a poor choice is a dataset that is too large, causing overfitting
+- C) It selects which layers to quantize; a poor choice is a dataset that is too large, causing <abbr title="A training error where a model learns training data details too well, performing poorly on new data.">overfitting</abbr>
 - D) It validates numerical precision against float32 outputs; any held-out split of the training set is ideal
 
 <details>
@@ -71,7 +71,7 @@ The endpoint accepts arbitrary-length `text` with no guard. A 12,000-token input
 
 **Correct: B**
 
-Static quantization records the minimum and maximum activation values per tensor across the calibration set to compute fixed scale factors used at inference time. If the calibration data is unrepresentative — for example, short generic sentences when the production workload is long legal clauses — the fixed scales will be wrong, leading to clipping and accuracy degradation. Option A conflates calibration with fine-tuning. Option C describes a different process (structured pruning). Option D is partially true in spirit but wrong in detail: using only the training split risks distribution mismatch versus real traffic.
+Static quantization records the minimum and maximum activation values per tensor across the calibration set to compute fixed scale factors used at inference time. If the calibration data is unrepresentative — for example, short generic sentences when the production workload is long legal clauses — the fixed scales will be wrong, leading to clipping and accuracy degradation. Option A conflates calibration with <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr>. Option C describes a different process (structured pruning). Option D is partially true in spirit but wrong in detail: using only the training split risks distribution mismatch versus real traffic.
 
 </details>
 
@@ -95,7 +95,7 @@ A single Uvicorn worker processes one request at a time; 20 concurrent users que
 
 ---
 
-**Q5: You quantize a fine-tuned SLM to INT4 and evaluate it on your domain-specific test set. ROUGE-L drops from 0.61 (float32 baseline) to 0.43. Before reverting to float32, what is the most targeted next step?**
+**Q5: You quantize a fine-tuned SLM to INT4 and evaluate it on your domain-specific test set. <abbr title="Recall-Oriented Understudy for Gisting Evaluation: metrics evaluating summary quality by comparing against human references.">ROUGE</abbr>-L drops from 0.61 (float32 baseline) to 0.43. Before reverting to float32, what is the most targeted next step?**
 
 - A) Re-run fine-tuning from scratch on the quantized model weights
 - B) Switch from weight-only INT4 to INT8 activation-plus-weight quantization, or apply GPTQ with a domain-representative calibration set
@@ -139,7 +139,7 @@ You have a 135M-parameter SLM fine-tuned on customer support tickets for a Europ
 
 Complete all of the following:
 
-1. **Quantize** the model to a format appropriate for CPU deployment. Document the calibration dataset you used, why you chose it, and report the ROUGE-L or F1 score before and after quantization.
+1. **Quantize** the model to a format appropriate for CPU deployment. Document the calibration dataset you used, why you chose it, and report the ROUGE-L or <abbr title="A metric that balances precision and recall, representing their harmonic mean.">F1 score</abbr> before and after quantization.
 2. **Build a FastAPI service** that accepts a ticket string, validates input length, runs inference, and returns a validated Pydantic response model containing `issue_category: str` and `suggested_resolution: str`.
 3. **Load test** the endpoint using `locust` or `wrk` at 10 concurrent users. Record median and p95 latency. If p95 exceeds 1.5 seconds, apply one optimization (batching, streaming, or worker scaling) and re-test.
 4. **Security and safety audit**: Send five adversarial inputs (e.g., prompt injection attempts, inputs in a non-supported language, inputs exceeding 512 tokens) and document the observed behavior and the guardrails you added.

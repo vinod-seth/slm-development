@@ -1,18 +1,20 @@
 # Why Pretrained Weights Accelerate Fine-Tuning
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/01_why_pretrained_weights_accelerate.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
-| **Module** | Fine-Tuning Pretrained SLMs with PEFT and LoRA |
+| **Module** | <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">Fine-Tuning</abbr> Pretrained <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLMs</abbr> with <abbr title="Parameter-Efficient Fine-Tuning: techniques (like LoRA) that adapt pre-trained models by updating only a tiny fraction of parameters.">PEFT</abbr> and <abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr> |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 20 minutes |
-| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and inference; Module 3 completed with at least one successful training checkpoint saved |
+| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr>; Module 3 completed with at least one successful training checkpoint saved |
 
 ---
 
 ## Lesson Roadmap
 
-- **Section 1 — Core Concepts**: Understand why pretrained weights give you a head start and how transfer learning reduces your data burden.
+- **Section 1 — Core Concepts**: Understand why <abbr title="A model trained on a massive general dataset to learn language patterns before fine-tuning.">pretrained</abbr> weights give you a head start and how transfer learning reduces your data burden.
 - **Section 2 — Technical Deep-Dive**: Inspect a 135M-parameter SLM's memory footprint under full fine-tuning vs. LoRA, then load a pretrained checkpoint in Python.
 - **Section 3 — Hands-On Exercise**: Run a script that prints frozen vs. trainable parameter counts for a SmolLM2-135M model.
 - **Section 4 — Concept Check**: Verify your understanding with 4 questions.
@@ -25,7 +27,7 @@
 By the end of this lesson, you will be able to:
 
 - Explain how pretrained weights encode transferable language knowledge and reduce data requirements for fine-tuning.
-- Compare the GPU memory footprint of full fine-tuning vs. LoRA fine-tuning for a 135M-parameter model.
+- Compare the <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr> memory footprint of full fine-tuning vs. LoRA fine-tuning for a 135M-parameter model.
 - Identify which transformer layers benefit most from task-specific adaptation.
 - Confirm that your Module 3 training checkpoint exists before beginning any fine-tuning run.
 
@@ -92,9 +94,9 @@ Frozen model (no grad):  ~540 MB (loaded, but no gradient storage)
 Total:                   ~556 MB  (~0.5 GB) practical minimum
 ```
 
-This reduction makes fine-tuning feasible on a consumer GPU with 6–8 GB of VRAM.
+This reduction makes fine-tuning feasible on a consumer GPU with 6–8 GB of <abbr title="Video Random Access Memory: high-speed memory on a GPU used to store model weights and activations during run time.">VRAM</abbr>.
 
-> **Sidebar — VRAM Discussion (Optional Reading)**: VRAM requirements vary significantly based on batch size, sequence length, and mixed-precision settings (`bfloat16` vs `float32`). The figures above assume `float32` with batch size 1. In practice, using `bfloat16` halves weight storage to ~270 MB for a 135M model. See Module 5 for a complete quantization-aware training walkthrough.
+> **Sidebar — VRAM Discussion (Optional Reading)**: VRAM requirements vary significantly based on batch size, sequence length, and mixed-precision settings (`bfloat16` vs `float32`). The figures above assume `float32` with batch size 1. In practice, using `bfloat16` halves weight storage to ~270 MB for a 135M model. See Module 5 for a complete <abbr title="The process of reducing weight precision (e.g. from 16-bit to 4-bit) to shrink model size and speed up inference.">quantization</abbr>-aware training walkthrough.
 
 ---
 
@@ -133,7 +135,7 @@ CUDA available: True   # or False on CPU-only machines
 
 ### Step 1 — Load a Pretrained SmolLM2-135M Checkpoint
 
-`SmolLM2-135M` is a publicly accessible, non-gated model from Hugging Face (HuggingFaceTB/SmolLM2-135M, last verified 2025-07). It is an ideal teaching model: small enough to fit in CPU RAM, large enough to demonstrate real transfer learning behavior.
+`SmolLM2-135M` is a publicly accessible, non-gated model from Hugging Face (HuggingFaceTB/SmolLM2-135M, last verified 2025-07). It is an ideal teaching model: small enough to fit in <abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr> RAM, large enough to demonstrate real transfer learning behavior.
 
 ```python
 # lesson4_1_pretrained_footprint.py
@@ -437,7 +439,7 @@ Three factors combine here. First, `r=64` is an 8× larger rank than the `r=8` b
 
 ---
 
-**Question 4 — Reflection** — Describe a real project where an SLM fine-tuned with LoRA would outperform a large hosted LLM API. Justify your reasoning using at least one of these factors: inference latency, data privacy, or domain-scope constraints.
+**Question 4 — Reflection** — Describe a real project where an SLM fine-tuned with LoRA would outperform a large hosted <abbr title="Large Language Model: a massive language model (7B+ parameters) requiring cloud or cluster hardware.">LLM</abbr> API. Justify your reasoning using at least one of these factors: inference latency, data privacy, or domain-scope constraints.
 
 *(Open-ended — no single correct answer.)*
 

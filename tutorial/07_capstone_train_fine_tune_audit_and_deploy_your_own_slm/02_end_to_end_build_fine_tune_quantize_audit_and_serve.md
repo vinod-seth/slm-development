@@ -1,21 +1,23 @@
 # End-to-End Build: Fine-Tune, Quantize, Audit, and Serve
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/02_end_to_end_build.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
-| **Module** | Capstone: Train, Fine-Tune, Audit, and Deploy Your Own SLM |
+| **Module** | Capstone: Train, Fine-Tune, Audit, and Deploy Your Own <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLM</abbr> |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 90 minutes |
-| **Prerequisites** | Modules 1–6 completed; HuggingFace account with write-access token; Python 3.11 environment with CUDA 12.1 or CPU-only fallback; `pip install transformers peft datasets bitsandbytes fastapi uvicorn evaluate rouge-score` |
+| **Prerequisites** | Modules 1–6 completed; HuggingFace account with write-access token; Python 3.11 environment with CUDA 12.1 or <abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr>-only fallback; `pip install transformers peft datasets bitsandbytes fastapi uvicorn evaluate rouge-score` |
 
 ---
 
 ## Lesson Roadmap
 
 - **Steps 1–2 (0–15 min):** Verify your environment and run a baseline generation call — the first API experiment happens here, within your first 10 minutes.
-- **Steps 3–4 (15–40 min):** Prepare a domain dataset and fine-tune a LoRA adapter on `SmolLM2-135M-Instruct`.
-- **Step 5 (40–55 min):** Evaluate with ROUGE-L and F1 against capstone rubric thresholds.
-- **Steps 6–7 (55–75 min):** Run an adversarial bias audit, then apply int8 quantization and benchmark time-to-first-token.
+- **Steps 3–4 (15–40 min):** Prepare a domain dataset and fine-tune a <abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr> adapter on `SmolLM2-135M-Instruct`.
+- **Step 5 (40–55 min):** Evaluate with <abbr title="Recall-Oriented Understudy for Gisting Evaluation: metrics evaluating summary quality by comparing against human references.">ROUGE</abbr>-L and F1 against capstone rubric thresholds.
+- **Steps 6–7 (55–75 min):** Run an adversarial bias audit, then apply int8 <abbr title="The process of reducing weight precision (e.g. from 16-bit to 4-bit) to shrink model size and speed up inference.">quantization</abbr> and benchmark time-to-first-token.
 - **Steps 8–9 (75–90 min):** Serve the quantized model with FastAPI and publish your adapter plus model card to the HuggingFace Hub.
 
 ---
@@ -24,7 +26,7 @@
 
 By the end of this lesson, you will be able to:
 
-- Execute the complete pipeline — data prep → LoRA fine-tuning → ROUGE/F1 evaluation → bias audit → int8 quantization → FastAPI serving → Hub publication — as a single reproducible workflow.
+- Execute the complete pipeline — data prep → LoRA <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr> → ROUGE/F1 evaluation → bias audit → int8 quantization → FastAPI serving → Hub publication — as a single reproducible workflow.
 - Verify your model meets the capstone rubric targets: ROUGE-L ≥ 0.28, F1 ≥ 0.35, time-to-first-token < 800 ms on CPU.
 - Document at least three adversarial prompt failure modes in a structured bias audit log.
 - Publish a compliant model card, LoRA adapter, and quantized checkpoint to the HuggingFace Hub.
@@ -341,7 +343,7 @@ if __name__ == "__main__":
 
 ### Step 5 — ROUGE-L and F1 Evaluation
 
-ROUGE-L measures the longest common subsequence between your model's output and the reference answer. Token-level F1 measures precision/recall overlap. Both are required for the capstone rubric.
+ROUGE-L measures the longest common subsequence between your model's output and the reference answer. <abbr title="A sub-word unit, word, or character that text is split into for processing by a language model.">Token</abbr>-level F1 measures precision/recall overlap. Both are required for the capstone rubric.
 
 ```python
 # evaluate_model.py
@@ -494,4 +496,4 @@ ADVERSARIAL_PROMPTS = [
         ),
         "expected_behaviour": "Affirm that triage priority is determined by medical urgency only.",
     },
-    {
+    {```

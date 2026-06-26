@@ -1,12 +1,14 @@
 # Instruction Fine-Tuning for Task-Specific SLMs
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/03_instruction_fine_tuning.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
-| **Module** | Fine-Tuning Pretrained SLMs with PEFT and LoRA |
+| **Module** | <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">Fine-Tuning</abbr> Pretrained <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLMs</abbr> with <abbr title="Parameter-Efficient Fine-Tuning: techniques (like LoRA) that adapt pre-trained models by updating only a tiny fraction of parameters.">PEFT</abbr> and <abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr> |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 35 minutes |
-| **Prerequisites** | Completed Module 4 Lessons 1–2 (LoRA setup and adapter training basics); Python 3.11 environment with CUDA 12.1 or CPU fallback; HuggingFace account with access token for model downloads |
+| **Prerequisites** | Completed Module 4 Lessons 1–2 (LoRA setup and adapter training basics); Python 3.11 environment with CUDA 12.1 or <abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr> fallback; HuggingFace account with access token for model downloads |
 
 > [!IMPORTANT]
 > You must have completed at least one successful LoRA training run from Lesson 2 before starting here. If you skipped that lesson, training in this lesson will fail at the adapter initialization step.
@@ -30,7 +32,7 @@ By the end of this lesson, you will be able to:
 - Format a raw dataset into instruction-response pairs using a reusable prompt template
 - Fine-tune a LoRA-wrapped SLM on an instruction dataset using `SFTTrainer` from the `trl` library
 - Merge LoRA adapter weights back into the base model with `merge_and_unload()`
-- Verify output quality by running structured inference after merging
+- Verify output quality by running structured <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr> after merging
 - Document known safety limitations of instruction fine-tuning and run a baseline adversarial prompt audit
 
 ---
@@ -39,7 +41,7 @@ By the end of this lesson, you will be able to:
 
 ### What Instruction Fine-Tuning Actually Does
 
-A pretrained SLM is a next-token prediction engine. It learns statistical patterns across billions of tokens but has no concept of *following instructions*. When you ask a raw pretrained model to "Summarize this paragraph," it is just as likely to continue generating text *about summarization* as it is to produce an actual summary.
+A <abbr title="A model trained on a massive general dataset to learn language patterns before fine-tuning.">pretrained</abbr> SLM is a next-token prediction engine. It learns statistical patterns across billions of tokens but has no concept of *following instructions*. When you ask a raw pretrained model to "Summarize this paragraph," it is just as likely to continue generating text *about summarization* as it is to produce an actual summary.
 
 Instruction fine-tuning bridges that gap. You show the model hundreds or thousands of examples in a fixed format — an instruction paired with the expected response — and the model adjusts its weights to produce responses that match the pattern.
 
@@ -73,7 +75,7 @@ flowchart LR
 
 ### Why PEFT + LoRA Instead of Full Fine-Tuning
 
-Full fine-tuning updates every parameter in the model. For a 360M-parameter model like SmolLM2-360M, that still requires significant GPU memory and time. LoRA (Hu et al., 2021) inserts small trainable rank-decomposition matrices into selected layers. Only those matrices update during training. The base model weights stay frozen.
+Full fine-tuning updates every parameter in the model. For a 360M-parameter model like SmolLM2-360M, that still requires significant <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr> memory and time. LoRA (Hu et al., 2021) inserts small trainable rank-decomposition matrices into selected layers. Only those matrices update during training. The base model weights stay frozen.
 
 This matters for instruction tuning because:
 

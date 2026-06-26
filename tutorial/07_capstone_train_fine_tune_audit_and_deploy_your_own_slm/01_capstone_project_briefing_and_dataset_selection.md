@@ -1,12 +1,14 @@
 # Capstone Project Briefing and Dataset Selection
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/01_capstone_briefing.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
-| **Module** | Capstone: Train, Fine-Tune, Audit, and Deploy Your Own SLM |
+| **Module** | Capstone: Train, Fine-Tune, Audit, and Deploy Your Own <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLM</abbr> |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 20 minutes |
-| **Prerequisites** | Basic Python programming knowledge · Familiarity with fundamental ML concepts (training vs. inference, what a model is) · No prior deep learning or NLP experience required · Modules 1–6 of this course completed |
+| **Prerequisites** | Basic Python programming knowledge · Familiarity with fundamental ML concepts (training vs. <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr>, what a model is) · No prior deep learning or NLP experience required · Modules 1–6 of this course completed |
 
 ---
 
@@ -26,7 +28,7 @@ By the end of this lesson, you will be able to:
 
 - Select a target domain and source a suitable public dataset from the Hugging Face Hub
 - Define a concrete task (text classification, Q&A, summarization, or code completion) with measurable success criteria
-- Outline a project plan covering data preparation, fine-tuning, evaluation, bias audit, and deployment steps
+- Outline a project plan covering data preparation, <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr>, evaluation, bias audit, and deployment steps
 - Identify the compute tier available to you and select an appropriate SLM checkpoint accordingly
 
 ---
@@ -50,12 +52,12 @@ Pick the task that matches a problem you actually care about. A narrow, meaningf
 
 ### Compute Tier Selection
 
-Before choosing a model checkpoint, know your hardware. The table below maps VRAM to realistic SLM choices verified against current Hugging Face Model Hub listings.
+Before choosing a model checkpoint, know your hardware. The table below maps <abbr title="Video Random Access Memory: high-speed memory on a GPU used to store model weights and activations during run time.">VRAM</abbr> to realistic SLM choices verified against current Hugging Face Model Hub listings.
 
 | Tier | Hardware | Recommended Checkpoint | Parameter Range |
 |---|---|---|---|
-| **CPU-only** | Any laptop | `HuggingFaceTB/SmolLM2-135M` | 135 M |
-| **8 GB VRAM** | Consumer GPU (RTX 3070 / T4 Colab) | `HuggingFaceTB/SmolLM2-1.7B` | 1.7 B |
+| **<abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr>-only** | Any laptop | `HuggingFaceTB/SmolLM2-135M` | 135 M |
+| **8 GB VRAM** | Consumer <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr> (RTX 3070 / T4 Colab) | `HuggingFaceTB/SmolLM2-1.7B` | 1.7 B |
 | **16 GB VRAM** | Prosumer GPU (RTX 3090 / A10 Colab Pro) | `microsoft/phi-2` | 2.7 B |
 
 > [!IMPORTANT]
@@ -322,7 +324,7 @@ Record the output. Match it to the compute tier table in Core Concepts. Write th
 Choose one dataset from the HF Hub that matches your domain. Run `dataset_scout.py` with that dataset identifier. Confirm the license is in the approved set. If it is not, pick a different dataset.
 
 **Step 3 — Confirm column names map to your task.**
-For classification, you need at least a `text` column and a `label` column (or equivalent). For Q&A, you need `context`, `question`, and `answers`. Write down the exact column names from your scout output — you will reference them in the tokenization step in Lesson 2.
+For classification, you need at least a `text` column and a `label` column (or equivalent). For Q&A, you need `context`, `question`, and `answers`. Write down the exact column names from your scout output — you will reference them in the <abbr title="The preprocessing step of converting raw text input into numerical tokens that a language model can process.">tokenization</abbr> step in Lesson 2.
 
 **Step 4 — Generate and fill your project plan.**
 Run `generate_project_plan.py`. Open `project_plan.md` and replace every `TODO`. Verify: no `TODO` remains, the license is approved, the metric target is specific (not "good accuracy"), and the compute tier matches Step 1.
@@ -409,7 +411,7 @@ Describe a real project where an SLM (under 2B parameters) would outperform a la
 ## References & Credits
 
 - Brown et al. (2020) *Language Models are Few-Shot Learners*. [https://arxiv.org/abs/2005.14165](https://arxiv.org/abs/2005.14165)
-- Hu et al. (2021) *LoRA: Low-Rank Adaptation of Large Language Models*. [https://arxiv.org/abs/2106.09685](https://arxiv.org/abs/2106.09685) — LoRA / PEFT is the fine-tuning method used in Phase 2.
+- Hu et al. (2021) *<abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr>: Low-Rank Adaptation of Large Language Models*. [https://arxiv.org/abs/2106.09685](https://arxiv.org/abs/2106.09685) — LoRA / <abbr title="Parameter-Efficient Fine-Tuning: techniques (like LoRA) that adapt pre-trained models by updating only a tiny fraction of parameters.">PEFT</abbr> is the fine-tuning method used in Phase 2.
 - HuggingFaceTB. *SmolLM2 Model Family*. [https://huggingface.co/HuggingFaceTB/SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M) — *Last verified: 2025-06*
 - Microsoft. *Phi-2 Model Card*. [https://huggingface.co/microsoft/phi-2](https://huggingface.co/microsoft/phi-2) — *Last verified: 2025-06*
 - Saravia et al. (2018) *CARER: Contextualized Affect Representations for Emotion Recognition* — source paper for the `dair-ai/emotion` dataset. [https://aclanthology.org/D18-1404/](https://aclanthology.org/D18-1404/)

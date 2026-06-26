@@ -54,13 +54,13 @@ for epoch in range(num_epochs):
 
 **Correct: B**
 
-Without `optimizer.zero_grad()` before `loss.backward()`, gradients from every previous batch accumulate. The parameter updates become dominated by accumulated noise, so the model makes little meaningful progress — validation loss stagnates. Option A is wrong: `AdamW` is the standard choice for transformer pre-training. Option C is wrong: `torch.no_grad()` is correct and necessary for memory-efficient inference; it does not corrupt the loss value. Option D is wrong: `model.train()` is set at the top of the outer `for epoch` loop, so it applies at the start of each epoch.
+Without `optimizer.zero_grad()` before `loss.backward()`, gradients from every previous batch accumulate. The parameter updates become dominated by accumulated noise, so the model makes little meaningful progress — validation loss stagnates. Option A is wrong: `AdamW` is the standard choice for transformer pre-training. Option C is wrong: `torch.no_grad()` is correct and necessary for memory-efficient <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr>; it does not corrupt the loss value. Option D is wrong: `model.train()` is set at the top of the outer `for epoch` loop, so it applies at the start of each epoch.
 
 </details>
 
 ---
 
-**Q3: Your 60M-parameter SLM is trained on legal contract text. You evaluate it on a held-out contract test set and observe perplexity = 8.4. A colleague argues this means the model "gets 8.4 words wrong per sentence." Which statement most accurately describes what perplexity measures?**
+**Q3: Your 60M-parameter <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLM</abbr> is trained on legal contract text. You evaluate it on a held-out contract test set and observe <abbr title="A metric measuring how well a probability model predicts a sample; lower perplexity indicates higher confidence and quality.">perplexity</abbr> = 8.4. A colleague argues this means the model "gets 8.4 words wrong per sentence." Which statement most accurately describes what perplexity measures?**
 
 - A) Perplexity equals the average number of token prediction errors per sequence.
 - B) Perplexity is the exponentiated average negative log-likelihood per token — a lower value means the model assigns higher probability to the held-out text.
@@ -78,7 +78,7 @@ Perplexity is defined as `exp(average NLL per token)`. Intuitively, it represent
 
 ---
 
-**Q4: You fine-tune an SLM to generate one-paragraph summaries of engineering incident reports. After training, you run ROUGE-L evaluation. The model achieves ROUGE-L F1 = 0.31 against human-written reference summaries. A stakeholder asks whether this score is "good." Which response is most accurate?**
+**Q4: You fine-tune an SLM to generate one-paragraph summaries of engineering incident reports. After training, you run <abbr title="Recall-Oriented Understudy for Gisting Evaluation: metrics evaluating summary quality by comparing against human references.">ROUGE</abbr>-L evaluation. The model achieves ROUGE-L F1 = 0.31 against human-written reference summaries. A stakeholder asks whether this score is "good." Which response is most accurate?**
 
 - A) ROUGE-L F1 of 0.31 is always poor; production summarization systems require scores above 0.70.
 - B) ROUGE-L measures exact n-gram overlap, so 0.31 is uninformative without domain baselines or human judgement comparison.
@@ -129,7 +129,7 @@ A strong response covers at least three of the following evaluation dimensions:
 
 **1. Human evaluation of output quality.** Perplexity and ROUGE measure statistical fit and surface overlap, not user value. A sample of 100–200 generated replies should be rated by support agents on helpfulness, tone appropriateness, and factual accuracy — metrics that automation cannot fully capture.
 
-**2. Failure mode and adversarial probing.** Run a structured set of edge-case inputs: hostile user messages, ambiguous product version references, requests involving sensitive account data. Document observed failure modes. This step directly informs the security and safety callout required before deployment — fine-tuning alone does not guarantee safe outputs.
+**2. Failure mode and adversarial probing.** Run a structured set of edge-case inputs: hostile user messages, ambiguous product version references, requests involving sensitive account data. Document observed failure modes. This step directly informs the security and safety callout required before deployment — <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr> alone does not guarantee safe outputs.
 
 **3. Factual grounding and hallucination rate.** Support replies often reference specific product features or policies. Evaluate what proportion of generated replies contain statements that contradict the company's documentation. Even a 5% hallucination rate is unacceptable for customer-facing text.
 
@@ -149,7 +149,7 @@ A response that only restates ROUGE or perplexity improvements without addressin
 
 Select a publicly available domain corpus from Hugging Face Hub — suitable options include `scientific_papers` (arXiv split), `eurlex` (EU legal text), or a filtered subset of `pile-of-law`. Complete all three stages below and document your results in a structured evaluation report.
 
-**Stage 1 — Dataset Construction:** Load the corpus using `load_dataset`, apply a `map`-based tokenization function with truncation and padding to a fixed block length, filter out sequences below 64 tokens, and produce a 90/5/5 train/validation/test split. Log the final token count per split.
+**Stage 1 — Dataset Construction:** Load the corpus using `load_dataset`, apply a `map`-based <abbr title="The preprocessing step of converting raw text input into numerical tokens that a language model can process.">tokenization</abbr> function with truncation and padding to a fixed block length, filter out sequences below 64 tokens, and produce a 90/5/5 train/validation/test split. Log the final token count per split.
 
 **Stage 2 — Training:** Train a `GPT-2`-architecture model (config: 6 layers, 8 heads, 512 hidden dim — approximately 45M parameters) for at least 3 epochs using either the `Trainer` API or a manual PyTorch loop. Use `AdamW` with a linear warmup schedule. Save a checkpoint after each epoch.
 
@@ -161,7 +161,7 @@ Select a publicly available domain corpus from Hugging Face Hub — suitable opt
 
 - **Dataset pipeline correctness:** Tokenization applies truncation and padding; no raw sequences exceed `max_length`; split sizes are logged and plausible for the source corpus; filtering logic removes degenerate sequences without discarding more than 15% of the total data.
 
-- **Training loop integrity:** Optimizer, scheduler, and gradient zeroing are all correctly implemented; validation loss is logged per epoch and shows a downward trend; at least one checkpoint is saved and reloadable with `model.from_pretrained()`.
+- **Training loop integrity:** <abbr title="The algorithm (e.g. AdamW) that updates model weights based on computed gradients to minimize the loss.">Optimizer</abbr>, scheduler, and gradient zeroing are all correctly implemented; validation loss is logged per epoch and shows a downward trend; at least one checkpoint is saved and reloadable with `model.from_pretrained()`.
 
 - **Evaluation completeness:** Perplexity is computed on the held-out test split (not the validation split); ROUGE-L scores are reported with the reference source documented; the adversarial prompt log names at least three distinct failure categories (e.g., hallucination, topic drift, unsafe content) with representative examples.
 

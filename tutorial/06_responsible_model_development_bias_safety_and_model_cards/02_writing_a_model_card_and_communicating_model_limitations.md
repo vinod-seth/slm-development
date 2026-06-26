@@ -1,12 +1,14 @@
 # Writing a Model Card and Communicating Model Limitations
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/06_responsible_model_development_bias_safety_and_model_cards/02_writing_a_model_card.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
 | **Module** | Responsible Model Development: Bias, Safety, and Model Cards |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 25 minutes |
-| **Prerequisites** | Basic Python programming knowledge; familiarity with training vs. inference concepts; completion of Module 5 (Optimization and Deployment) |
+| **Prerequisites** | Basic Python programming knowledge; familiarity with training vs. <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr> concepts; completion of Module 5 (Optimization and Deployment) |
 
 ---
 
@@ -14,7 +16,7 @@
 
 - **Core Concepts** — Understand the model card framework, its origin, and the schema Hugging Face uses to structure documentation.
 - **Technical Deep-Dive** — Write, validate, and publish a complete model card with front matter, bias audit findings, and evaluation results using the `huggingface_hub` SDK.
-- **Hands-On Exercise** — Author a model card for a LoRA-fine-tuned SmolLM2 adapter and push it to the Hub.
+- **Hands-On Exercise** — Author a model card for a <abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr>-fine-tuned SmolLM2 adapter and push it to the Hub.
 - **Concept Check** — Verify comprehension of card sections, disclosure requirements, and Hub mechanics.
 - **Summary & References** — Key takeaways and the Mitchell et al. (2019) citation.
 
@@ -71,7 +73,7 @@ The Hugging Face schema maps directly onto Mitchell et al.'s structure:
 
 **Evaluation Results** must cite the exact dataset, split, and metric used. A score without a test set name is meaningless.
 
-**Bias, Risks, and Limitations** is where your bias audit lives. Every SLM fine-tuned on domain-specific data amplifies existing dataset skews. Disclosing them is not optional for responsible deployment.
+**Bias, Risks, and Limitations** is where your bias audit lives. Every <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLM</abbr> fine-tuned on domain-specific data amplifies existing dataset skews. Disclosing them is not optional for responsible deployment.
 
 ### The Nutrition Label Analogy
 
@@ -382,7 +384,7 @@ YOUR_REPO_ID = f"{os.environ['HF_USERNAME']}/my-smollm2-card-exercise"
 create_repo(repo_id=YOUR_REPO_ID, repo_type="model", exist_ok=True, private=True)
 ```
 
-**2. Define your own domain-specific evaluation results.** Replace the medical triage metrics with any two metrics relevant to your fine-tuning task (or use placeholder values for the exercise):
+**2. Define your own domain-specific evaluation results.** Replace the medical triage metrics with any two metrics relevant to your <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr> task (or use placeholder values for the exercise):
 
 ```python
 my_eval_results = {
@@ -439,7 +441,7 @@ A colleague asks why you listed paediatric triage as an out-of-scope use when th
 * [ ] The model's tokenizer rejects paediatric terminology.
 * [ ] Out-of-scope sections only apply to multilingual models.
 * [x] The training data under-represents paediatric cases, so performance in that sub-population is unvalidated and potentially harmful.
-* [ ] PEFT adapters cannot generalize to unseen domains.
+* [ ] <abbr title="Parameter-Efficient Fine-Tuning: techniques (like LoRA) that adapt pre-trained models by updating only a tiny fraction of parameters.">PEFT</abbr> adapters cannot generalize to unseen domains.
 
 <details>
 <summary>🔑 Click to Reveal Answer & Explanation</summary>

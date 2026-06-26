@@ -1,22 +1,24 @@
 # Evaluating Your Trained Model: Perplexity, ROUGE, and F1
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/03_data_preparation_and_training_from_scratch/03_evaluating_your_trained_model.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
 | **Module** | Data Preparation and Training from Scratch |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 25 minutes |
-| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and inference; no prior deep learning or NLP experience required. Complete Module 3 Lessons 1–2 before this lesson. |
+| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr>; no prior deep learning or NLP experience required. Complete Module 3 Lessons 1–2 before this lesson. |
 
 ---
 
 ## Lesson Roadmap
 
-- **Core Concepts** — understand perplexity, ROUGE, and F1 through plain-language analogies before touching any code.
+- **Core Concepts** — understand <abbr title="A metric measuring how well a probability model predicts a sample; lower perplexity indicates higher confidence and quality.">perplexity</abbr>, <abbr title="Recall-Oriented Understudy for Gisting Evaluation: metrics evaluating summary quality by comparing against human references.">ROUGE</abbr>, and F1 through plain-language analogies before touching any code.
 - **Technical Deep-Dive** — compute all three metrics against a real held-out test set using the `evaluate` library (~10 min in).
 - **Worked Examples** — walk through a ROUGE-L and F1 calculation step by step with concrete token-level output.
 - **Hands-On Exercise** — run the full evaluation pipeline on your own checkpoint and read the results.
-- **Concept Check & Failure Mode Diagnosis** — identify overfitting, underfitting, and distribution mismatch from loss curves and metric values.
+- **Concept Check & Failure Mode Diagnosis** — identify <abbr title="A training error where a model learns training data details too well, performing poorly on new data.">overfitting</abbr>, <abbr title="A training error where a model is too simple to capture patterns, performing poorly overall.">underfitting</abbr>, and distribution mismatch from loss curves and metric values.
 
 ---
 
@@ -415,7 +417,7 @@ Scenario D — Catastrophic forgetting
 ```
 
 > [!IMPORTANT]
-> Catastrophic forgetting is a fine-tuning risk, not a training-from-scratch risk. If you trained from scratch, Scenario D is more likely distribution mismatch: your test data comes from a different source than your training corpus.
+> Catastrophic forgetting is a <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr> risk, not a training-from-scratch risk. If you trained from scratch, Scenario D is more likely distribution mismatch: your test data comes from a different source than your training corpus.
 
 ---
 
@@ -495,7 +497,7 @@ The training loss improves continuously while the validation loss initially fall
 
 **Question 2**
 
-A worked ROUGE-1 calculation gives Recall = 0.70, Precision = 0.50. What is the ROUGE-1 F1 score, rounded to two decimal places?
+A worked ROUGE-1 calculation gives Recall = 0.70, Precision = 0.50. What is the ROUGE-1 <abbr title="A metric that balances precision and recall, representing their harmonic mean.">F1 score</abbr>, rounded to two decimal places?
 
 * [ ] 0.60
 * [ ] 0.35
@@ -543,7 +545,7 @@ More data helps only when the fundamental problem is data scarcity. Ruling out m
 
 - **Perplexity** measures how surprised your model is by held-out text; values below ~20 signal healthy language modeling for a small domain-specific model.
 - **ROUGE** (particularly ROUGE-L) quantifies n-gram and sequence overlap between generated output and a reference; it is the standard metric for summarization and text generation tasks.
-- **Token-level F1** balances precision and recall on exact token matches; use it alongside ROUGE for extraction and QA tasks where missing or adding tokens carries different costs.
+- **<abbr title="A sub-word unit, word, or character that text is split into for processing by a language model.">Token</abbr>-level F1** balances precision and recall on exact token matches; use it alongside ROUGE for extraction and QA tasks where missing or adding tokens carries different costs.
 - **Loss curves** are your first diagnostic tool: training loss falling while validation loss rises signals overfitting; both staying flat signals underfitting; a sharp validation spike after domain fine-tuning signals catastrophic forgetting.
 - The Hugging Face `evaluate` library (`evaluate.load("rouge")`) handles ROUGE computation in three lines of code — no manual n-gram counting required.
 - Surface-level metrics like ROUGE and F1 do not capture semantic correctness; treat them as signals, then inspect model outputs manually before drawing conclusions.
@@ -553,6 +555,6 @@ More data helps only when the fundamental problem is data scarcity. Ruling out m
 ## References & Credits
 
 - **ROUGE**: Lin, C.-Y. (2004). *ROUGE: A Package for Automatic Evaluation of Summaries*. Proceedings of the Workshop on Text Summarization Branches Out, ACL 2004. [https://aclanthology.org/W04-1013](https://aclanthology.org/W04-1013)
-- **BPE Tokenization**: Sennrich et al. (2016). *Neural Machine Translation of Rare Words with Subword Units*. [https://arxiv.org/abs/1508.07909](https://arxiv.org/abs/1508.07909)
+- **BPE <abbr title="The preprocessing step of converting raw text input into numerical tokens that a language model can process.">Tokenization</abbr>**: Sennrich et al. (2016). *Neural Machine Translation of Rare Words with Subword Units*. [https://arxiv.org/abs/1508.07909](https://arxiv.org/abs/1508.07909)
 - **Catastrophic Forgetting**: McCloskey, M., & Cohen, N. J. (1989). *Catastrophic Interference in Connectionist Networks: The Sequential Learning Problem*. Psychology of Learning and Motivation, 24, 109–165. [https://doi.org/10.1016/S0079-7421(08)60536-8](https://doi.org/10.1016/S0079-7421(08)60536-8)
-- **LoRA (PEFT)**: Hu et al. (2021). *LoRA: Low-Rank Adaptation of Large Language Models*. [https://arxiv.org/abs/2106.09685](https://arxiv.org/abs/2106.09685
+- **<abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr> (<abbr title="Parameter-Efficient Fine-Tuning: techniques (like LoRA) that adapt pre-trained models by updating only a tiny fraction of parameters.">PEFT</abbr>)**: Hu et al. (2021). *LoRA: Low-Rank Adaptation of Large Language Models*. [https://arxiv.org/abs/2106.09685](https://arxiv.org/abs/2106.09685

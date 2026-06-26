@@ -8,9 +8,9 @@ Test your understanding of Transformer Architecture for Practitioners.
 
 **Q1: A teammate claims that removing residual connections from a 12-layer transformer "shouldn't matter much since the attention layers do the real work." What is the most accurate rebuttal?**
 
-- A) Residual connections are only needed in models with more than 1B parameters, so the claim may be correct for SLMs.
-- B) Residual connections allow gradients to flow directly to early layers during backpropagation, preventing vanishing gradients that would make deep stacking untrainable.
-- C) Residual connections reduce memory usage by sharing weights across layers, so removing them would increase VRAM consumption.
+- A) Residual connections are only needed in models with more than 1B parameters, so the claim may be correct for <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLMs</abbr>.
+- B) Residual connections allow gradients to flow directly to early layers during <abbr title="The algorithm that calculates gradients of the loss function with respect to weights by moving backward through the network.">backpropagation</abbr>, preventing vanishing gradients that would make deep stacking untrainable.
+- C) Residual connections reduce memory usage by sharing weights across layers, so removing them would increase <abbr title="Video Random Access Memory: high-speed memory on a GPU used to store model weights and activations during run time.">VRAM</abbr> consumption.
 - D) Residual connections perform layer normalization, which stabilizes training — without them, activations would explode.
 
 <details>
@@ -24,7 +24,7 @@ Residual connections create a direct path from the output of each sub-layer back
 
 ---
 
-**Q2: You are planning to fine-tune a 360M-parameter SLM on a single consumer GPU with 8 GB of VRAM. The model uses fp32 weights by default. Which statement most accurately describes your situation?**
+**Q2: You are planning to fine-tune a 360M-parameter SLM on a single consumer <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr> with 8 GB of VRAM. The model uses fp32 weights by default. Which statement most accurately describes your situation?**
 
 - A) Training in fp32 is fine — 360M parameters at 4 bytes each occupies roughly 1.4 GB, well within the 8 GB budget.
 - B) The raw weights fit in VRAM, but optimizer states and activations during a forward/backward pass will push total usage well beyond 8 GB in a standard training loop.
@@ -42,7 +42,7 @@ The weights alone at fp32 occupy approximately 1.44 GB (360M × 4 bytes), but a 
 
 ---
 
-**Q3: Examine the following code snippet intended to inspect the attention configuration of a pretrained SLM. Identify the bug.**
+**Q3: Examine the following code snippet intended to inspect the attention configuration of a <abbr title="A model trained on a massive general dataset to learn language patterns before fine-tuning.">pretrained</abbr> SLM. Identify the bug.**
 
 ```python
 from transformers import AutoModel
@@ -71,7 +71,7 @@ Head dimension is defined as `hidden_size // num_attention_heads`. Dividing by `
 
 ---
 
-**Q4: In a transformer's feed-forward network (FFN) sub-layer, the intermediate dimension is typically 4× the model's hidden dimension. A colleague proposes halving this multiplier to 2× across all layers of a 135M-parameter SLM to reduce inference latency. What is the most likely trade-off?**
+**Q4: In a transformer's feed-forward network (FFN) sub-layer, the intermediate dimension is typically 4× the model's hidden dimension. A colleague proposes halving this multiplier to 2× across all layers of a 135M-parameter SLM to reduce <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr> latency. What is the most likely trade-off?**
 
 - A) Halving the FFN width has no effect on latency because attention, not the FFN, dominates compute at this scale.
 - B) Halving the FFN width reduces parameter count and compute per token, but risks degrading the model's ability to store and retrieve factual associations, which research links to FFN capacity.
@@ -89,7 +89,7 @@ The FFN sub-layer is widely understood to function as a key-value memory store f
 
 ---
 
-**Q5: You run the following snippet to verify tokenizer–model alignment before fine-tuning and observe an unexpected output. What is the most likely root cause?**
+**Q5: You run the following snippet to verify tokenizer–model alignment before <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr> and observe an unexpected output. What is the most likely root cause?**
 
 ```python
 from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -133,7 +133,7 @@ Different checkpoint variants of the same model family can carry different vocab
 
 **Correct: B**
 
-At bf16, 1.7B parameters consume approximately 3.4 GB. AdamW maintains two fp32 momentum tensors per parameter, adding roughly 13.6 GB. Gradients at bf16 add another 3.4 GB. Activations — even with a batch size of 1 and moderate sequence length — typically add several more gigabytes, placing realistic peak usage well above 24 GB. Option A accounts only for weight storage and ignores optimizer and gradient memory entirely. Option C is incorrect; automatic CPU offloading requires explicit configuration via libraries like DeepSpeed or Accelerate. Option D is wrong; the RTX 4090 supports both bf16 and fp16 natively.
+At bf16, 1.7B parameters consume approximately 3.4 GB. AdamW maintains two fp32 momentum tensors per parameter, adding roughly 13.6 GB. <abbr title="A vector of partial derivatives indicating how to adjust model weights to minimize the loss function.">Gradients</abbr> at bf16 add another 3.4 GB. Activations — even with a batch size of 1 and moderate sequence length — typically add several more gigabytes, placing realistic peak usage well above 24 GB. Option A accounts only for weight storage and ignores optimizer and gradient memory entirely. Option C is incorrect; automatic <abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr> offloading requires explicit configuration via libraries like DeepSpeed or Accelerate. Option D is wrong; the RTX 4090 supports both bf16 and fp16 natively.
 
 </details>
 
@@ -149,7 +149,7 @@ Select any publicly available SLM on Hugging Face with fewer than 500M parameter
 
 **Part 2 — Memory Footprint Projection**: Compute the expected VRAM requirement for inference (weights only) and for a full fine-tuning run (weights + AdamW states + gradients + activations at batch size 4, sequence length 512) in both fp32 and bf16. Produce a hardware-tier recommendation table mapping each scenario to a specific consumer or cloud GPU tier.
 
-**Part 3 — Attention Pattern Inspection**: Run a forward pass on a five-sentence input of your choice with `output_attentions=True`. Extract the attention weight tensor from the final layer and describe — in two to three paragraphs — what the attention distribution across heads reveals. Identify any heads that appear to attend broadly versus narrowly, and comment on what this might suggest about specialization.
+**Part 3 — <abbr title="A mechanism that lets neural networks focus on specific parts of the input sequence when generating output.">Attention</abbr> Pattern Inspection**: Run a forward pass on a five-sentence input of your choice with `output_attentions=True`. Extract the attention weight tensor from the final layer and describe — in two to three paragraphs — what the attention distribution across heads reveals. Identify any heads that appear to attend broadly versus narrowly, and comment on what this might suggest about specialization.
 
 ---
 

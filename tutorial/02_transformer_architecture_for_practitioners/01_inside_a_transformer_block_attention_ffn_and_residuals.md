@@ -1,12 +1,14 @@
 # Inside a Transformer Block: Attention, FFN, and Residuals
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/02_transformer_architecture_for_practitioners/01_inside_a_transformer_block.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
 | **Module** | Transformer Architecture for Practitioners |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 35 minutes |
-| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and training vs. inference; no prior deep learning or NLP experience required |
+| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and training vs. <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr>; no prior deep learning or NLP experience required |
 
 ---
 
@@ -39,7 +41,7 @@ A transformer model stacks identical blocks, one after another. Each block recei
 
 Every block contains exactly three stages:
 
-1. **Self-attention** — each token looks at every other token to gather context.
+1. **<abbr title="The core mechanism of Transformers allowing tokens to dynamically relate to and focus on other tokens in the sequence.">Self-attention</abbr>** — each token looks at every other token to gather context.
 2. **Feed-forward network (FFN)** — each token's representation is independently transformed.
 3. **Residual connection + layer normalization** — the block's input is added back to its output, stabilizing training.
 
@@ -58,7 +60,7 @@ Self-attention answers the question: *Which other tokens in this sequence should
 
 Each input token produces three vectors — a **Query (Q)**, a **Key (K)**, and a **Value (V)** — through separate learned linear projections. You can think of Q as "what am I looking for?", K as "what do I advertise about myself?", and V as "what do I actually contribute if selected?"
 
-The attention score between two tokens is the dot product of one token's Query against another's Key, scaled by the square root of the key dimension. This scaling prevents dot products from growing too large as dimensionality increases — a practical stability trick from Vaswani et al. (2017) *Attention Is All You Need*. [https://arxiv.org/abs/1706.03762]
+The attention score between two tokens is the dot product of one token's Query against another's Key, scaled by the square root of the key dimension. This scaling prevents dot products from growing too large as dimensionality increases — a practical stability trick from Vaswani et al. (2017) *<abbr title="A mechanism that lets neural networks focus on specific parts of the input sequence when generating output.">Attention</abbr> Is All You Need*. [https://arxiv.org/abs/1706.03762]
 
 $$\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
 
@@ -68,7 +70,7 @@ $$\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\righ
 
 After attention, each token's vector passes through a small two-layer network applied position-wise (independently per token). This FFN typically expands the hidden dimension by a factor of 4, applies a non-linearity (GELU or ReLU), then projects back down.
 
-Residual connections add the block's *input* to its *output* at each stage. This gives gradients a direct path to earlier layers during training — a technique that makes deep networks practical. Layer normalization is applied either before (pre-norm, common in modern SLMs) or after (post-norm, original paper) each sublayer.
+Residual connections add the block's *input* to its *output* at each stage. This gives gradients a direct path to earlier layers during training — a technique that makes deep networks practical. Layer normalization is applied either before (pre-norm, common in modern <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLMs</abbr>) or after (post-norm, original paper) each sublayer.
 
 ### How Parameters Scale
 
@@ -357,8 +359,8 @@ A spell-checker is a classification task — it assigns a label per token. Encod
 - Vaswani et al. (2017) *Attention Is All You Need.* [https://arxiv.org/abs/1706.03762]
   — Original transformer paper. Source of the scaled dot-product attention formula and multi-head attention design.
 
-- Hu et al. (2021) *LoRA: Low-Rank Adaptation of Large Language Models.* [https://arxiv.org/abs/2106.09685]
-  — Introduced the LoRA fine-tuning method covered in Module 4 of this course. Mentioned here because PEFT appears in the course tech stack from Module 1 onward.
+- Hu et al. (2021) *<abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr>: Low-Rank Adaptation of Large Language Models.* [https://arxiv.org/abs/2106.09685]
+  — Introduced the LoRA <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr> method covered in Module 4 of this course. Mentioned here because <abbr title="Parameter-Efficient Fine-Tuning: techniques (like LoRA) that adapt pre-trained models by updating only a tiny fraction of parameters.">PEFT</abbr> appears in the course tech stack from Module 1 onward.
 
 - HuggingFace TB, *SmolLM2 Model Family.* [https://huggingface.co/HuggingFaceTB/SmolLM2-135M] — Last verified: 2025-06.
   — Primary SLM family used throughout this course. Apache 2.0 license.

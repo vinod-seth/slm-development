@@ -22,11 +22,11 @@ By the end of this module you will be able to:
 - Configure a TrainingArguments object with learning rate, batch size, and evaluation strategy
 - Train a SmolLM2-135M model on a custom dataset using the Hugging Face Trainer
 - Write a minimal manual PyTorch training loop to understand what Trainer abstracts away
-- Compute perplexity on a held-out validation set and interpret the result
-- Evaluate a trained model using perplexity, ROUGE-L, and F1 metrics on a held-out test set
+- Compute <abbr title="A metric measuring how well a probability model predicts a sample; lower perplexity indicates higher confidence and quality.">perplexity</abbr> on a held-out validation set and interpret the result
+- Evaluate a trained model using perplexity, <abbr title="Recall-Oriented Understudy for Gisting Evaluation: metrics evaluating summary quality by comparing against human references.">ROUGE</abbr>-L, and F1 metrics on a held-out test set
 - Use the evaluate library to compute ROUGE scores on a generation task
 - Interpret a worked ROUGE and F1 example end-to-end
-- Identify common failure modes: overfitting, catastrophic forgetting, and distribution mismatch
+- Identify common failure modes: <abbr title="A training error where a model learns training data details too well, performing poorly on new data.">overfitting</abbr>, catastrophic forgetting, and distribution mismatch
 
 ---
 

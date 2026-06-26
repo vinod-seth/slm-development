@@ -1,21 +1,23 @@
 # Bias Detection and Safety Auditing for SLMs
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/06_responsible_model_development_bias_safety_and_model_cards/01_bias_detection_and_safety_auditing.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
 | **Module** | Responsible Model Development: Bias, Safety, and Model Cards |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 30 minutes |
-| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and inference; no prior deep learning or NLP experience required |
+| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr>; no prior deep learning or NLP experience required |
 
 ---
 
 ## Lesson Roadmap
 
-- **Core Concepts** — Understand what bias auditing is, why it matters for SLMs specifically, and how adversarial probing differs from standard evaluation.
+- **Core Concepts** — Understand what bias auditing is, why it matters for <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLMs</abbr> specifically, and how adversarial probing differs from standard evaluation.
 - **Technical Deep-Dive** — Build a structured probe set, run it against a fine-tuned SLM, and write outputs to a bias audit log with severity ratings.
 - **Mitigation Techniques** — Apply output filtering and refusal prompting; understand constrained decoding as an alternative.
-- **Safety Limits** — Examine why fine-tuning, system prompts, and RLHF are necessary but not sufficient safeguards.
+- **Safety Limits** — Examine why <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr>, system prompts, and RLHF are necessary but not sufficient safeguards.
 - **Hands-On Exercise** — Run your own adversarial prompt battery against a small model and file a completed audit log entry.
 
 ---
@@ -67,7 +69,7 @@ A complete audit uses three complementary probe types:
 
 ### Why Fine-Tuning Cannot Eliminate Harmful Outputs
 
-Fine-tuning adjusts weights on a pre-trained base. It does not delete knowledge or capabilities baked in during pre-training. A model fine-tuned on polite customer-service conversations still retains the capacity to produce harmful text — the fine-tuning shifts the probability distribution, not the underlying vocabulary or associations.
+Fine-tuning adjusts weights on a <abbr title="A model trained on a massive general dataset to learn language patterns before fine-tuning.">pre-trained</abbr> base. It does not delete knowledge or capabilities baked in during pre-training. A model fine-tuned on polite customer-service conversations still retains the capacity to produce harmful text — the fine-tuning shifts the probability distribution, not the underlying vocabulary or associations.
 
 > [!IMPORTANT]
 > Fine-tuning is a soft control. It reduces the *likelihood* of harmful outputs under normal input distributions. It does not eliminate the *possibility* under adversarial or out-of-distribution inputs.
@@ -102,7 +104,7 @@ pip install transformers==4.44.0 torch==2.3.1 datasets==2.20.0 accelerate==0.33.
 
 ### Selecting a Target Model
 
-This lesson uses `microsoft/phi-2` (2.7B parameters, Apache 2.0 license, publicly available on Hugging Face Hub — no gated access required). If you completed a LoRA fine-tune in Module 4 or 5, substitute your adapter path in `MODEL_ID`.
+This lesson uses `microsoft/phi-2` (2.7B parameters, Apache 2.0 license, publicly available on Hugging Face Hub — no gated access required). If you completed a <abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr> fine-tune in Module 4 or 5, substitute your adapter path in `MODEL_ID`.
 
 > [!NOTE]
 > Verify model availability at: [https://huggingface.co/microsoft/phi-2](https://huggingface.co/microsoft/phi-2). Last verified: 2025-06.

@@ -1,21 +1,23 @@
 # Memory Footprint and Hardware Tiers for SLM Training
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/02_transformer_architecture_for_practitioners/02_memory_footprint_and_hardware_tiers.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
 | **Module** | Transformer Architecture for Practitioners |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 30 minutes |
-| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and inference; no prior deep learning or NLP experience required. Complete Module 2, Lesson 1 before this lesson. |
+| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr>; no prior deep learning or NLP experience required. Complete Module 2, Lesson 1 before this lesson. |
 
 ---
 
 ## Lesson Roadmap
 
-- **Core Concepts** — Understand the bytes-per-parameter rule and why dtype choice controls VRAM usage.
-- **Hardware Tiers** — Match model families to CPU-only, 8 GB, 16 GB, and 24 GB setups using a feasibility table.
+- **Core Concepts** — Understand the bytes-per-parameter rule and why dtype choice controls <abbr title="Video Random Access Memory: high-speed memory on a GPU used to store model weights and activations during run time.">VRAM</abbr> usage.
+- **Hardware Tiers** — Match model families to <abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr>-only, 8 GB, 16 GB, and 24 GB setups using a feasibility table.
 - **Technical Deep-Dive** — Run a live VRAM estimator script and load a model in `float16` with gradient checkpointing enabled.
-- **Batch Size Interaction** — See exactly how batch size and sequence length multiply your memory budget.
+- **<abbr title="The number of training examples processed in a single forward and backward pass.">Batch Size</abbr> Interaction** — See exactly how batch size and sequence length multiply your memory budget.
 - **Hands-On Exercise** — Estimate and verify VRAM usage for two course models on your own hardware tier.
 
 ---
@@ -24,7 +26,7 @@
 
 By the end of this lesson, you will be able to:
 
-- Estimate GPU VRAM requirements for a given model size using the bytes-per-parameter rule.
+- Estimate <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr> VRAM requirements for a given model size using the bytes-per-parameter rule.
 - Select an appropriate model family (sub-100M, 100M–500M, 500M–3B) given a hardware constraint.
 - Explain why gradient checkpointing and mixed-precision training reduce memory usage.
 - Identify which course models run on CPU-only, 8 GB VRAM, and 16 GB VRAM setups.
@@ -42,7 +44,7 @@ Every model parameter is a number stored in memory. The precision format determi
 | `float32` (fp32) | 4 bytes | Full precision, baseline |
 | `float16` (fp16) | 2 bytes | Mixed-precision training on NVIDIA |
 | `bfloat16` (bf16) | 2 bytes | Mixed-precision on Ampere+ / TPU |
-| `int8` | 1 byte | Post-training quantization, inference |
+| `int8` | 1 byte | Post-training <abbr title="The process of reducing weight precision (e.g. from 16-bit to 4-bit) to shrink model size and speed up inference.">quantization</abbr>, inference |
 
 **Quick formula:**
 
@@ -57,9 +59,9 @@ A 360M-parameter model in fp32 uses approximately **1.34 GB** just for its weigh
 Loading a model for inference only loads its weights. Training loads:
 
 1. **Weights** — the model parameters themselves.
-2. **Gradients** — one gradient tensor per parameter (same size as weights).
-3. **Optimizer states** — Adam stores two extra tensors per parameter (momentum and variance), tripling the weight cost alone.
-4. **Activations** — intermediate layer outputs retained for backpropagation.
+2. **<abbr title="A vector of partial derivatives indicating how to adjust model weights to minimize the loss function.">Gradients</abbr>** — one gradient tensor per parameter (same size as weights).
+3. **<abbr title="The algorithm (e.g. AdamW) that updates model weights based on computed gradients to minimize the loss.">Optimizer</abbr> states** — Adam stores two extra tensors per parameter (momentum and variance), tripling the weight cost alone.
+4. **Activations** — intermediate layer outputs retained for <abbr title="The algorithm that calculates gradients of the loss function with respect to weights by moving backward through the network.">backpropagation</abbr>.
 
 A rough training multiplier for Adam with fp32 weights is **~16 bytes per parameter** before activations.
 
@@ -93,7 +95,7 @@ Mixed-precision keeps a **master copy** of weights in fp32 for numerical stabili
 
 | Hardware Tier | VRAM Budget | Trainable Model Range | Course Models |
 |---|---|---|---|
-| CPU only | System RAM (8–32 GB) | Inference only, or LoRA on sub-100M | `google/flan-t5-small` (60M) |
+| CPU only | System RAM (8–32 GB) | Inference only, or <abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr> on sub-100M | `google/flan-t5-small` (60M) |
 | 8 GB VRAM | ~6–7 GB usable | Full fine-tune up to ~125M; LoRA up to 500M | `facebook/opt-125m`, `distilgpt2` (82M) |
 | 16 GB VRAM | ~14 GB usable | Full fine-tune up to ~350M; LoRA up to 1.5B | `microsoft/phi-2` (2.7B) via LoRA only |
 | 24 GB VRAM | ~22 GB usable | Full fine-tune up to ~1B; LoRA up to 3B | `microsoft/phi-2` full fine-tune (borderline) |
@@ -501,7 +503,7 @@ Gradient checkpointing reduces VRAM by approximately 40–60% but slows training
 
 **How to think about this:**
 
-A strong answer identifies a case where hardware cost is the binding constraint — not time. For example: a researcher fine-tuning a 350M model on a single consumer RTX 4070 Ti (12 GB) would exceed VRAM without gradient checkpointing, making training literally impossible. The 30% slower wall-clock time is irrelevant if the alternative is renting a more expensive cloud GPU. Contrast this with a production pipeline where a team has access to multiple A100s and needs to hit a weekly release cadence — there, the speed penalty has real cost and checkpointing might be worth evaluating more carefully.
+A strong answer identifies a case where hardware cost is the binding constraint — not time. For example: a researcher <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr> a 350M model on a single consumer RTX 4070 Ti (12 GB) would exceed VRAM without gradient checkpointing, making training literally impossible. The 30% slower wall-clock time is irrelevant if the alternative is renting a more expensive cloud GPU. Contrast this with a production pipeline where a team has access to multiple A100s and needs to hit a weekly release cadence — there, the speed penalty has real cost and checkpointing might be worth evaluating more carefully.
 
 </details>
 

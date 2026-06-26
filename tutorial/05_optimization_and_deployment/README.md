@@ -1,6 +1,6 @@
 # Module 5: Optimization and Deployment
 
-Quantize and serve a fine-tuned SLM for production or edge use with minimum latency and memory footprint.
+Quantize and serve a fine-tuned <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLM</abbr> for production or edge use with minimum latency and memory footprint.
 
 ## Lessons
 
@@ -13,10 +13,10 @@ Quantize and serve a fine-tuned SLM for production or edge use with minimum late
 ## Module Objectives
 
 By the end of this module you will be able to:
-- Explain how int8 and int4 quantization reduce model size and memory usage
+- Explain how int8 and int4 <abbr title="The process of reducing weight precision (e.g. from 16-bit to 4-bit) to shrink model size and speed up inference.">quantization</abbr> reduce model size and memory usage
 - Apply bitsandbytes int8 quantization to a fine-tuned SLM and measure size reduction
-- Benchmark inference latency and output quality before and after quantization
-- Select the appropriate quantization strategy for CPU, mobile, and server targets
+- Benchmark <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr> latency and output quality before and after quantization
+- Select the appropriate quantization strategy for <abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr>, mobile, and server targets
 - Build a FastAPI inference endpoint that loads a quantized SLM and returns streamed responses
 - Configure input length limits and basic output content filtering as production baselines
 - Measure time-to-first-token and tokens-per-second for a served SLM

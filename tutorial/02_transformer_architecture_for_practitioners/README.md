@@ -19,13 +19,13 @@ By the end of this module you will be able to:
 - Interpret the scaled dot-product attention formula at a conceptual level, with citation to Vaswani et al. (2017)
 - Explain how layer count and hidden dimension jointly determine parameter count
 - Differentiate encoder-only, decoder-only, and encoder-decoder architectures by use case
-- Estimate GPU VRAM requirements for a given model size using the bytes-per-parameter rule
+- Estimate <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr> <abbr title="Video Random Access Memory: high-speed memory on a GPU used to store model weights and activations during run time.">VRAM</abbr> requirements for a given model size using the bytes-per-parameter rule
 - Select an appropriate model family (sub-100M, 100M–500M, 500M–3B) given a hardware constraint
 - Explain why gradient checkpointing and mixed-precision training reduce memory usage
-- Identify which course models run on CPU-only, 8 GB VRAM, and 16 GB VRAM setups
-- Load a pretrained SmolLM2-135M checkpoint using AutoModelForCausalLM and AutoTokenizer
+- Identify which course models run on <abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr>-only, 8 GB VRAM, and 16 GB VRAM setups
+- Load a <abbr title="A model trained on a massive general dataset to learn language patterns before fine-tuning.">pretrained</abbr> SmolLM2-135M checkpoint using AutoModelForCausalLM and AutoTokenizer
 - Inspect model architecture, total parameter count, and layer names programmatically
-- Run a basic inference call and decode the output tokens to readable text
+- Run a basic <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr> call and decode the output tokens to readable text
 - Read a Hugging Face model card and locate training data, license, and known limitations
 
 ---

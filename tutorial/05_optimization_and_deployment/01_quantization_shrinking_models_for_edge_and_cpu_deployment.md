@@ -1,5 +1,7 @@
 # Quantization: Shrinking Models for Edge and CPU Deployment
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/05_optimization_and_deployment/01_quantization.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
@@ -9,7 +11,7 @@
 | **Prerequisites** | Modules 1–4 completed; Python 3.11 environment with PyTorch installed; Hugging Face account (free tier sufficient); 8 GB RAM minimum |
 
 > **Module Prerequisite Block**
-> - ✅ Completed Module 4: Fine-Tuning with LoRA (at least one training run finished)
+> - ✅ Completed Module 4: <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">Fine-Tuning</abbr> with <abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr> (at least one training run finished)
 > - 🛠 Tools required: `bitsandbytes >= 0.43`, `transformers >= 4.40`, `torch >= 2.2`
 > - ⏱ Estimated cumulative time from course start: ~14 hours
 
@@ -17,11 +19,11 @@
 
 ## 📍 Lesson Roadmap
 
-- **Core Concepts** — Understand what quantization does to model weights, and why it matters for edge hardware
+- **Core Concepts** — Understand what <abbr title="The process of reducing weight precision (e.g. from 16-bit to 4-bit) to shrink model size and speed up inference.">quantization</abbr> does to model weights, and why it matters for edge hardware
 - **First Experiment** — Load a model in int8 mode and compare memory footprint (appears within the first 10 minutes)
 - **Technical Deep-Dive** — Apply `load_in_8bit` and `load_in_4bit` with `bitsandbytes`; measure latency and output quality
-- **GGUF & llama.cpp** — Explore CPU-native quantization formats for Raspberry Pi and laptop deployment
-- **Hands-On Exercise** — Benchmark your fine-tuned SLM at fp16, int8, and int4 precision and document the trade-offs
+- **GGUF & llama.cpp** — Explore <abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr>-native quantization formats for Raspberry Pi and laptop deployment
+- **Hands-On Exercise** — Benchmark your fine-tuned <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLM</abbr> at fp16, int8, and int4 precision and document the trade-offs
 
 ---
 
@@ -31,7 +33,7 @@ By the end of this lesson, you will be able to:
 
 - Explain how int8 and int4 quantization reduce model size and memory usage without full retraining
 - Apply `bitsandbytes` int8 and int4 quantization to a fine-tuned SLM using Hugging Face Transformers
-- Benchmark inference latency and generation quality before and after quantization
+- Benchmark <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr> latency and generation quality before and after quantization
 - Select the appropriate quantization strategy for CPU, mobile, and server deployment targets
 
 ---
@@ -47,7 +49,7 @@ Quantization replaces those high-precision numbers with lower-precision integers
 | Precision | Bits per weight | Bytes per weight | Typical use case |
 |-----------|-----------------|------------------|------------------|
 | fp32 | 32 | 4 | Training |
-| fp16 / bf16 | 16 | 2 | GPU inference |
+| fp16 / bf16 | 16 | 2 | <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr> inference |
 | int8 | 8 | 1 | Server CPU / edge GPU |
 | int4 | 4 | 0.5 | Laptop CPU / Raspberry Pi |
 
@@ -77,7 +79,7 @@ A **scale factor** maps the continuous float range to the integer range. At infe
 
 **int4** maximises compression:
 - Enables models to run on devices with 4–8 GB RAM
-- Requires careful calibration; perplexity increase is measurable
+- Requires careful calibration; <abbr title="A metric measuring how well a probability model predicts a sample; lower perplexity indicates higher confidence and quality.">perplexity</abbr> increase is measurable
 - GGUF format (used by `llama.cpp`) ships popular SLMs in Q4_K_M variants optimised for CPU
 
 > [!IMPORTANT]
@@ -364,7 +366,7 @@ Run all three precision modes and record your results here. Representative figur
 |-----------|---------------|---------------------|-------------------|
 | fp16 | ~688 MB | ~312 ms | CUDA GPU server |
 | int8 | ~348 MB | ~390 ms | Edge GPU, CUDA CPU |
-| int4 (NF4) | ~185 MB | ~270 ms | CUDA GPU; lower VRAM |
+| int4 (NF4) | ~185 MB | ~270 ms | CUDA GPU; lower <abbr title="Video Random Access Memory: high-speed memory on a GPU used to store model weights and activations during run time.">VRAM</abbr> |
 | GGUF Q4_K_M | ~185 MB | ~1,100 ms | CPU, Raspberry Pi, laptop |
 
 > [!IMPORTANT]

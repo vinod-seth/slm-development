@@ -1,6 +1,6 @@
 # Module 4: Fine-Tuning Pretrained SLMs with PEFT and LoRA
 
-Apply parameter-efficient fine-tuning techniques to adapt a pretrained SLM to a target task using a fraction of the compute required for full fine-tuning.
+Apply parameter-efficient <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr> techniques to adapt a <abbr title="A model trained on a massive general dataset to learn language patterns before fine-tuning.">pretrained</abbr> <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLM</abbr> to a target task using a fraction of the compute required for full fine-tuning.
 
 ## Lessons
 
@@ -16,10 +16,10 @@ Apply parameter-efficient fine-tuning techniques to adapt a pretrained SLM to a 
 
 By the end of this module you will be able to:
 - Explain how pretrained weights encode transferable language knowledge and reduce data requirements
-- Compare memory footprint of full fine-tuning vs PEFT fine-tuning for a 135M model
+- Compare memory footprint of full fine-tuning vs <abbr title="Parameter-Efficient Fine-Tuning: techniques (like LoRA) that adapt pre-trained models by updating only a tiny fraction of parameters.">PEFT</abbr> fine-tuning for a 135M model
 - Identify which layers benefit most from task-specific adaptation
 - Confirm successful completion of Module 3 training runs before proceeding
-- Describe the LoRA low-rank decomposition technique and explain why it reduces trainable parameters — citing Hu et al. (2021)
+- Describe the <abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr> low-rank decomposition technique and explain why it reduces trainable parameters — citing Hu et al. (2021)
 - Configure a LoraConfig targeting attention projection layers with rank, alpha, and dropout
 - Apply get_peft_model() to wrap a pretrained SLM and inspect trainable parameter count
 - Train a LoRA adapter on a classification or generation task and save the adapter weights

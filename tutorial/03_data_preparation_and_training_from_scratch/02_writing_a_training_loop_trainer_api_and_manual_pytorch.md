@@ -1,12 +1,14 @@
 # Writing a Training Loop: Trainer API and Manual PyTorch
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/03_data_preparation_and_training_from_scratch/02_writing_a_training_loop.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
 | **Module** | Data Preparation and Training from Scratch |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 40 minutes |
-| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and what training vs. inference means; Module 3, Lesson 1 completed (tokenization and dataset splits); no prior deep learning or NLP experience required |
+| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and what training vs. <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr> means; Module 3, Lesson 1 completed (<abbr title="The preprocessing step of converting raw text input into numerical tokens that a language model can process.">tokenization</abbr> and dataset splits); no prior deep learning or NLP experience required |
 
 ---
 
@@ -14,8 +16,8 @@
 
 - **🟢 Core Concepts** — Understand what a training loop does and where Trainer fits versus raw PyTorch. *(Non-engineers: focus here.)*
 - **🔷 Technical Deep-Dive** — Configure `TrainingArguments`, wire up `Trainer`, then write a minimal manual loop. *(Engineers: this is your primary track.)*
-- **💡 Compute Budget Planning** — Estimate token throughput and per-step cost before you commit GPU hours.
-- **🧪 Hands-On Exercise** — Train SmolLM2-135M on a custom recipe-instruction dataset and measure perplexity.
+- **💡 Compute Budget Planning** — Estimate token throughput and per-step cost before you commit <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr> hours.
+- **🧪 Hands-On Exercise** — Train SmolLM2-135M on a custom recipe-instruction dataset and measure <abbr title="A metric measuring how well a probability model predicts a sample; lower perplexity indicates higher confidence and quality.">perplexity</abbr>.
 - **✅ Concept Check** — Validate your understanding with scenario-based questions before moving to Module 4.
 
 ---
@@ -60,7 +62,7 @@ This lesson shows you both, so you can choose intelligently.
 
 ### The SmolLM2-135M Model Family
 
-SmolLM2-135M ([HuggingFaceTB/SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M), *last verified: 2025-06*) is a 135-million-parameter decoder-only language model designed for on-device and resource-constrained training. At 135 M parameters it fits comfortably in 1–2 GB of GPU VRAM in full precision, making it a realistic training target for a single consumer GPU or a free-tier Colab session.
+SmolLM2-135M ([HuggingFaceTB/SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M), *last verified: 2025-06*) is a 135-million-parameter decoder-only language model designed for on-device and resource-constrained training. At 135 M parameters it fits comfortably in 1–2 GB of GPU <abbr title="Video Random Access Memory: high-speed memory on a GPU used to store model weights and activations during run time.">VRAM</abbr> in full precision, making it a realistic training target for a single consumer GPU or a free-tier Colab session.
 
 > [!IMPORTANT]
 > SmolLM2 uses the **LlamaTokenizer** family internally. When you set `labels = input_ids` for causal language modeling, the tokenizer's `pad_token` must equal its `eos_token`. The code below handles this explicitly.
@@ -85,7 +87,7 @@ time_estimate  = training_steps / token_throughput_per_second
 For this lesson's exercise dataset (~2 M tokens, 3 epochs, batch 8, seq 512): expect **~8 minutes on a T4** and ~25 minutes on an M2. Check your estimate before committing to a longer run.
 
 > [!NOTE]
-> Token throughput degrades roughly linearly as sequence length grows beyond 512 for models without sliding-window attention. SmolLM2-135M supports up to 2048 tokens.
+> <abbr title="A sub-word unit, word, or character that text is split into for processing by a language model.">Token</abbr> throughput degrades roughly linearly as sequence length grows beyond 512 for models without sliding-window attention. SmolLM2-135M supports up to 2048 tokens.
 
 ---
 
@@ -202,7 +204,7 @@ def tokenize_recipe_dataset(
     return {"train": split["train"], "validation": split["test"]}
 ```
 
-### Step 3A — Trainer API Path (Recommended for Beginners)
+### Step 3 — Train with Hugging Face Trainer (Recommended)
 
 ```python
 # src/training/train_with_trainer.py
@@ -294,7 +296,175 @@ if __name__ == "__main__":
 > [!NOTE]
 > `gradient_accumulation_steps=4` lets you simulate a batch size of 32 on a GPU that can only hold 8 samples at once. This is one of the most practical knobs available on memory-constrained hardware.
 
-### Step 3B — Manual PyTorch Training Loop
+---
+
+### Interpreting Perplexity
+
+| Perplexity Range | What It Signals |
+|---|---|
+| > 200 | Model has barely started learning; loss is near random |
+| 50 – 200 | Early convergence; the model recognises some patterns |
+| 15 – 50 | Reasonable for a domain-specific 135M model after a few epochs |
+| < 15 | Strong fit; verify you are not <abbr title="A training error where a model learns training data details too well, performing poorly on new data.">overfitting</abbr> the training set |
+
+After 3 epochs on a well-prepared recipe dataset (~2 M tokens), expect SmolLM2-135M to land between 20 and 40 perplexity. A validation perplexity significantly lower than training perplexity is unusual and warrants checking for data leakage between splits.
+
+> [!IMPORTANT]
+> <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">Fine-tuning</abbr> (covered in Module 4) typically reaches lower perplexity faster because <abbr title="A model trained on a massive general dataset to learn language patterns before fine-tuning.">pre-trained</abbr> weights already encode language structure. Training from scratch requires more data and more epochs to achieve comparable results.
+
+---
+
+## Hands-On Exercise
+
+**Goal:** Train SmolLM2-135M for 1 epoch on a small sample dataset and verify the perplexity drops below 100.
+
+### Setup (5 minutes)
+
+```bash
+# 1. Install dependencies (skip if your devcontainer is active)
+pip install transformers==4.44.0 datasets==2.20.0 torch accelerate --quiet
+
+# 2. Create a minimal JSONL sample file for testing
+python - <<'EOF'
+import json, pathlib, random
+
+INSTRUCTIONS = [
+    "How do I make sourdough bread?",
+    "What is a quick pasta carbonara recipe?",
+    "Describe how to prepare a classic French omelette.",
+    "List steps to brew pour-over coffee.",
+    "How do I make a simple tomato sauce from scratch?",
+]
+RESPONSES = [
+    "Mix flour, water, salt, and starter. Ferment overnight. Shape, proof, and bake at 230°C for 35 minutes.",
+    "Cook guanciale, whisk eggs and pecorino, combine off heat with pasta water to emulsify.",
+    "Beat eggs, season, melt butter, pour in pan, fold gently while still slightly wet in the centre.",
+    "Grind medium-coarse. Bloom with 30g water for 45s. Pour remainder in slow circles. Total brew: 3 minutes.",
+    "Sauté garlic in olive oil, add crushed tomatoes, season, simmer 20 minutes, finish with basil.",
+]
+
+pathlib.Path("data").mkdir(exist_ok=True)
+rows = [{"instruction": i, "response": r} for i, r in zip(INSTRUCTIONS, RESPONSES)] * 40
+random.shuffle(rows)
+with open("data/recipes.jsonl", "w") as f:
+    for row in rows:
+        f.write(json.dumps(row) + "\n")
+print(f"Wrote {len(rows)} records to data/recipes.jsonl")
+EOF
+```
+
+### Run the Trainer (15 minutes)
+
+```python
+# quick_train.py — a self-contained single-file version for the exercise
+# Paste this into a Jupyter cell or run as: python quick_train.py
+
+import math, os, torch
+from datasets import load_dataset
+from transformers import (
+    AutoTokenizer, AutoModelForCausalLM,
+    TrainingArguments, Trainer, DataCollatorForLanguageModeling,
+)
+
+MODEL_ID     = "HuggingFaceTB/SmolLM2-135M"
+DATASET_PATH = "data/recipes.jsonl"
+OUTPUT_DIR   = "outputs/smollm2-exercise"
+MAX_SEQ_LEN  = 256  # Shorter for the exercise to reduce runtime
+
+# --- Load tokenizer and model ---
+tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
+if tokenizer.pad_token is None:
+    tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.pad_token_id = tokenizer.eos_token_id
+
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_ID,
+    torch_dtype=torch.bfloat16 if torch.cuda.is_available() else torch.float32,
+    device_map="auto",
+)
+model.resize_token_embeddings(len(tokenizer))
+
+# --- Tokenize ---
+raw = load_dataset("json", data_files={"full": DATASET_PATH}, split="full")
+
+def tokenize(batch):
+    texts = [
+        f"### Instruction\n{i}\n\n### Response\n{r}"
+        for i, r in zip(batch["instruction"], batch["response"])
+    ]
+    enc = tokenizer(texts, truncation=True, max_length=MAX_SEQ_LEN, padding="max_length")
+    enc["labels"] = [
+        [t if t != tokenizer.pad_token_id else -100 for t in seq]
+        for seq in enc["input_ids"]
+    ]
+    return enc
+
+tokenized = raw.map(tokenize, batched=True, remove_columns=raw.column_names)
+tokenized.set_format("torch")
+split = tokenized.train_test_split(test_size=0.1, seed=42)
+
+# --- Training arguments ---
+args = TrainingArguments(
+    output_dir=OUTPUT_DIR,
+    num_train_epochs=1,
+    per_device_train_batch_size=4,
+    per_device_eval_batch_size=4,
+    learning_rate=3e-4,
+    evaluation_strategy="epoch",
+    save_strategy="epoch",
+    bf16=torch.cuda.is_available(),
+    logging_steps=10,
+    report_to="none",
+)
+
+trainer = Trainer(
+    model=model,
+    args=args,
+    train_dataset=split["train"],
+    eval_dataset=split["test"],
+    data_collator=DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False),
+)
+
+trainer.train()
+
+# --- Evaluate ---
+eval_results = trainer.evaluate()
+val_loss = eval_results["eval_loss"]
+perplexity = math.exp(val_loss)
+print(f"Validation Loss: {val_loss:.4f}")
+print(f"Validation Perplexity: {perplexity:.2f}")
+```
+
+---
+
+## ✅ Concept Check
+
+1. **Why do we align `tokenizer.pad_token` with `tokenizer.eos_token` for causal language modeling?**
+   - *Answer:* Causal language models do not have a default pad token like masked language models. Aligning it with the end-of-sequence (EOS) token prevents errors during batch processing and ensures the model ignores padded positions correctly when labels are masked to -100.
+
+2. **What does `gradient_accumulation_steps=4` accomplish?**
+   - *Answer:* It accumulates gradients over 4 forward/backward passes before updating weights, effectively multiplying the batch size by 4 without increasing the peak memory footprint (VRAM usage) on the GPU.
+
+3. **If your validation loss is 3.4, what is the validation perplexity?**
+   - *Answer:* Perplexity is $e^{3.4} \approx 30$.
+
+---
+
+## 🎓 Confidence Checklist
+
+Before moving on to Module 4, verify that you are confident with the following skills:
+
+- [ ] **Configure** `TrainingArguments` with learning rate, batch size, and weight decay.
+- [ ] **Initialize** a Hugging Face `Trainer` to run model training and evaluation.
+- [ ] **Implement** gradient accumulation to manage GPU VRAM constraints.
+- [ ] **Calculate** and interpret model perplexity from cross-entropy loss.
+- [ ] **Estimate** token throughput and training time based on hardware performance.
+
+If you can check all of these, you are ready for Module 4!
+
+---
+
+## 💡 Appendix: Manual PyTorch Training Loop (Optional)
 
 This stripped-down loop mirrors exactly what `Trainer` does internally. Reading it once will make every `TrainingArguments` parameter click.
 
@@ -435,119 +605,3 @@ def train():
 if __name__ == "__main__":
     train()
 ```
-
-### Interpreting Perplexity
-
-| Perplexity Range | What It Signals |
-|---|---|
-| > 200 | Model has barely started learning; loss is near random |
-| 50 – 200 | Early convergence; the model recognises some patterns |
-| 15 – 50 | Reasonable for a domain-specific 135M model after a few epochs |
-| < 15 | Strong fit; verify you are not overfitting the training set |
-
-After 3 epochs on a well-prepared recipe dataset (~2 M tokens), expect SmolLM2-135M to land between 20 and 40 perplexity. A validation perplexity significantly lower than training perplexity is unusual and warrants checking for data leakage between splits.
-
-> [!IMPORTANT]
-> Fine-tuning (covered in Module 4) typically reaches lower perplexity faster because pre-trained weights already encode language structure. Training from scratch requires more data and more epochs to achieve comparable results.
-
----
-
-## Hands-On Exercise
-
-**Goal:** Train SmolLM2-135M for 1 epoch on a small sample dataset and verify the perplexity drops below 100.
-
-### Setup (5 minutes)
-
-```bash
-# 1. Install dependencies (skip if your devcontainer is active)
-pip install transformers==4.44.0 datasets==2.20.0 torch accelerate --quiet
-
-# 2. Create a minimal JSONL sample file for testing
-python - <<'EOF'
-import json, pathlib, random
-
-INSTRUCTIONS = [
-    "How do I make sourdough bread?",
-    "What is a quick pasta carbonara recipe?",
-    "Describe how to prepare a classic French omelette.",
-    "List steps to brew pour-over coffee.",
-    "How do I make a simple tomato sauce from scratch?",
-]
-RESPONSES = [
-    "Mix flour, water, salt, and starter. Ferment overnight. Shape, proof, and bake at 230°C for 35 minutes.",
-    "Cook guanciale, whisk eggs and pecorino, combine off heat with pasta water to emulsify.",
-    "Beat eggs, season, melt butter, pour in pan, fold gently while still slightly wet in the centre.",
-    "Grind medium-coarse. Bloom with 30g water for 45s. Pour remainder in slow circles. Total brew: 3 minutes.",
-    "Sauté garlic in olive oil, add crushed tomatoes, season, simmer 20 minutes, finish with basil.",
-]
-
-pathlib.Path("data").mkdir(exist_ok=True)
-rows = [{"instruction": i, "response": r} for i, r in zip(INSTRUCTIONS, RESPONSES)] * 40
-random.shuffle(rows)
-with open("data/recipes.jsonl", "w") as f:
-    for row in rows:
-        f.write(json.dumps(row) + "\n")
-print(f"Wrote {len(rows)} records to data/recipes.jsonl")
-EOF
-```
-
-### Run the Trainer (15 minutes)
-
-```python
-# quick_train.py — a self-contained single-file version for the exercise
-# Paste this into a Jupyter cell or run as: python quick_train.py
-
-import math, os, torch
-from datasets import load_dataset
-from transformers import (
-    AutoTokenizer, AutoModelForCausalLM,
-    TrainingArguments, Trainer, DataCollatorForLanguageModeling,
-)
-
-MODEL_ID     = "HuggingFaceTB/SmolLM2-135M"
-DATASET_PATH = "data/recipes.jsonl"
-OUTPUT_DIR   = "outputs/smollm2-exercise"
-MAX_SEQ_LEN  = 256  # Shorter for the exercise to reduce runtime
-
-# --- Load tokenizer and model ---
-tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
-if tokenizer.pad_token is None:
-    tokenizer.pad_token = tokenizer.eos_token
-    tokenizer.pad_token_id = tokenizer.eos_token_id
-
-model = AutoModelForCausalLM.from_pretrained(
-    MODEL_ID,
-    torch_dtype=torch.bfloat16 if torch.cuda.is_available() else torch.float32,
-    device_map="auto",
-)
-model.resize_token_embeddings(len(tokenizer))
-
-# --- Tokenize ---
-raw = load_dataset("json", data_files={"full": DATASET_PATH}, split="full")
-
-def tokenize(batch):
-    texts = [
-        f"### Instruction\n{i}\n\n### Response\n{r}"
-        for i, r in zip(batch["instruction"], batch["response"])
-    ]
-    enc = tokenizer(texts, truncation=True, max_length=MAX_SEQ_LEN, padding="max_length")
-    enc["labels"] = [
-        [t if t != tokenizer.pad_token_id else -100 for t in seq]
-        for seq in enc["input_ids"]
-    ]
-    return enc
-
-tokenized = raw.map(tokenize, batched=True, remove_columns=raw.column_names)
-tokenized.set_format("torch")
-split = tokenized.train_test_split(test_size=0.1, seed=42)
-
-# --- Training arguments ---
-args = TrainingArguments(
-    output_dir=OUTPUT_DIR,
-    num_train_epochs=1,
-    per_device_train_batch_size=4,
-    per_device_eval_batch_size=4,
-    learning_rate=3e-4,
-    evaluation_strategy="epoch",
-    save_strategy="epoch",
-    bf

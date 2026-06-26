@@ -8,9 +8,9 @@ Test your understanding of Small Language Models: What They Are and Why They Mat
 
 **Q1: A medical clinic wants to deploy an on-device model on a tablet that flags abnormal vital signs and surfaces relevant protocol summaries — without sending patient data to external servers. Which model choice is most appropriate, and why?**
 
-- A) A 70B-parameter LLM accessed via cloud API, because larger models produce more accurate clinical reasoning.
-- B) A 1–3B-parameter SLM fine-tuned on clinical protocols, deployed locally on the tablet.
-- C) A general-purpose SLM with no fine-tuning, because smaller models are always faster.
+- A) A 70B-parameter <abbr title="Large Language Model: a massive language model (7B+ parameters) requiring cloud or cluster hardware.">LLM</abbr> accessed via cloud API, because larger models produce more accurate clinical reasoning.
+- B) A 1–3B-parameter <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLM</abbr> fine-tuned on clinical protocols, deployed locally on the tablet.
+- C) A general-purpose SLM with no <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr>, because smaller models are always faster.
 - D) A cloud-hosted LLM with output filtering, because on-device compute is insufficient for any NLP task.
 
 <details>
@@ -42,7 +42,7 @@ Parameter count directly affects how much world knowledge and task variety a mod
 
 ---
 
-**Q3: During tokenization, the input string `"CloudWatch"` is split into the tokens `["Cloud", "Watch"]` by a BPE tokenizer. What does this tell you about the token `"CloudWatch"` in the model's vocabulary?**
+**Q3: During <abbr title="The preprocessing step of converting raw text input into numerical tokens that a language model can process.">tokenization</abbr>, the input string `"CloudWatch"` is split into the tokens `["Cloud", "Watch"]` by a BPE tokenizer. What does this tell you about the token `"CloudWatch"` in the model's vocabulary?**
 
 - A) The tokenizer is misconfigured and should be retrained on cloud infrastructure corpora.
 - B) `"CloudWatch"` appears frequently enough in the training corpus to warrant its own token, but the tokenizer chose not to include it.
@@ -112,7 +112,7 @@ Temperature scales the logits before the softmax step. Values below 1.0 compress
 
 - A) Fine-tune the SLM unconditionally — smaller is always better.
 - B) Use the LLM API unconditionally — more parameters guarantee higher accuracy.
-- C) Evaluate latency requirements, data privacy obligations, per-query cost, inference hardware constraints, and acceptable accuracy floor before deciding.
+- C) Evaluate latency requirements, data privacy obligations, per-query cost, <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr> hardware constraints, and acceptable accuracy floor before deciding.
 - D) The number of output classes determines the choice; five classes always requires an LLM.
 
 <details>
@@ -120,7 +120,7 @@ Temperature scales the logits before the softmax step. Values below 1.0 compress
 
 **Correct: C**
 
-No single metric — parameter count, class count, or dataset size — determines the right architecture. The decision matrix includes: inference latency targets (on-device SLM wins for sub-100ms needs), data privacy (on-premise SLM avoids sending shipment records externally), cost at scale (per-token API pricing compounds at high query volume), hardware budget (a 72B model requires multi-GPU serving), and whether 10k labeled examples are sufficient for SLM fine-tuning to meet the accuracy floor. Options A and B apply single-axis reasoning to a multi-dimensional problem. Option D is incorrect; classification head count is a minor architectural consideration, not a model-size driver.
+No single metric — parameter count, class count, or dataset size — determines the right architecture. The decision matrix includes: inference latency targets (on-device SLM wins for sub-100ms needs), data privacy (on-premise SLM avoids sending shipment records externally), cost at scale (per-token API pricing compounds at high query volume), hardware budget (a 72B model requires multi-<abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr> serving), and whether 10k labeled examples are sufficient for SLM fine-tuning to meet the accuracy floor. Options A and B apply single-axis reasoning to a multi-dimensional problem. Option D is incorrect; classification head count is a minor architectural consideration, not a model-size driver.
 
 </details>
 
@@ -130,7 +130,7 @@ No single metric — parameter count, class count, or dataset size — determine
 
 **Challenge: Environment Audit and Model Selection Memo**
 
-You have joined a three-person team building a real-time document redaction tool for a legal firm. The tool must detect and mask personally identifiable information (PII) in uploaded contracts — running entirely on the firm's on-premise Linux servers (2× NVIDIA A10G GPUs, 24 GB VRAM each). No contract text may leave the premises. Target latency is under 300ms per page.
+You have joined a three-person team building a real-time document redaction tool for a legal firm. The tool must detect and mask personally identifiable information (PII) in uploaded contracts — running entirely on the firm's on-premise Linux servers (2× NVIDIA A10G GPUs, 24 GB <abbr title="Video Random Access Memory: high-speed memory on a GPU used to store model weights and activations during run time.">VRAM</abbr> each). No contract text may leave the premises. Target latency is under 300ms per page.
 
 Complete both parts:
 

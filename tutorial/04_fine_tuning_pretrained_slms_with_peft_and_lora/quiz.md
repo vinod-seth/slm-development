@@ -1,12 +1,12 @@
 # Module 4 Quiz: Fine-Tuning Pretrained SLMs with PEFT and LoRA
 
-Test your understanding of Fine-Tuning Pretrained SLMs with PEFT and LoRA.
+Test your understanding of <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">Fine-Tuning</abbr> Pretrained <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLMs</abbr> with <abbr title="Parameter-Efficient Fine-Tuning: techniques (like LoRA) that adapt pre-trained models by updating only a tiny fraction of parameters.">PEFT</abbr> and <abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr>.
 
 ---
 
 ## Questions
 
-**Q1: A team wants to fine-tune a 360M-parameter SLM for legal document summarization. They have 8 GB of GPU VRAM and 4,000 labeled examples. Which training approach is most appropriate?**
+**Q1: A team wants to fine-tune a 360M-parameter SLM for legal document summarization. They have 8 GB of <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr> <abbr title="Video Random Access Memory: high-speed memory on a GPU used to store model weights and activations during run time.">VRAM</abbr> and 4,000 labeled examples. Which training approach is most appropriate?**
 
 - A) Full fine-tuning with all parameters unfrozen and a learning rate of 5e-4
 - B) Training from scratch on the 4,000 examples using a randomly initialized model
@@ -18,7 +18,7 @@ Test your understanding of Fine-Tuning Pretrained SLMs with PEFT and LoRA.
 
 **Correct: C**
 
-LoRA fine-tuning injects trainable low-rank matrices into selected layers while keeping the base weights frozen. This keeps VRAM consumption well within the 8 GB budget and extracts the most value from pretrained weights when labeled data is limited. Full fine-tuning (A) risks catastrophic forgetting and exceeds typical VRAM limits at this scale. Training from scratch (B) requires orders of magnitude more data. A frozen backbone with only a classification head (D) is better suited to classification tasks, not generative summarization.
+LoRA fine-tuning injects trainable low-rank matrices into selected layers while keeping the base weights frozen. This keeps VRAM consumption well within the 8 GB budget and extracts the most value from <abbr title="A model trained on a massive general dataset to learn language patterns before fine-tuning.">pretrained</abbr> weights when labeled data is limited. Full fine-tuning (A) risks catastrophic forgetting and exceeds typical VRAM limits at this scale. Training from scratch (B) requires orders of magnitude more data. A frozen backbone with only a classification head (D) is better suited to classification tasks, not generative summarization.
 
 </details>
 
@@ -85,7 +85,7 @@ Catastrophic forgetting occurs when gradient updates for a narrow task overwrite
 
 **Correct: B**
 
-Instruction fine-tuning trains the model to recognize and respond to a consistent signal structure. Explicit delimiters like `### Instruction:` give the model repeatable anchors that generalize at inference time. Without consistent structure (A, C), the model cannot reliably separate the instruction from the context or the response boundary. Raw JSON keys (D) are not text tokens the causal LM interprets meaningfully unless you format them into a template string first.
+Instruction fine-tuning trains the model to recognize and respond to a consistent signal structure. Explicit delimiters like `### Instruction:` give the model repeatable anchors that generalize at <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr> time. Without consistent structure (A, C), the model cannot reliably separate the instruction from the context or the response boundary. Raw JSON keys (D) are not text tokens the causal LM interprets meaningfully unless you format them into a template string first.
 
 </details>
 
@@ -95,7 +95,7 @@ Instruction fine-tuning trains the model to recognize and respond to a consisten
 
 - A) Correct — higher rank captures more task-specific information and cannot hurt performance
 - B) Incorrect — higher rank linearly increases full-model parameters, negating the PEFT advantage entirely
-- C) Partially correct — higher rank increases adapter capacity and trainable parameter count, but risks overfitting on small datasets and increases VRAM usage
+- C) Partially correct — higher rank increases adapter capacity and trainable parameter count, but risks <abbr title="A training error where a model learns training data details too well, performing poorly on new data.">overfitting</abbr> on small datasets and increases VRAM usage
 - D) Incorrect — ranks above 16 are unsupported by the PEFT library and will raise an error
 
 <details>
@@ -129,14 +129,14 @@ Instruction fine-tuning and system prompts shape model behavior probabilisticall
 
 ## Capstone Challenge
 
-You work at a small healthtech startup. Your team has a pre-trained `SmolLM2-360M` checkpoint and 6,200 annotated patient intake summaries, each paired with a structured triage category and a one-sentence clinical rationale. Your deployment target is a CPU-only edge server with 4 GB RAM.
+You work at a small healthtech startup. Your team has a pre-trained `SmolLM2-360M` checkpoint and 6,200 annotated patient intake summaries, each paired with a structured triage category and a one-sentence clinical rationale. Your deployment target is a <abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr>-only edge server with 4 GB RAM.
 
 **Your task:** Design and document a complete LoRA fine-tuning pipeline that produces a deployable instruction-following SLM for this triage use case. Your submission must include:
 
 1. A `LoraConfig` with justified hyperparameter choices (`r`, `lora_alpha`, `target_modules`, `lora_dropout`)
 2. A prompt template used consistently in training and at inference
 3. A training script (or pseudocode with key implementation decisions annotated) using `transformers` + `peft`
-4. An evaluation plan referencing at least one quantitative metric (ROUGE-L, F1, or per-category accuracy)
+4. An evaluation plan referencing at least one quantitative metric (<abbr title="Recall-Oriented Understudy for Gisting Evaluation: metrics evaluating summary quality by comparing against human references.">ROUGE</abbr>-L, F1, or per-category accuracy)
 5. A brief adversarial prompt audit — run five edge-case inputs and document observed model behavior and any failure modes
 
 **Evaluation Rubric:**
@@ -145,4 +145,4 @@ You work at a small healthtech startup. Your team has a pre-trained `SmolLM2-360
 - **Prompt template consistency**: The same delimiter structure appears in the training collator and the inference call. An excellent submission shows both the training-time formatted string and the inference-time prompt side by side, with no structural mismatch.
 - **Evaluation rigor**: An excellent submission reports ROUGE-L or per-category F1 on a held-out split (at minimum 10% of the dataset), not just training loss. Bonus: include a confusion matrix across triage categories.
 - **Safety and failure-mode documentation**: An excellent submission lists at least five adversarial or out-of-distribution prompts (e.g., inputs in a non-English language, inputs with no clinical content, inputs exceeding max token length), records the model's actual output, and proposes a mitigation for each observed failure.
-- **Edge deployment readiness**: An excellent submission notes that the LoRA adapter will be merged into the base weights before export (`merge_and_unload()`), confirms the resulting model fits within 4 GB RAM, and specifies the quantization strategy (e.g., 8-bit dynamic quantization via `torch.quantization`) used to meet the constraint.
+- **Edge deployment readiness**: An excellent submission notes that the LoRA adapter will be merged into the base weights before export (`merge_and_unload()`), confirms the resulting model fits within 4 GB RAM, and specifies the <abbr title="The process of reducing weight precision (e.g. from 16-bit to 4-bit) to shrink model size and speed up inference.">quantization</abbr> strategy (e.g., 8-bit dynamic quantization via `torch.quantization`) used to meet the constraint.

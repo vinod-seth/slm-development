@@ -1,18 +1,20 @@
 # Loading and Inspecting Pretrained SLMs with Hugging Face
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/02_transformer_architecture_for_practitioners/03_loading_and_inspecting_pretrained_slms.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
 | **Module** | Transformer Architecture for Practitioners |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 30 minutes |
-| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and inference; no prior deep learning or NLP experience required |
+| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr>; no prior deep learning or NLP experience required |
 
 ---
 
 ## Lesson Roadmap
 
-- **Core Concepts** — understand what a pretrained checkpoint is and how the Hugging Face Hub stores it
+- **Core Concepts** — understand what a <abbr title="A model trained on a massive general dataset to learn language patterns before fine-tuning.">pretrained</abbr> checkpoint is and how the Hugging Face Hub stores it
 - **Technical Deep-Dive** — load SmolLM2-135M, inspect its config and parameter count, and run your first inference call in under 10 minutes of reading
 - **Model Card Anatomy** — navigate the model card to find training data, license, and known limitations
 - **Hands-On Exercise** — run a structured inspection script and record findings in a companion notebook
@@ -67,10 +69,10 @@ Before any text reaches the model, it passes through a tokenizer. The tokenizer 
 
 ### Why 135M Parameters Matters at This Stage
 
-SmolLM2-135M has approximately 135 million trainable parameters. On a modern laptop CPU, the full model fits comfortably in under 600 MB of RAM. This makes it the right tool for learning inspection and inference mechanics before scaling to larger checkpoints that require a GPU.
+SmolLM2-135M has approximately 135 million trainable parameters. On a modern laptop <abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr>, the full model fits comfortably in under 600 MB of RAM. This makes it the right tool for learning inspection and inference mechanics before scaling to larger checkpoints that require a <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr>.
 
 > [!NOTE]
-> The Phi-2 (2.7B) VRAM footprint discussion is covered in the optional sidebar in the Module 2 README. You do not need it here.
+> The Phi-2 (2.7B) <abbr title="Video Random Access Memory: high-speed memory on a GPU used to store model weights and activations during run time.">VRAM</abbr> footprint discussion is covered in the optional sidebar in the Module 2 README. You do not need it here.
 
 ---
 
@@ -159,7 +161,7 @@ Max sequence length: 2,048
 ```
 
 > [!NOTE]
-> SmolLM2 uses Grouped Query Attention (GQA), where 9 query heads share 3 key-value heads. GQA reduces KV-cache memory during inference without degrading quality significantly. Vaswani et al. (2017) introduced the original multi-head attention formula this builds upon.
+> SmolLM2 uses Grouped Query <abbr title="A mechanism that lets neural networks focus on specific parts of the input sequence when generating output.">Attention</abbr> (GQA), where 9 query heads share 3 key-value heads. GQA reduces KV-cache memory during inference without degrading quality significantly. Vaswani et al. (2017) introduced the original multi-head attention formula this builds upon.
 
 ---
 
@@ -191,7 +193,7 @@ Trainable parameters: 134,515,200
 Frozen parameters   : 0
 ```
 
-All parameters are trainable by default. When you apply LoRA fine-tuning in Module 4, only a small subset will remain trainable — Hu et al. (2021) showed that training as few as 0.1% of parameters can match full fine-tuning on many tasks.
+All parameters are trainable by default. When you apply <abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr> <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr> in Module 4, only a small subset will remain trainable — Hu et al. (2021) showed that training as few as 0.1% of parameters can match full fine-tuning on many tasks.
 
 ---
 
@@ -387,7 +389,7 @@ After loading SmolLM2-135M with no modifications, what do you expect `total - tr
 **Correct Answer:** 0 — all parameters are trainable by default.
 
 **Explanation:**
-`from_pretrained` does not freeze weights. Every `nn.Parameter` starts with `requires_grad=True`. You explicitly freeze parameters by calling `param.requires_grad = False` (or using PEFT's `freeze_model` utilities). `torch_dtype` affects precision, not gradient tracking.
+`from_pretrained` does not freeze weights. Every `nn.Parameter` starts with `requires_grad=True`. You explicitly freeze parameters by calling `param.requires_grad = False` (or using <abbr title="Parameter-Efficient Fine-Tuning: techniques (like LoRA) that adapt pre-trained models by updating only a tiny fraction of parameters.">PEFT</abbr>'s `freeze_model` utilities). `torch_dtype` affects precision, not gradient tracking.
 
 </details>
 
@@ -408,7 +410,7 @@ A teammate runs inference and gets nonsensical output despite using the correct 
 **Correct Answer:** Mismatched tokenizer — BERT uses a WordPiece vocabulary; SmolLM2 uses a BPE vocabulary with a different set of IDs.
 
 **Explanation:**
-Token ID 4321 in BERT's vocabulary maps to a completely different subword than ID 4321 in SmolLM2's vocabulary. The model receives valid-looking integers that encode entirely different meanings. Always load the tokenizer from the same checkpoint as the model.
+<abbr title="A sub-word unit, word, or character that text is split into for processing by a language model.">Token</abbr> ID 4321 in BERT's vocabulary maps to a completely different subword than ID 4321 in SmolLM2's vocabulary. The model receives valid-looking integers that encode entirely different meanings. Always load the tokenizer from the same checkpoint as the model.
 
 </details>
 
@@ -434,7 +436,7 @@ Token ID 4321 in BERT's vocabulary maps to a completely different subword than I
 
 - Vaswani et al. (2017) *Attention Is All You Need.* [https://arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762) — original multi-head attention formulation underlying SmolLM2's self-attention blocks.
 
-- Sennrich et al. (2016) *Neural Machine Translation of Rare Words with Subword Units.* [https://arxiv.org/abs/1508.07909](https://arxiv.org/abs/1508.07909) — introduced Byte-Pair Encoding, the tokenization algorithm used by SmolLM2.
+- Sennrich et al. (2016) *Neural Machine Translation of Rare Words with Subword Units.* [https://arxiv.org/abs/1508.07909](https://arxiv.org/abs/1508.07909) — introduced Byte-Pair Encoding, the <abbr title="The preprocessing step of converting raw text input into numerical tokens that a language model can process.">tokenization</abbr> algorithm used by SmolLM2.
 
 - Hu et al. (2021) *LoRA: Low-Rank Adaptation of Large Language Models.* [https://arxiv.org/abs/2106.09685](https://arxiv.org/abs/2106.09685) — foundational PEFT method referenced in the parameter-counting section; covered fully in Module 4.
 

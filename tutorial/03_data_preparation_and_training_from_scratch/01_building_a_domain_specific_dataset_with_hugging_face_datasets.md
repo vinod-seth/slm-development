@@ -1,12 +1,14 @@
 # Building a Domain-Specific Dataset with Hugging Face Datasets
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/03_data_preparation_and_training_from_scratch/01_building_a_domain_specific_dataset.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
 | **Module** | Data Preparation and Training from Scratch |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 30 minutes |
-| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and inference; no prior deep learning or NLP experience required |
+| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr>; no prior deep learning or NLP experience required |
 
 ---
 
@@ -15,7 +17,7 @@
 - **Core Concepts** — Understand how datasets flow from the Hub into a training pipeline, using a schema-to-tokens mental model.
 - **Technical Deep-Dive** — Load a real public dataset, inspect its schema, tokenize it with batched `map()`, and produce reproducible train/validation/test splits.
 - **Hands-On Exercise** — Build a complete preprocessing pipeline for a domain-specific corpus drawn from the medical question-answering domain.
-- **Concept Check** — Three questions testing schema inspection, tokenization strategy, and split reproducibility.
+- **Concept Check** — Three questions testing schema inspection, <abbr title="The preprocessing step of converting raw text input into numerical tokens that a language model can process.">tokenization</abbr> strategy, and split reproducibility.
 - **Summary & References** — Key takeaways and academic citations for any foundational techniques referenced.
 
 ---
@@ -61,7 +63,7 @@ A tokenizer converts raw text into integer token IDs. Two decisions control outp
 - **Truncation** (`truncation=True`): Clips sequences longer than `max_length`. Essential — models have a fixed context window.
 - **Padding**: Adds a special `[PAD]` token so all sequences in a batch share the same length.
 
-For training efficiency, avoid **static padding** (pad every sequence to `max_length`). Use a **data collator** instead, which pads only to the longest sequence *within each batch*. This is called **dynamic padding** and it cuts GPU memory waste significantly.
+For training efficiency, avoid **static padding** (pad every sequence to `max_length`). Use a **data collator** instead, which pads only to the longest sequence *within each batch*. This is called **dynamic padding** and it cuts <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr> memory waste significantly.
 
 ### Causal Language Modeling and Data Collators
 
@@ -283,7 +285,7 @@ print("labels shape:   ", collated["labels"].shape)
 
 1. **Load** the `medmcqa` dataset. Print the feature names of the `"train"` split.
 
-2. **Select** the first 2,000 rows of the training split using `.select(range(2000))`. This keeps runtime under 2 minutes on a CPU.
+2. **Select** the first 2,000 rows of the training split using `.select(range(2000))`. This keeps runtime under 2 minutes on a <abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr>.
 
 3. **Apply** `build_training_text` (from the deep-dive) to create the `"text"` column.
 
@@ -372,7 +374,7 @@ Consider a case where your domain-specific corpus has only 800 labeled examples 
 **Correct Answer:** Adjust ratios based on absolute row counts; consider k-fold cross-validation.
 
 **Explanation:**
-An 80/10/10 split on 800 examples yields only 80 validation rows. Evaluation metrics computed on 80 samples carry high variance — a single unusual batch can swing your perplexity estimate by several points. For small corpora, k-fold cross-validation provides more stable estimates by rotating the validation window across the full dataset. Merging validation and test sets is dangerous: the test set should remain unseen until final evaluation; using it during hyperparameter tuning causes data leakage.
+An 80/10/10 split on 800 examples yields only 80 validation rows. Evaluation metrics computed on 80 samples carry high variance — a single unusual batch can swing your <abbr title="A metric measuring how well a probability model predicts a sample; lower perplexity indicates higher confidence and quality.">perplexity</abbr> estimate by several points. For small corpora, k-fold cross-validation provides more stable estimates by rotating the validation window across the full dataset. Merging validation and test sets is dangerous: the test set should remain unseen until final evaluation; using it during hyperparameter tuning causes data leakage.
 
 **Open-ended extension:** Describe a real project domain (e.g., internal legal Q&A, rare-disease clinical notes) where you would face a sub-1,000-example constraint. What data augmentation or synthetic generation strategies might help, and what risks do those introduce?
 
@@ -396,4 +398,4 @@ An 80/10/10 split on 800 examples yields only 80 validation rows. Evaluation met
 - **Model checkpoint:** `HuggingFaceTB/SmolLM2-135M` — Hugging Face Technology Team (2024). SmolLM2 model family. [https://huggingface.co/HuggingFaceTB/SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M). Licensed under Apache 2.0. Last verified: 2025-06.
 - **Tokenizer BPE foundations** — Sennrich et al. (2016) *Neural Machine Translation of Rare Words with Subword Units*. [https://arxiv.org/abs/1508.07909](https://arxiv.org/abs/1508.07909). *(BPE is the subword algorithm underlying SmolLM2's tokenizer.)*
 - **Hugging Face `datasets` library** — Lhoest et al. (2021) *Datasets: A Community Library for Natural Language Processing*. [https://arxiv.org/abs/2109.02846](https://arxiv.org/abs/2109.02846). Licensed under Apache 2.0.
-- **LoRA fine-tuning** (referenced in later modules) — Hu et al. (2021) *LoRA: Low-Rank Adaptation of Large Language Models*. [https://arxiv.org/abs/2106.09685](https://arxiv.org/abs/2106.09685).
+- **<abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr> <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr>** (referenced in later modules) — Hu et al. (2021) *LoRA: Low-Rank Adaptation of Large Language Models*. [https://arxiv.org/abs/2106.09685](https://arxiv.org/abs/2106.09685).

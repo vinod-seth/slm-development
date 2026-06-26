@@ -1,19 +1,21 @@
 # Serving a Fine-Tuned SLM: API Endpoints and Inference Pipelines
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/05_optimization_and_deployment/02_serving_a_fine_tuned_slm.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
 | **Module** | Optimization and Deployment |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 35 minutes |
-| **Prerequisites** | Basic Python programming knowledge; familiarity with training vs. inference concepts; Module 4 (LoRA Fine-Tuning) completed; Python 3.11 + CUDA 12.1 environment active |
+| **Prerequisites** | Basic Python programming knowledge; familiarity with training vs. <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr> concepts; Module 4 (<abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr> <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">Fine-Tuning</abbr>) completed; Python 3.11 + CUDA 12.1 environment active |
 
 ---
 
 ## Lesson Roadmap
 
 - **🟢 Core Concepts** — Understand how a model becomes a web service: the request lifecycle, streaming, and why input validation matters at the API layer.
-- **🔷 Technical Deep-Dive** — Build a FastAPI inference server that loads a quantized SLM, streams tokens, enforces input limits, and filters outputs.
+- **🔷 Technical Deep-Dive** — Build a FastAPI inference server that loads a quantized <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLM</abbr>, streams tokens, enforces input limits, and filters outputs.
 - **📊 Metrics Section** — Instrument time-to-first-token (TTFT) and tokens-per-second (TPS) with minimal overhead.
 - **☁️ Hub Publishing** — Push your adapter and model card to the Hugging Face Hub.
 - **🧪 Hands-On Exercise** — Run the server locally, call it with `curl`, and record your latency numbers.
@@ -79,12 +81,12 @@ Neither control is sufficient alone. They are your first line of defense while y
 
 Two numbers define the user experience of a served SLM:
 
-| Metric | Definition | Target (edge SLM, CPU) |
+| Metric | Definition | Target (edge SLM, <abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr>) |
 |---|---|---|
 | **TTFT** (time-to-first-token) | Wall-clock seconds from request receipt to first token emitted | < 2 s |
 | **TPS** (tokens per second) | Total generated tokens ÷ total generation time | > 8 tok/s |
 
-Both degrade with longer context, quantization trade-offs, and concurrent requests. Measure them before you optimize.
+Both degrade with longer context, <abbr title="The process of reducing weight precision (e.g. from 16-bit to 4-bit) to shrink model size and speed up inference.">quantization</abbr> trade-offs, and concurrent requests. Measure them before you optimize.
 
 ---
 

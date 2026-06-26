@@ -1,18 +1,20 @@
 # How a Language Model Learns: Tokens, Probabilities, and Prediction
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/01_small_language_models_what_they_are_and_why_they_matter/02_tokens_probabilities_prediction.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
 | **Module** | Small Language Models: What They Are and Why They Matter |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 30 minutes |
-| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and what training vs. inference means; no prior deep learning or NLP experience required |
+| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and what training vs. <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr> means; no prior deep learning or NLP experience required |
 
 ---
 
 ## Lesson Roadmap
 
-- **Core Concepts** — Understand tokenization, next-token prediction, and probability distributions using concrete analogies (non-technical readers, start here)
+- **Core Concepts** — Understand <abbr title="The preprocessing step of converting raw text input into numerical tokens that a language model can process.">tokenization</abbr>, next-token prediction, and probability distributions using concrete analogies (non-technical readers, start here)
 - **Technical Deep-Dive** — Run a working tokenizer and observe softmax outputs in Python using `transformers` and `torch` (all readers, especially engineers)
 - **Hands-On Exercise** — Tokenize a custom string, decode it back, and inspect a raw probability distribution over a small vocabulary
 - **Concept Check** — Four questions testing tokenization, BPE, next-token prediction, and softmax
@@ -58,7 +60,7 @@ Sennrich et al. (2016) introduced BPE as a way to build a compact, fixed-size vo
 > [!NOTE]
 > BPE is the tokenization strategy behind GPT-2, GPT-4, and many Hugging Face models including `SmolLM2`. The vocabulary size for SmolLM2-135M is 49,152 tokens.
 
-This matters for small language models (SLMs) in particular: a tighter vocabulary means the model's output layer stays small, which keeps inference fast on limited hardware.
+This matters for small language models (<abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLMs</abbr>) in particular: a tighter vocabulary means the model's output layer stays small, which keeps inference fast on limited hardware.
 
 ### Next-Token Prediction: The Core Training Signal
 
@@ -74,7 +76,7 @@ During training, the model sees a sequence like:
 
 Its job is to assign a high probability to `" zone"` (or another plausible continuation) and a low probability to `" seventeen"` or `" purple"`.
 
-The model produces a **probability distribution** across all 49,152 vocabulary entries. The correct token should receive the highest score. The gap between predicted probability and the correct answer is the loss. Gradient descent shrinks that gap across millions of examples.
+The model produces a **probability distribution** across all 49,152 vocabulary entries. The correct token should receive the highest score. The gap between predicted probability and the correct answer is the loss. <abbr title="A vector of partial derivatives indicating how to adjust model weights to minimize the loss function.">Gradient</abbr> descent shrinks that gap across millions of examples.
 
 ```mermaid
 graph LR
@@ -96,7 +98,7 @@ The **softmax** function converts raw scores (logits) into a valid probability d
 
 ### Attention in One Paragraph
 
-The transformer architecture (Vaswani et al., 2017) uses an **attention mechanism** to let each token look at all other tokens in the sequence and decide which ones matter most for predicting the next token. In the sentence `"The irrigation sensor failed because it overheated"`, the word `"it"` needs to attend strongly to `"sensor"` to resolve the reference correctly. Attention weights capture exactly that relationship. Each transformer layer refines these relationships, building richer representations before the final probability distribution is computed. <sup>[Vaswani et al., 2017]</sup>
+The transformer architecture (Vaswani et al., 2017) uses an **attention mechanism** to let each token look at all other tokens in the sequence and decide which ones matter most for predicting the next token. In the sentence `"The irrigation sensor failed because it overheated"`, the word `"it"` needs to attend strongly to `"sensor"` to resolve the reference correctly. <abbr title="A mechanism that lets neural networks focus on specific parts of the input sequence when generating output.">Attention</abbr> weights capture exactly that relationship. Each transformer layer refines these relationships, building richer representations before the final probability distribution is computed. <sup>[Vaswani et al., 2017]</sup>
 
 ---
 
@@ -395,10 +397,24 @@ reconstructed = tokenizer.decode(ids, skip_special_tokens=True)
 
 ## Summary
 
-- **Tokens are sub-word units**, not characters or words. BPE (Sennrich et al., 2016) builds the vocabulary by merging frequent adjacent character pairs, keeping common words whole and decomposing rare words into recognizable pieces.
+- **<abbr title="A sub-word unit, word, or character that text is split into for processing by a language model.">Tokens</abbr> are sub-word units**, not characters or words. BPE (Sennrich et al., 2016) builds the vocabulary by merging frequent adjacent character pairs, keeping common words whole and decomposing rare words into recognizable pieces.
 - **Next-token prediction is the training objective.** The model repeatedly estimates a probability distribution over its full vocabulary and adjusts weights to increase the probability of the correct next token — no human labels required.
 - **Softmax converts logits to probabilities.** Temperature scales the logits before softmax: low temperature sharpens the distribution toward the top token; high temperature spreads probability mass across more candidates.
 - **Attention lets each token consider all others.** The transformer's attention mechanism (Vaswani et al., 2017) computes weighted relationships between every pair of tokens, allowing the model to resolve references and capture long-range dependencies before predicting the next token.
+
+---
+
+## 🎓 Confidence Checklist
+
+Before moving on, verify that you are confident with the following skills:
+
+- [ ] **Explain** what a token is and how tokenization splits text into sub-word units using BPE.
+- [ ] **Describe** the next-token prediction training objective.
+- [ ] **Interpret** logits and understand how the Softmax function converts them into probabilities.
+- [ ] **Control** the randomness and creativity of text generation using the temperature parameter.
+- [ ] **Differentiate** between self-attention and traditional sequential processing (like RNNs).
+
+If you can check all of these, you are ready for Lesson 3!
 
 ---
 

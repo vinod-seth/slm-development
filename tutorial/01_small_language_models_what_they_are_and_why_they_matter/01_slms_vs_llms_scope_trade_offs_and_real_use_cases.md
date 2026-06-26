@@ -1,18 +1,20 @@
 # SLMs vs LLMs: Scope, Trade-offs, and Real Use Cases
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/01_small_language_models_what_they_are_and_why_they_matter/01_slms_vs_llms.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
 | **Module** | Small Language Models: What They Are and Why They Matter |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 25 minutes |
-| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and inference; no prior deep learning or NLP experience required |
+| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr>; no prior deep learning or NLP experience required |
 
 ---
 
 ## 📍 Lesson Roadmap
 
-- **Core Concepts** — Understand what separates an SLM from an LLM using parameter count, hardware tiers, and deployment context.
+- **Core Concepts** — Understand what separates an <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLM</abbr> from an <abbr title="Large Language Model: a massive language model (7B+ parameters) requiring cloud or cluster hardware.">LLM</abbr> using parameter count, hardware tiers, and deployment context.
 - **Model Families** — Meet the four SLM families you will work with throughout this course: SmolLM2, Phi-2, TinyLlama, and DistilGPT-2.
 - **Technical Deep-Dive** — Run your first SLM inference in under ten lines of Python using Hugging Face Transformers.
 - **Hands-On Exercise** — Load two different SLMs, compare their output latency, and record your observations.
@@ -53,7 +55,7 @@ Parameter count and its hardware implications:
 ```
 
 > [!NOTE]
-> These VRAM estimates assume full FP16 precision. 4-bit quantization roughly halves the footprint — covered in Module 5.
+> These <abbr title="Video Random Access Memory: high-speed memory on a GPU used to store model weights and activations during run time.">VRAM</abbr> estimates assume full <abbr title="16-bit Floating-Point: a half-precision format that halves memory usage and speeds up model computations.">FP16</abbr> precision. 4-bit <abbr title="The process of reducing weight precision (e.g. from 16-bit to 4-bit) to shrink model size and speed up inference.">quantization</abbr> roughly halves the footprint — covered in Module 5.
 
 ### The Capability Trade-off Is Not Linear
 
@@ -193,7 +195,7 @@ if __name__ == "__main__":
     print(f"Latency: {latency_secs:.3f} seconds on {DEVICE}")
 ```
 
-**Expected output (CPU, first run):**
+**Expected output (<abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr>, first run):**
 
 ```
 Loading HuggingFaceTB/SmolLM2-135M-Instruct on cpu...
@@ -204,7 +206,7 @@ Latency: 0.612 seconds on cpu
 ```
 
 > [!NOTE]
-> Your output text will differ on each run due to temperature-based sampling. Latency varies by CPU model. On a CUDA GPU, expect under 0.1 seconds.
+> Your output text will differ on each run due to temperature-based sampling. Latency varies by CPU model. On a CUDA <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr>, expect under 0.1 seconds.
 
 ### Comparing Parameter Counts Programmatically
 
@@ -326,7 +328,7 @@ Create a file called `exercise_01_results.md` with the following template:
 **Verifiable outcome:** Your `exercise_01_results.md` shows two distinct latency measurements with the correct parameter counts filled in.
 
 > [!NOTE]
-> DistilGPT-2 has no instruction-following fine-tuning, so its raw completions will read differently from SmolLM2. You will explore why fine-tuning matters in Module 4.
+> DistilGPT-2 has no instruction-following <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">fine-tuning</abbr>, so its raw completions will read differently from SmolLM2. You will explore why fine-tuning matters in Module 4.
 
 ---
 
@@ -400,6 +402,19 @@ Describe a real project or professional context where you would choose an SLM ov
 - **SLMs occupy the sub-3B parameter range.** They require dramatically less hardware and power than LLMs, making local and edge deployment feasible on consumer GPUs or even CPUs.
 - **The capability trade-off is task-dependent, not absolute.** SLMs match or beat LLMs on narrow, well-defined tasks — the three primary reasons to choose an SLM are latency constraints, privacy requirements, and domain-scope boundaries.
 - **Four model families anchor this course.** SmolLM2 (135M–1.7B), Phi-2 (2.7B), TinyLlama (1.1B), and DistilGPT-2 (82M) span the hardware feasibility spectrum from a Raspberry Pi to a workstation GPU. You can inspect and run any of them today using the Hugging Face Transformers library.
+
+---
+
+## 🎓 Confidence Checklist
+
+Before moving on, verify that you are confident with the following skills:
+
+- [ ] **Distinguish** an SLM from an LLM based on parameter count (~3B threshold) and hardware tier.
+- [ ] **Evaluate** a real-world task against the three decision axes (latency, privacy, domain scope) to justify using an SLM.
+- [ ] **Name** the four model families covered in this course (SmolLM2, Phi-2, TinyLlama, DistilGPT-2).
+- [ ] **Run** a minimal text generation pipeline using Hugging Face's `transformers` library in Python.
+
+If you can check all of these, you are ready for Lesson 2!
 
 ---
 

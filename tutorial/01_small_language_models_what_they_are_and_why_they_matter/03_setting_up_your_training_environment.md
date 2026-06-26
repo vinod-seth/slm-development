@@ -1,19 +1,21 @@
 # Setting Up Your Training Environment
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/01_small_language_models_what_they_are_and_why_they_matter/03_setting_up_your_environment.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
 | **Module** | Small Language Models: What They Are and Why They Matter |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 25 minutes |
-| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and inference; no prior deep learning or NLP experience required |
+| **Prerequisites** | Basic Python programming knowledge; familiarity with what a model is and the difference between training and <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr>; no prior deep learning or NLP experience required |
 
 ---
 
 ## Lesson Roadmap
 
 - **🟢 Core Concepts** — Why dependency isolation prevents silent training failures, and how the course repo is organized.
-- **🔷 Technical Deep-Dive** — Create a virtual environment, install the pinned stack, verify your GPU (or CPU fallback), and run your first five-line diagnostic inside 10 minutes.
+- **🔷 Technical Deep-Dive** — Create a virtual environment, install the pinned stack, verify your <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr> (or <abbr title="Central Processing Unit: the general-purpose processor in a computer.">CPU</abbr> fallback), and run your first five-line diagnostic inside 10 minutes.
 - **🔷 DevContainer / Dockerfile** — Zero-configuration cloud setup for learners without a local CUDA-capable GPU.
 - **🔷 Hugging Face Hub Setup** — Create an account and authenticate the CLI.
 - **🧪 Hands-On Exercise** — Confirm every dependency version matches the compatibility matrix and commit the result to your repo.
@@ -35,7 +37,7 @@ By the end of this lesson, you will be able to:
 
 ### How Conflicting Dependencies Break Training Runs
 
-A Python environment is a container for packages and their exact versions. Without isolation, installing two projects side by side almost guarantees a conflict. For SLM training, the failure mode is subtle: PyTorch silently falls back to CPU when a mismatched CUDA version breaks the GPU bridge. You won't see an error — you'll just see your training run take 40× longer than expected.
+A Python environment is a container for packages and their exact versions. Without isolation, installing two projects side by side almost guarantees a conflict. For <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLM</abbr> training, the failure mode is subtle: PyTorch silently falls back to CPU when a mismatched CUDA version breaks the GPU bridge. You won't see an error — you'll just see your training run take 40× longer than expected.
 
 Think of a virtual environment like a separate toolbox for each project. The tools in one box never interfere with another box, even if two boxes contain different versions of the same wrench.
 
@@ -46,7 +48,7 @@ The course uses **Python 3.11** and **CUDA 12.1** throughout. The table below is
 | Python | 3.11.x | 2025-01 |
 | PyTorch | 2.2.x (cu121) | 2025-01 |
 | Hugging Face Transformers | 4.40.x | 2025-01 |
-| PEFT | 0.10.x | 2025-01 |
+| <abbr title="Parameter-Efficient Fine-Tuning: techniques (like LoRA) that adapt pre-trained models by updating only a tiny fraction of parameters.">PEFT</abbr> | 0.10.x | 2025-01 |
 | Datasets (HF) | 2.19.x | 2025-01 |
 | Accelerate | 0.29.x | 2025-01 |
 
@@ -270,7 +272,7 @@ docker run --gpus all -it --rm \
 Several models used in later modules (starting in Module 4) require a Hugging Face account to accept gating terms.
 
 1. Create a free account at [huggingface.co](https://huggingface.co).
-2. Navigate to **Settings → Access Tokens** and create a token with **read** scope.
+2. Navigate to **Settings → Access <abbr title="A sub-word unit, word, or character that text is split into for processing by a language model.">Tokens</abbr>** and create a token with **read** scope.
 3. Authenticate the CLI:
 
 ```bash
@@ -428,6 +430,6 @@ There is no single correct answer. The goal is to identify which steps assume in
 - PyTorch Installation Selector — official compatibility matrix for CUDA/Python combinations: [https://pytorch.org/get-started/locally/](https://pytorch.org/get-started/locally/) *(Last verified: 2025-01)*
 - Hugging Face Hub documentation — token authentication and CLI reference: [https://huggingface.co/docs/hub/security-tokens](https://huggingface.co/docs/hub/security-tokens) *(Last verified: 2025-01)*
 - NVIDIA CUDA 12.1 release notes — driver and toolkit compatibility: [https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html) *(Last verified: 2025-01)*
-- Hu et al. (2021) *LoRA: Low-Rank Adaptation of Large Language Models.* [https://arxiv.org/abs/2106.09685](https://arxiv.org/abs/2106.09685) — The PEFT library installed in this lesson implements this method; the full technique is covered in Module 4.
+- Hu et al. (2021) *<abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr>: Low-Rank Adaptation of Large Language Models.* [https://arxiv.org/abs/2106.09685](https://arxiv.org/abs/2106.09685) — The PEFT library installed in this lesson implements this method; the full technique is covered in Module 4.
 - PEFT library (Apache 2.0 License) — Hugging Face: [https://github.com/huggingface/peft](https://github.com/huggingface/peft) *(Last verified: 2025-01)*
 - Hugging Face Transformers library (Apache 2.0 License): [https://github.com/huggingface/transformers](https://github.com/huggingface/transformers) *(Last verified: 2025-01)*

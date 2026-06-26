@@ -1,12 +1,14 @@
 # LoRA Fine-Tuning: Theory and Implementation
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/02_lora_fine_tuning.ipynb)
+
 | | |
 |---|---|
 | **Domain** | GenAI |
-| **Module** | Fine-Tuning Pretrained SLMs with PEFT and LoRA |
+| **Module** | <abbr title="Adapting a pre-trained model to a specific task by training it further on a smaller, targeted dataset.">Fine-Tuning</abbr> Pretrained <abbr title="Small Language Model: a compact language model (under ~3B parameters) that can run on consumer hardware.">SLMs</abbr> with <abbr title="Parameter-Efficient Fine-Tuning: techniques (like LoRA) that adapt pre-trained models by updating only a tiny fraction of parameters.">PEFT</abbr> and <abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr> |
 | **Difficulty** | Beginner |
 | **Estimated Time** | 40 minutes |
-| **Prerequisites** | Basic Python programming knowledge, Familiarity with fundamental machine learning concepts (e.g., what a model is, training vs inference), No prior deep learning or NLP experience required |
+| **Prerequisites** | Basic Python programming knowledge, Familiarity with fundamental machine learning concepts (e.g., what a model is, training vs <abbr title="Running a trained model to generate predictions or text output from new, unseen inputs.">inference</abbr>), No prior deep learning or NLP experience required |
 
 > [!IMPORTANT]
 > You must complete Module 3 ("Training Your First SLM from Scratch") and have at least one successful training run under your belt before working through this lesson. LoRA builds directly on the weight-update concepts introduced there.
@@ -29,7 +31,7 @@ By the end of this lesson, you will be able to:
 
 - Describe the LoRA low-rank decomposition technique and explain why it reduces trainable parameters, citing Hu et al. (2021)
 - Configure a `LoraConfig` targeting attention projection layers with appropriate `rank`, `alpha`, and `dropout` values
-- Apply `get_peft_model()` to wrap a pretrained SLM and inspect the resulting trainable parameter count
+- Apply `get_peft_model()` to wrap a <abbr title="A model trained on a massive general dataset to learn language patterns before fine-tuning.">pretrained</abbr> SLM and inspect the resulting trainable parameter count
 - Train a LoRA adapter on a text-generation task and save the adapter weights to disk
 
 ---
@@ -38,7 +40,7 @@ By the end of this lesson, you will be able to:
 
 ### The Problem: Full Fine-Tuning Is Expensive
 
-Full fine-tuning updates every weight in a model. For a 2.7-billion-parameter model like Phi-2, that means storing a full-precision copy of 2.7B gradients per training step. On a consumer GPU with 16 GB of VRAM, that is simply not feasible.
+Full fine-tuning updates every weight in a model. For a 2.7-billion-parameter model like Phi-2, that means storing a full-precision copy of 2.7B gradients per training step. On a consumer <abbr title="Graphics Processing Unit: hardware optimized for parallel processing, essential for deep learning.">GPU</abbr> with 16 GB of <abbr title="Video Random Access Memory: high-speed memory on a GPU used to store model weights and activations during run time.">VRAM</abbr>, that is simply not feasible.
 
 LoRA — **Low-Rank Adaptation** — solves this by updating only a small set of injected weight matrices instead of the original weights. Hu et al. (2021) showed that the weight changes learned during full fine-tuning have a low **intrinsic rank**: most of the useful update signal lives in a much smaller subspace than the full weight matrix.
 
@@ -320,7 +322,7 @@ print(generated_text)
 
 **Step 1 — Modify the rank.** Change `r=8` to `r=16` and `lora_alpha=16` to `lora_alpha=32` in your `LoraConfig`. Re-run `peft_model.print_trainable_parameters()` and record the new trainable count.
 
-**Step 2 — Reduce the sample size.** Set `MAX_SAMPLES = 200` and re-run the tokenization cell.
+**Step 2 — Reduce the sample size.** Set `MAX_SAMPLES = 200` and re-run the <abbr title="The preprocessing step of converting raw text input into numerical tokens that a language model can process.">tokenization</abbr> cell.
 
 **Step 3 — Train for one epoch.** Run `trainer.train()` and note the final training loss in your Jupyter output.
 
@@ -431,7 +433,7 @@ Fine-tuning — including LoRA — adjusts model behavior toward the training di
 - **microsoft/phi-2** model card — Microsoft Research. [https://huggingface.co/microsoft/phi-2](https://huggingface.co/microsoft/phi-2) *(Last verified: 2025-05)*
 - **timdettmers/openassistant-guanaco** dataset — HuggingFace Hub. License: Apache 2.0. [https://huggingface.co/datasets/timdettmers/openassistant-guanaco](https://huggingface.co/datasets/timdettmers/openassistant-guanaco) *(Last verified: 2025-05)*
 - **PEFT library documentation** — Hugging Face. License: Apache 2.0. [https://huggingface.co/docs/peft](https://huggingface.co/docs/peft) *(Last verified: 2025-05)*
-- Dettmers et al. (2023) *QLoRA: Efficient Finetuning of Quantized LLMs.* [https://arxiv.org/abs/2305.14314](https://arxiv.org/abs/2305.14314) — Recommended reading for extending this lesson to 4-bit quantized training.
+- Dettmers et al. (2023) *QLoRA: Efficient Finetuning of Quantized <abbr title="Large Language Model: a massive language model (7B+ parameters) requiring cloud or cluster hardware.">LLMs</abbr>.* [https://arxiv.org/abs/2305.14314](https://arxiv.org/abs/2305.14314) — Recommended reading for extending this lesson to 4-bit quantized training.
 
 > [!NOTE]
 > The installation sequence in this lesson follows standard Hugging Face library conventions. Procedural similarity to official documentation reflects that the setup steps are the correct minimal path — not reproduction of any specific guide.
