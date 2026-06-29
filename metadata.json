@@ -44,7 +44,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/01_slms_vs_llms_scope_trade_offs_and_real_use_cases.md",
-            "notebook": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/01_slms_vs_llms.ipynb"
+            "notebook": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/01_slms_vs_llms.ipynb",
+            "interview": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/01_interview_questions.json"
           }
         },
         {

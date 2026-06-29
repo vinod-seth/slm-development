@@ -1,0 +1,62 @@
+{
+  "lesson_title": "SLMs vs LLMs: Scope, Trade-offs, and Real Use Cases",
+  "experience_levels": {
+    "junior": [
+      {
+        "id": "j1",
+        "question": "What is the key structural difference between a Small Language Model (SLM) and a Large Language Model (LLM), and why does parameter count matter?",
+        "complexity": "Easy",
+        "companies": ["Google", "General"],
+        "core_intent": "Tests basic comprehension of model sizing, parameter footprint, and compute trade-offs.",
+        "preparation_guide": "Explain parameters as weights in neural network layers. Compare 1B-3B SLMs with 70B+ LLMs in terms of RAM/VRAM footprint and execution speed.",
+        "explanation": "Parameters are the trainable weights in a transformer neural network that store learned representations during pretraining.\n\n### Key Differences:\n* **Parameter Scale**: SLMs typically range between **1 billion to 7 billion parameters** (e.g. Gemma 2B, Phi-3 Mini), whereas frontier LLMs range from 70B to over 1 Trillion parameters.\n* **Hardware Requirements**: A 2B parameter model quantized to 4-bit precision consumes under 2GB of memory, enabling local execution on consumer smartphones or micro-servers without expensive A100/H100 GPUs.",
+        "star_framework_tip": "Define parameter count, state typical size ranges, and give a real-world edge execution example.",
+        "common_pitfalls": [
+          "Thinking SLMs use completely different neural architectures instead of scaled-down transformer blocks",
+          "Assuming SLMs cannot perform domain-specific tasks accurately"
+        ],
+        "references": [
+          { "title": "Hugging Face Model Sizes & Memory Guide", "url": "https://huggingface.co/docs/transformers/main/en/perf_infer_gpu_one" }
+        ]
+      }
+    ],
+    "mid_level": [
+      {
+        "id": "m1",
+        "question": "In a resource-constrained environment (e.g. edge deployment), how do you decide whether to fine-tune a 3B SLM or use a 70B API-based LLM via RAG?",
+        "complexity": "Medium",
+        "companies": ["Meta", "OpenAI", "Anthropic"],
+        "core_intent": "Evaluates architectural trade-offs between latency, privacy, operational cost, and domain accuracy.",
+        "preparation_guide": "Compare Latency, Data Privacy/HIPAA compliance, Offline capability, and Operational Cost per million tokens.",
+        "explanation": "Architectural decision matrix:\n\n1. **Data Privacy & Offline Operations**: If strict compliance (e.g. medical or defense) prohibits external API calls, fine-tuning an SLM locally is mandatory.\n2. **Latency**: Fine-tuned SLMs on local hardware provide deterministic, low-latency execution (~15ms TTFT) without network overhead.\n3. **Cost**: API calls for 70B LLMs at high request volumes create exponential recurring costs, whereas fine-tuned SLMs have fixed hardware costs.",
+        "star_framework_tip": "Structure your answer using four pillars: Privacy, Latency, Accuracy, and Cost (PLAC framework).",
+        "common_pitfalls": [
+          "Recommending RAG over API without considering network latency",
+          "Ignoring total cost of ownership (TCO) at high query volumes"
+        ],
+        "references": [
+          { "title": "Microsoft Phi-3 Technical Report", "url": "https://arxiv.org/abs/2404.14219" }
+        ]
+      }
+    ],
+    "senior": [
+      {
+        "id": "s1",
+        "question": "Design a hybrid model routing architecture where incoming user prompts are classified and routed dynamically between an onshore 2B SLM and a cloud 405B LLM. How do you manage KV-cache and fallback reliability?",
+        "complexity": "System Design",
+        "companies": ["Google", "Meta", "OpenAI", "Anthropic"],
+        "core_intent": "Tests advanced system design, query complexity classification, fallback circuits, and memory efficiency.",
+        "preparation_guide": "Draw or describe a gateway routing architecture. Discuss semantic intent classifiers, confidence scoring thresholds, and circuit breaker patterns.",
+        "explanation": "### Hybrid Routing Architecture Design\n\n```\n[Client Request] --> [API Gateway / Router]\n                          |\n             +------------+------------+\n             |                         |\n      (Simple/Private)          (Complex/Reasoning)\n             |                         |\n    [Onshore Gemma 2B SLM]     [Cloud 405B LLM API]\n```\n\n### Implementation Details:\n1. **Intent Classifier**: Use a lightweight BERT or SVM classifier to measure query complexity and domain intent in <5ms.\n2. **Confidence Score Threshold**: If the SLM generates an output with low log-probability / high entropy, fallback dynamically to the cloud LLM.\n3. **Circuit Breakers**: Implement fallback mechanisms using Hystrix patterns to gracefully downgrade if cloud APIs experience rate limits.",
+        "star_framework_tip": "Start with high-level architecture diagrams, explain the routing classifier, detail fallback thresholds, and address reliability metrics.",
+        "common_pitfalls": [
+          "Failing to account for router overhead latency",
+          "Omitting fallback mechanisms when cloud API limits are reached"
+        ],
+        "references": [
+          { "title": "RouteLLM: Learning to Route LLM Queries", "url": "https://arxiv.org/abs/2406.18665" }
+        ]
+      }
+    ]
+  }
+}
