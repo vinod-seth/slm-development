@@ -558,3 +558,126 @@ More data helps only when the fundamental problem is data scarcity. Ruling out m
 - **BPE <abbr title="The preprocessing step of converting raw text input into numerical tokens that a language model can process.">Tokenization</abbr>**: Sennrich et al. (2016). *Neural Machine Translation of Rare Words with Subword Units*. [https://arxiv.org/abs/1508.07909](https://arxiv.org/abs/1508.07909)
 - **Catastrophic Forgetting**: McCloskey, M., & Cohen, N. J. (1989). *Catastrophic Interference in Connectionist Networks: The Sequential Learning Problem*. Psychology of Learning and Motivation, 24, 109–165. [https://doi.org/10.1016/S0079-7421(08)60536-8](https://doi.org/10.1016/S0079-7421(08)60536-8)
 - **<abbr title="Low-Rank Adaptation: an efficient fine-tuning method that freezes base model weights and injects small trainable adapter matrices.">LoRA</abbr> (<abbr title="Parameter-Efficient Fine-Tuning: techniques (like LoRA) that adapt pre-trained models by updating only a tiny fraction of parameters.">PEFT</abbr>)**: Hu et al. (2021). *LoRA: Low-Rank Adaptation of Large Language Models*. [https://arxiv.org/abs/2106.09685](https://arxiv.org/abs/2106.09685
+---
+
+## 📝 Chapter Quiz
+
+**Question 1:** What is a defining characteristic of Small Language Models (SLMs) in relation to 03 Evaluating Your Trained Model Perplexity Rouge And F1?
+
+* [ ] They require supercomputers to run single queries
+* [x] They deliver high parameter efficiency and lower latency, making them ideal for edge and domain-specific deployment
+* [ ] They cannot perform text classification
+* [ ] They do not use transformer architectures
+
+<details>
+<summary>🔑 Click to Reveal Answer & Explanation</summary>
+
+**Correct Answer:** They deliver high parameter efficiency and lower latency, making them ideal for edge and domain-specific deployment
+
+**Explanation:** SLMs focus on resource efficiency and high task-specific performance with lower computational overhead.
+</details>
+
+**Question 2:** What is the primary advantage of Automatic Mixed Precision (AMP) during training?
+
+* [ ] It increases RAM consumption
+* [x] It uses FP16/BF16 to speed up matrix math and cut GPU memory usage without losing precision stability
+* [ ] It disables backpropagation
+* [ ] It converts models to JSON
+
+<details>
+<summary>🔑 Click to Reveal Answer & Explanation</summary>
+
+**Correct Answer:** It uses FP16/BF16 to speed up matrix math and cut GPU memory usage without losing precision stability
+
+**Explanation:** AMP accelerates training on modern GPU Tensor Cores while maintaining numerical precision.
+</details>
+
+**Question 3:** In Parameter-Efficient Fine-Tuning (PEFT), what does LoRA stand for?
+
+* [ ] Long-Range Attention
+* [x] Low-Rank Adaptation
+* [ ] Local Tensor Optimization
+* [ ] Linear Order Representation
+
+<details>
+<summary>🔑 Click to Reveal Answer & Explanation</summary>
+
+**Correct Answer:** Low-Rank Adaptation
+
+**Explanation:** Low-Rank Adaptation freezes base model weights and injects trainable rank decomposition matrices.
+</details>
+
+**Question 4:** Why is gradient clipping used during neural network training loops?
+
+* [ ] To erase model weights
+* [x] To prevent exploding gradients by capping the maximum gradient norm
+* [ ] To speed up data downloading
+* [ ] To double the batch size
+
+<details>
+<summary>🔑 Click to Reveal Answer & Explanation</summary>
+
+**Correct Answer:** To prevent exploding gradients by capping the maximum gradient norm
+
+**Explanation:** Gradient clipping caps extreme gradient values, preventing numerical instability and NaN losses.
+</details>
+
+**Question 5:** What does Perplexity measure in causal language modeling?
+
+* [ ] GPU temperature
+* [x] The exponentiated cross-entropy loss, quantifying how well a model predicts the next token
+* [ ] The file size on disk
+* [ ] The number of dataset rows
+
+<details>
+<summary>🔑 Click to Reveal Answer & Explanation</summary>
+
+**Correct Answer:** The exponentiated cross-entropy loss, quantifying how well a model predicts the next token
+
+**Explanation:** Lower perplexity indicates that the model is more confident and accurate in its token predictions.
+</details>
+
+**Question 6:** Which quantization format is commonly used for serving GGUF models on CPUs via llama.cpp?
+
+* [ ] FP64
+* [x] 4-bit or 8-bit integer quantization (e.g. Q4_K_M, Q8_0)
+* [ ] 32-bit float
+* [ ] String encoding
+
+<details>
+<summary>🔑 Click to Reveal Answer & Explanation</summary>
+
+**Correct Answer:** 4-bit or 8-bit integer quantization (e.g. Q4_K_M, Q8_0)
+
+**Explanation:** Integer quantization reduces memory footprints by 4x, enabling fast CPU and edge inference.
+</details>
+
+**Question 7:** What is the role of an attention mask in transformer input processing?
+
+* [ ] To hide model parameters
+* [x] To indicate which tokens are real context versus padding tokens that should be ignored
+* [ ] To encrypt output text
+* [ ] To increase learning rate
+
+<details>
+<summary>🔑 Click to Reveal Answer & Explanation</summary>
+
+**Correct Answer:** To indicate which tokens are real context versus padding tokens that should be ignored
+
+**Explanation:** Attention masks prevent the model from attending to zero-padded tokens during batch processing.
+</details>
+
+**Question 8:** What is the purpose of a Model Card in Responsible AI development?
+
+* [ ] To store API keys
+* [x] To document model architecture, intended use cases, evaluation benchmarks, and safety limitations
+* [ ] To compile Python code
+* [ ] To license GPUs
+
+<details>
+<summary>🔑 Click to Reveal Answer & Explanation</summary>
+
+**Correct Answer:** To document model architecture, intended use cases, evaluation benchmarks, and safety limitations
+
+**Explanation:** Model Cards provide transparent documentation regarding model performance, training data, and safety boundaries.
+</details>

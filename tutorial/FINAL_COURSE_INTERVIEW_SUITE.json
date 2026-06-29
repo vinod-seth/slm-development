@@ -1,0 +1,79 @@
+{
+  "lesson_title": "Small Language Model Development Comprehensive Course Interview Suite",
+  "experience_levels": {
+    "junior": [
+      {
+        "id": "slm_fc_j1",
+        "question": "Walk through the process of training a custom 1B parameter SLM from dataset collation to model evaluation.",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Hugging Face"
+        ],
+        "core_intent": "Evaluates full-lifecycle SLM training understanding.",
+        "preparation_guide": "Trace data cleaning → tokenization → PyTorch/Trainer setup → AMP training → perplexity evaluation.",
+        "explanation": "SLM training involves tokenizing domain text, configuring causal language modeling loss, training with mixed precision, and tracking evaluation perplexity.",
+        "star_framework_tip": "Explain each phase clearly and highlight memory management choices.",
+        "common_pitfalls": [
+          "Skipping validation loss monitoring during training"
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Course",
+            "url": "https://huggingface.co/course/"
+          }
+        ]
+      }
+    ],
+    "mid_level": [
+      {
+        "id": "slm_fc_m1",
+        "question": "How do you implement 4-bit QLoRA fine-tuning for a domain-specific SLM while maintaining high target accuracy?",
+        "complexity": "Medium",
+        "companies": [
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Tests QLoRA implementation and hyperparameter optimization.",
+        "preparation_guide": "Discuss BitsAndBytes NF4 quantization, double quantization, paged optimizers, and target module selection.",
+        "explanation": "QLoRA quantizes base model weights to 4-bit NormalFloat while training 16-bit LoRA adapters, drastically reducing VRAM requirements.",
+        "star_framework_tip": "Detail BitsAndBytesConfig setup and specify target modules.",
+        "common_pitfalls": [
+          "Only applying LoRA to q_proj and v_proj matrices instead of all linear layers"
+        ],
+        "references": [
+          {
+            "title": "QLoRA Paper (Dettmers et al.)",
+            "url": "https://arxiv.org/abs/2305.14314"
+          }
+        ]
+      }
+    ],
+    "senior": [
+      {
+        "id": "slm_fc_s1",
+        "question": "Architect an end-to-end automated SLM retraining, quantization (AWQ), red-teaming, and vLLM serving pipeline for high-concurrency production applications.",
+        "complexity": "System Design",
+        "companies": [
+          "NVIDIA",
+          "Google",
+          "Meta",
+          "OpenAI"
+        ],
+        "core_intent": "Evaluates senior AI platform engineering and production SLM lifecycle architecture.",
+        "preparation_guide": "Cover automated retraining pipelines, AWQ quantization, bias safety auditing, vLLM continuous batching, and canary deployment.",
+        "explanation": "Enterprise SLM architecture links automated data pipelines with parameter-efficient retraining, 4-bit AWQ quantization, safety auditing, and high-throughput vLLM inference clusters.",
+        "star_framework_tip": "Draw the architecture diagram, detail latency SLAs, and explain rollback safety checks.",
+        "common_pitfalls": [
+          "Exposing fine-tuned models without automated safety red-teaming"
+        ],
+        "references": [
+          {
+            "title": "vLLM Production Documentation",
+            "url": "https://docs.vllm.ai/"
+          }
+        ]
+      }
+    ]
+  }
+}
