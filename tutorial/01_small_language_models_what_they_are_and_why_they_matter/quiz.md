@@ -1,5 +1,8 @@
 # Module 1 Quiz: Small Language Models: What They Are and Why They Matter
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/01_small_language_models_what_they_are_and_why_they_matter/quiz.md)
+
+
 Test your understanding of Small Language Models: What They Are and Why They Matter.
 
 ---

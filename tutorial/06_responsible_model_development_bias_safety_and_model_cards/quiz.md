@@ -1,5 +1,8 @@
 # Module 6 Quiz: Responsible Model Development: Bias, Safety, and Model Cards
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/06_responsible_model_development_bias_safety_and_model_cards/quiz.md)
+
+
 Test your understanding of Responsible Model Development: Bias, Safety, and Model Cards.
 
 ---

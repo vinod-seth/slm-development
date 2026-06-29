@@ -1,5 +1,8 @@
 # Course Review Report
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/REVIEW_REPORT.md)
+
+
 | Field | Value |
 |---|---|
 | **Course** | Small Language Model Training: A Beginner's Guide |

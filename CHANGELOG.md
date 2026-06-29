@@ -1,5 +1,8 @@
 # Changelog
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/CHANGELOG.md)
+
+
 ## [1.1] - 2026-06-26
 
 ### Added

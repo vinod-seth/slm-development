@@ -1,5 +1,8 @@
 # Module 2 Quiz: Transformer Architecture for Practitioners
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/02_transformer_architecture_for_practitioners/quiz.md)
+
+
 Test your understanding of Transformer Architecture for Practitioners.
 
 ---

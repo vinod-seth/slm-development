@@ -1,5 +1,8 @@
 # Module 3 Quiz: Data Preparation and Training from Scratch
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/03_data_preparation_and_training_from_scratch/quiz.md)
+
+
 Test your understanding of Data Preparation and Training from Scratch.
 
 ---

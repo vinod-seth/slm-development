@@ -1,5 +1,8 @@
 # Module 5 Quiz: Optimization and Deployment
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vinod-seth/slm-development/blob/main/tutorial/05_optimization_and_deployment/quiz.md)
+
+
 Test your understanding of Optimization and Deployment.
 
 ---
