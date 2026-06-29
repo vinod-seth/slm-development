@@ -32,5 +32,259 @@
     "PEFT",
     "Generative AI",
     "Python"
+  ],
+  "curriculum": [
+    {
+      "module_id": "module_01",
+      "title": "Module 1: Small Language Models: What They Are and Why They Matter",
+      "lessons": [
+        {
+          "id": "m1_l1",
+          "title": "SLMs vs LLMs: Scope, Trade-offs, and Real Use Cases",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/01_slms_vs_llms_scope_trade_offs_and_real_use_cases.md",
+            "notebook": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/01_slms_vs_llms.ipynb"
+          }
+        },
+        {
+          "id": "m1_l2",
+          "title": "How a Language Model Learns: Tokens, Probabilities, and Prediction",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/02_how_a_language_model_learns_tokens_probabilities_and_prediction.md",
+            "notebook": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/02_tokens_probabilities_prediction.ipynb"
+          }
+        },
+        {
+          "id": "m1_l3",
+          "title": "Setting Up Your Training Environment",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/03_setting_up_your_training_environment.md",
+            "notebook": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/03_setting_up_your_environment.ipynb"
+          }
+        },
+        {
+          "id": "m1_quiz",
+          "title": "Module 1 Quiz",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/quiz.md"
+          }
+        }
+      ]
+    },
+    {
+      "module_id": "module_02",
+      "title": "Module 2: Transformer Architecture for Practitioners",
+      "lessons": [
+        {
+          "id": "m2_l1",
+          "title": "Inside a Transformer Block: Attention, FFN, and Residuals",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/02_transformer_architecture_for_practitioners/01_inside_a_transformer_block_attention_ffn_and_residuals.md",
+            "notebook": "tutorial/02_transformer_architecture_for_practitioners/01_inside_a_transformer_block.ipynb"
+          }
+        },
+        {
+          "id": "m2_l2",
+          "title": "Memory Footprint and Hardware Tiers for SLM Training",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/02_transformer_architecture_for_practitioners/02_memory_footprint_and_hardware_tiers_for_slm_training.md",
+            "notebook": "tutorial/02_transformer_architecture_for_practitioners/02_memory_footprint_and_hardware_tiers.ipynb"
+          }
+        },
+        {
+          "id": "m2_l3",
+          "title": "Loading and Inspecting Pretrained SLMs with Hugging Face",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/02_transformer_architecture_for_practitioners/03_loading_and_inspecting_pretrained_slms_with_hugging_face.md",
+            "notebook": "tutorial/02_transformer_architecture_for_practitioners/03_loading_and_inspecting_pretrained_slms.ipynb"
+          }
+        },
+        {
+          "id": "m2_quiz",
+          "title": "Module 2 Quiz",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/02_transformer_architecture_for_practitioners/quiz.md"
+          }
+        }
+      ]
+    },
+    {
+      "module_id": "module_03",
+      "title": "Module 3: Data Preparation and Training from Scratch",
+      "lessons": [
+        {
+          "id": "m3_l1",
+          "title": "Building a Domain-Specific Dataset with Hugging Face Datasets",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/03_data_preparation_and_training_from_scratch/01_building_a_domain_specific_dataset_with_hugging_face_datasets.md",
+            "notebook": "tutorial/03_data_preparation_and_training_from_scratch/01_building_a_domain_specific_dataset.ipynb"
+          }
+        },
+        {
+          "id": "m3_l2",
+          "title": "Writing a Training Loop: Trainer API and Manual PyTorch",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/03_data_preparation_and_training_from_scratch/02_writing_a_training_loop_trainer_api_and_manual_pytorch.md",
+            "notebook": "tutorial/03_data_preparation_and_training_from_scratch/02_writing_a_training_loop.ipynb"
+          }
+        },
+        {
+          "id": "m3_l3",
+          "title": "Evaluating Your Trained Model: Perplexity, ROUGE, and F1",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/03_data_preparation_and_training_from_scratch/03_evaluating_your_trained_model_perplexity_rouge_and_f1.md",
+            "notebook": "tutorial/03_data_preparation_and_training_from_scratch/03_evaluating_your_trained_model.ipynb"
+          }
+        },
+        {
+          "id": "m3_quiz",
+          "title": "Module 3 Quiz",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/03_data_preparation_and_training_from_scratch/quiz.md"
+          }
+        }
+      ]
+    },
+    {
+      "module_id": "module_04",
+      "title": "Module 4: Fine-Tuning Pretrained SLMs with PEFT and LoRA",
+      "lessons": [
+        {
+          "id": "m4_l1",
+          "title": "Why Pretrained Weights Accelerate Fine-Tuning",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/01_why_pretrained_weights_accelerate_fine_tuning.md",
+            "notebook": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/01_why_pretrained_weights_accelerate.ipynb"
+          }
+        },
+        {
+          "id": "m4_l2",
+          "title": "LoRA Fine-Tuning: Theory and Implementation",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/02_lora_fine_tuning_theory_and_implementation.md",
+            "notebook": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/02_lora_fine_tuning.ipynb"
+          }
+        },
+        {
+          "id": "m4_l3",
+          "title": "Instruction Fine-Tuning for Task-Specific SLMs",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/03_instruction_fine_tuning_for_task_specific_slms.md",
+            "notebook": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/03_instruction_fine_tuning.ipynb"
+          }
+        },
+        {
+          "id": "m4_quiz",
+          "title": "Module 4 Quiz",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/quiz.md"
+          }
+        }
+      ]
+    },
+    {
+      "module_id": "module_05",
+      "title": "Module 5: Optimization and Deployment",
+      "lessons": [
+        {
+          "id": "m5_l1",
+          "title": "Quantization: Shrinking Models for Edge and CPU Deployment",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/05_optimization_and_deployment/01_quantization_shrinking_models_for_edge_and_cpu_deployment.md",
+            "notebook": "tutorial/05_optimization_and_deployment/01_quantization.ipynb"
+          }
+        },
+        {
+          "id": "m5_l2",
+          "title": "Serving a Fine-Tuned SLM: API Endpoints and Inference Pipelines",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/05_optimization_and_deployment/02_serving_a_fine_tuned_slm_api_endpoints_and_inference_pipelines.md",
+            "notebook": "tutorial/05_optimization_and_deployment/02_serving_a_fine_tuned_slm.ipynb"
+          }
+        },
+        {
+          "id": "m5_quiz",
+          "title": "Module 5 Quiz",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/05_optimization_and_deployment/quiz.md"
+          }
+        }
+      ]
+    },
+    {
+      "module_id": "module_06",
+      "title": "Module 6: Responsible Model Development: Bias, Safety, and Model Cards",
+      "lessons": [
+        {
+          "id": "m6_l1",
+          "title": "Bias Detection and Safety Auditing for SLMs",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/01_bias_detection_and_safety_auditing_for_slms.md",
+            "notebook": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/01_bias_detection_and_safety_auditing.ipynb"
+          }
+        },
+        {
+          "id": "m6_l2",
+          "title": "Writing a Model Card and Communicating Model Limitations",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/02_writing_a_model_card_and_communicating_model_limitations.md",
+            "notebook": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/02_writing_a_model_card.ipynb"
+          }
+        },
+        {
+          "id": "m6_quiz",
+          "title": "Module 6 Quiz",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/quiz.md"
+          }
+        }
+      ]
+    },
+    {
+      "module_id": "module_07",
+      "title": "Module 7: Capstone: Train, Fine-Tune, Audit, and Deploy Your Own SLM",
+      "lessons": [
+        {
+          "id": "m7_l1",
+          "title": "Capstone Project Briefing and Dataset Selection",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/01_capstone_project_briefing_and_dataset_selection.md",
+            "notebook": "tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/01_capstone_briefing.ipynb"
+          }
+        },
+        {
+          "id": "m7_l2",
+          "title": "End-to-End Build: Fine-Tune, Quantize, Audit, and Serve",
+          "defaultMode": "mdx",
+          "modes": {
+            "mdx": "tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/02_end_to_end_build_fine_tune_quantize_audit_and_serve.md",
+            "notebook": "tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/02_end_to_end_build.ipynb"
+          }
+        }
+      ]
+    }
   ]
 }
