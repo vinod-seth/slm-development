@@ -54,7 +54,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/02_how_a_language_model_learns_tokens_probabilities_and_prediction.md",
-            "notebook": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/02_tokens_probabilities_prediction.ipynb"
+            "notebook": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/02_tokens_probabilities_prediction.ipynb",
+            "interview": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/02_how_a_language_model_learns_tokens_probabilities_and_prediction_interview_questions.json"
           }
         },
         {
@@ -63,7 +64,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/03_setting_up_your_training_environment.md",
-            "notebook": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/03_setting_up_your_environment.ipynb"
+            "notebook": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/03_setting_up_your_environment.ipynb",
+            "interview": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/03_setting_up_your_training_environment_interview_questions.json"
           }
         },
         {
@@ -71,7 +73,8 @@
           "title": "Module 1 Quiz",
           "defaultMode": "mdx",
           "modes": {
-            "mdx": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/quiz.md"
+            "mdx": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/quiz.md",
+            "interview": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/quiz_interview_questions.json"
           }
         }
       ]
@@ -86,7 +89,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/02_transformer_architecture_for_practitioners/01_inside_a_transformer_block_attention_ffn_and_residuals.md",
-            "notebook": "tutorial/02_transformer_architecture_for_practitioners/01_inside_a_transformer_block.ipynb"
+            "notebook": "tutorial/02_transformer_architecture_for_practitioners/01_inside_a_transformer_block.ipynb",
+            "interview": "tutorial/02_transformer_architecture_for_practitioners/01_inside_a_transformer_block_attention_ffn_and_residuals_interview_questions.json"
           }
         },
         {
@@ -95,7 +99,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/02_transformer_architecture_for_practitioners/02_memory_footprint_and_hardware_tiers_for_slm_training.md",
-            "notebook": "tutorial/02_transformer_architecture_for_practitioners/02_memory_footprint_and_hardware_tiers.ipynb"
+            "notebook": "tutorial/02_transformer_architecture_for_practitioners/02_memory_footprint_and_hardware_tiers.ipynb",
+            "interview": "tutorial/02_transformer_architecture_for_practitioners/02_memory_footprint_and_hardware_tiers_for_slm_training_interview_questions.json"
           }
         },
         {
@@ -104,7 +109,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/02_transformer_architecture_for_practitioners/03_loading_and_inspecting_pretrained_slms_with_hugging_face.md",
-            "notebook": "tutorial/02_transformer_architecture_for_practitioners/03_loading_and_inspecting_pretrained_slms.ipynb"
+            "notebook": "tutorial/02_transformer_architecture_for_practitioners/03_loading_and_inspecting_pretrained_slms.ipynb",
+            "interview": "tutorial/02_transformer_architecture_for_practitioners/03_loading_and_inspecting_pretrained_slms_with_hugging_face_interview_questions.json"
           }
         },
         {
@@ -112,7 +118,8 @@
           "title": "Module 2 Quiz",
           "defaultMode": "mdx",
           "modes": {
-            "mdx": "tutorial/02_transformer_architecture_for_practitioners/quiz.md"
+            "mdx": "tutorial/02_transformer_architecture_for_practitioners/quiz.md",
+            "interview": "tutorial/02_transformer_architecture_for_practitioners/quiz_interview_questions.json"
           }
         }
       ]
@@ -127,7 +134,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/03_data_preparation_and_training_from_scratch/01_building_a_domain_specific_dataset_with_hugging_face_datasets.md",
-            "notebook": "tutorial/03_data_preparation_and_training_from_scratch/01_building_a_domain_specific_dataset.ipynb"
+            "notebook": "tutorial/03_data_preparation_and_training_from_scratch/01_building_a_domain_specific_dataset.ipynb",
+            "interview": "tutorial/03_data_preparation_and_training_from_scratch/01_building_a_domain_specific_dataset_with_hugging_face_datasets_interview_questions.json"
           }
         },
         {
@@ -136,7 +144,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/03_data_preparation_and_training_from_scratch/02_writing_a_training_loop_trainer_api_and_manual_pytorch.md",
-            "notebook": "tutorial/03_data_preparation_and_training_from_scratch/02_writing_a_training_loop.ipynb"
+            "notebook": "tutorial/03_data_preparation_and_training_from_scratch/02_writing_a_training_loop.ipynb",
+            "interview": "tutorial/03_data_preparation_and_training_from_scratch/02_writing_a_training_loop_trainer_api_and_manual_pytorch_interview_questions.json"
           }
         },
         {
@@ -145,7 +154,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/03_data_preparation_and_training_from_scratch/03_evaluating_your_trained_model_perplexity_rouge_and_f1.md",
-            "notebook": "tutorial/03_data_preparation_and_training_from_scratch/03_evaluating_your_trained_model.ipynb"
+            "notebook": "tutorial/03_data_preparation_and_training_from_scratch/03_evaluating_your_trained_model.ipynb",
+            "interview": "tutorial/03_data_preparation_and_training_from_scratch/03_evaluating_your_trained_model_perplexity_rouge_and_f1_interview_questions.json"
           }
         },
         {
@@ -153,7 +163,8 @@
           "title": "Module 3 Quiz",
           "defaultMode": "mdx",
           "modes": {
-            "mdx": "tutorial/03_data_preparation_and_training_from_scratch/quiz.md"
+            "mdx": "tutorial/03_data_preparation_and_training_from_scratch/quiz.md",
+            "interview": "tutorial/03_data_preparation_and_training_from_scratch/quiz_interview_questions.json"
           }
         }
       ]
@@ -168,7 +179,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/01_why_pretrained_weights_accelerate_fine_tuning.md",
-            "notebook": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/01_why_pretrained_weights_accelerate.ipynb"
+            "notebook": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/01_why_pretrained_weights_accelerate.ipynb",
+            "interview": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/01_why_pretrained_weights_accelerate_fine_tuning_interview_questions.json"
           }
         },
         {
@@ -177,7 +189,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/02_lora_fine_tuning_theory_and_implementation.md",
-            "notebook": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/02_lora_fine_tuning.ipynb"
+            "notebook": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/02_lora_fine_tuning.ipynb",
+            "interview": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/02_lora_fine_tuning_theory_and_implementation_interview_questions.json"
           }
         },
         {
@@ -186,7 +199,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/03_instruction_fine_tuning_for_task_specific_slms.md",
-            "notebook": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/03_instruction_fine_tuning.ipynb"
+            "notebook": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/03_instruction_fine_tuning.ipynb",
+            "interview": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/03_instruction_fine_tuning_for_task_specific_slms_interview_questions.json"
           }
         },
         {
@@ -194,7 +208,8 @@
           "title": "Module 4 Quiz",
           "defaultMode": "mdx",
           "modes": {
-            "mdx": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/quiz.md"
+            "mdx": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/quiz.md",
+            "interview": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/quiz_interview_questions.json"
           }
         }
       ]
@@ -209,7 +224,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/05_optimization_and_deployment/01_quantization_shrinking_models_for_edge_and_cpu_deployment.md",
-            "notebook": "tutorial/05_optimization_and_deployment/01_quantization.ipynb"
+            "notebook": "tutorial/05_optimization_and_deployment/01_quantization.ipynb",
+            "interview": "tutorial/05_optimization_and_deployment/01_quantization_shrinking_models_for_edge_and_cpu_deployment_interview_questions.json"
           }
         },
         {
@@ -218,7 +234,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/05_optimization_and_deployment/02_serving_a_fine_tuned_slm_api_endpoints_and_inference_pipelines.md",
-            "notebook": "tutorial/05_optimization_and_deployment/02_serving_a_fine_tuned_slm.ipynb"
+            "notebook": "tutorial/05_optimization_and_deployment/02_serving_a_fine_tuned_slm.ipynb",
+            "interview": "tutorial/05_optimization_and_deployment/02_serving_a_fine_tuned_slm_api_endpoints_and_inference_pipelines_interview_questions.json"
           }
         },
         {
@@ -226,7 +243,8 @@
           "title": "Module 5 Quiz",
           "defaultMode": "mdx",
           "modes": {
-            "mdx": "tutorial/05_optimization_and_deployment/quiz.md"
+            "mdx": "tutorial/05_optimization_and_deployment/quiz.md",
+            "interview": "tutorial/05_optimization_and_deployment/quiz_interview_questions.json"
           }
         }
       ]
@@ -241,7 +259,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/01_bias_detection_and_safety_auditing_for_slms.md",
-            "notebook": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/01_bias_detection_and_safety_auditing.ipynb"
+            "notebook": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/01_bias_detection_and_safety_auditing.ipynb",
+            "interview": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/01_bias_detection_and_safety_auditing_for_slms_interview_questions.json"
           }
         },
         {
@@ -250,7 +269,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/02_writing_a_model_card_and_communicating_model_limitations.md",
-            "notebook": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/02_writing_a_model_card.ipynb"
+            "notebook": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/02_writing_a_model_card.ipynb",
+            "interview": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/02_writing_a_model_card_and_communicating_model_limitations_interview_questions.json"
           }
         },
         {
@@ -258,7 +278,8 @@
           "title": "Module 6 Quiz",
           "defaultMode": "mdx",
           "modes": {
-            "mdx": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/quiz.md"
+            "mdx": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/quiz.md",
+            "interview": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/quiz_interview_questions.json"
           }
         }
       ]
@@ -273,7 +294,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/01_capstone_project_briefing_and_dataset_selection.md",
-            "notebook": "tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/01_capstone_briefing.ipynb"
+            "notebook": "tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/01_capstone_briefing.ipynb",
+            "interview": "tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/01_capstone_project_briefing_and_dataset_selection_interview_questions.json"
           }
         },
         {
@@ -282,7 +304,8 @@
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/02_end_to_end_build_fine_tune_quantize_audit_and_serve.md",
-            "notebook": "tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/02_end_to_end_build.ipynb"
+            "notebook": "tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/02_end_to_end_build.ipynb",
+            "interview": "tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/02_end_to_end_build_fine_tune_quantize_audit_and_serve_interview_questions.json"
           }
         }
       ]
