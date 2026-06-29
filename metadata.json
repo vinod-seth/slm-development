@@ -40,7 +40,7 @@
       "lessons": [
         {
           "id": "m1_l1",
-          "title": "SLMs vs LLMs: Scope, Trade-offs, and Real Use Cases",
+          "title": "Scope, Trade-offs, and Real Use Cases",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/01_slms_vs_llms_scope_trade_offs_and_real_use_cases.md",
@@ -50,7 +50,7 @@
         },
         {
           "id": "m1_l2",
-          "title": "How a Language Model Learns: Tokens, Probabilities, and Prediction",
+          "title": "Tokens, Probabilities, and Prediction",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/02_how_a_language_model_learns_tokens_probabilities_and_prediction.md",
@@ -70,7 +70,7 @@
         },
         {
           "id": "m1_quiz",
-          "title": "Module 1 Quiz",
+          "title": "Quiz",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/01_small_language_models_what_they_are_and_why_they_matter/quiz.md",
@@ -85,7 +85,7 @@
       "lessons": [
         {
           "id": "m2_l1",
-          "title": "Inside a Transformer Block: Attention, FFN, and Residuals",
+          "title": "Attention, FFN, and Residuals",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/02_transformer_architecture_for_practitioners/01_inside_a_transformer_block_attention_ffn_and_residuals.md",
@@ -115,7 +115,7 @@
         },
         {
           "id": "m2_quiz",
-          "title": "Module 2 Quiz",
+          "title": "Quiz",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/02_transformer_architecture_for_practitioners/quiz.md",
@@ -140,7 +140,7 @@
         },
         {
           "id": "m3_l2",
-          "title": "Writing a Training Loop: Trainer API and Manual PyTorch",
+          "title": "Trainer API and Manual PyTorch",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/03_data_preparation_and_training_from_scratch/02_writing_a_training_loop_trainer_api_and_manual_pytorch.md",
@@ -150,7 +150,7 @@
         },
         {
           "id": "m3_l3",
-          "title": "Evaluating Your Trained Model: Perplexity, ROUGE, and F1",
+          "title": "Perplexity, ROUGE, and F1",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/03_data_preparation_and_training_from_scratch/03_evaluating_your_trained_model_perplexity_rouge_and_f1.md",
@@ -160,7 +160,7 @@
         },
         {
           "id": "m3_quiz",
-          "title": "Module 3 Quiz",
+          "title": "Quiz",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/03_data_preparation_and_training_from_scratch/quiz.md",
@@ -185,7 +185,7 @@
         },
         {
           "id": "m4_l2",
-          "title": "LoRA Fine-Tuning: Theory and Implementation",
+          "title": "Theory and Implementation",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/02_lora_fine_tuning_theory_and_implementation.md",
@@ -205,7 +205,7 @@
         },
         {
           "id": "m4_quiz",
-          "title": "Module 4 Quiz",
+          "title": "Quiz",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/04_fine_tuning_pretrained_slms_with_peft_and_lora/quiz.md",
@@ -220,7 +220,7 @@
       "lessons": [
         {
           "id": "m5_l1",
-          "title": "Quantization: Shrinking Models for Edge and CPU Deployment",
+          "title": "Shrinking Models for Edge and CPU Deployment",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/05_optimization_and_deployment/01_quantization_shrinking_models_for_edge_and_cpu_deployment.md",
@@ -230,7 +230,7 @@
         },
         {
           "id": "m5_l2",
-          "title": "Serving a Fine-Tuned SLM: API Endpoints and Inference Pipelines",
+          "title": "API Endpoints and Inference Pipelines",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/05_optimization_and_deployment/02_serving_a_fine_tuned_slm_api_endpoints_and_inference_pipelines.md",
@@ -240,7 +240,7 @@
         },
         {
           "id": "m5_quiz",
-          "title": "Module 5 Quiz",
+          "title": "Quiz",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/05_optimization_and_deployment/quiz.md",
@@ -275,7 +275,7 @@
         },
         {
           "id": "m6_quiz",
-          "title": "Module 6 Quiz",
+          "title": "Quiz",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/06_responsible_model_development_bias_safety_and_model_cards/quiz.md",
@@ -300,7 +300,7 @@
         },
         {
           "id": "m7_l2",
-          "title": "End-to-End Build: Fine-Tune, Quantize, Audit, and Serve",
+          "title": "Fine-Tune, Quantize, Audit, and Serve",
           "defaultMode": "mdx",
           "modes": {
             "mdx": "tutorial/07_capstone_train_fine_tune_audit_and_deploy_your_own_slm/02_end_to_end_build_fine_tune_quantize_audit_and_serve.md",
