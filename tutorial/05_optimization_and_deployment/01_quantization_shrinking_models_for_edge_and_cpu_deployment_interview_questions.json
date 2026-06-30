@@ -1,321 +1,72 @@
 {
-  "lesson_title": "01 Quantization Shrinking Models For Edge And Cpu Deployment",
+  "lesson_title": "Quantization for Edge and CPU Deployment",
   "experience_levels": {
     "junior": [
       {
-        "id": "j1",
-        "question": "What are the fundamental principles of 01 Quantization Shrinking Models For Edge And Cpu Deployment in Small Language Model (SLM) development?",
-        "complexity": "Easy",
-        "companies": [
-          "Google",
-          "Meta",
-          "General"
-        ],
-        "core_intent": "Evaluates foundational understanding of 01 Quantization Shrinking Models For Edge And Cpu Deployment.",
-        "preparation_guide": "Define 01 Quantization Shrinking Models For Edge And Cpu Deployment and explain how it contributes to efficient model training, architecture, or evaluation.",
-        "explanation": "### Core Fundamentals of 01 Quantization Shrinking Models For Edge And Cpu Deployment\n\n01 Quantization Shrinking Models For Edge And Cpu Deployment provides critical techniques for optimizing SLM memory footprints, throughput, and task-specific accuracy.",
-        "star_framework_tip": "Explain the concept, state efficiency benefits, and cite a practical code snippet.",
-        "common_pitfalls": [
-          "Confusing SLM parameter efficiency with full LLM pre-training"
-        ],
-        "references": [
-          {
-            "title": "Hugging Face Transformers Documentation",
-            "url": "https://huggingface.co/docs/transformers/"
-          }
-        ]
-      },
-      {
-        "id": "j2",
-        "question": "How does 01 Quantization Shrinking Models For Edge And Cpu Deployment compare across PyTorch and Hugging Face Trainer APIs?",
-        "complexity": "Easy",
-        "companies": [
-          "Hugging Face",
-          "Google"
-        ],
-        "core_intent": "Tests implementation familiarity across standard ML frameworks.",
-        "preparation_guide": "Compare explicit manual PyTorch training loops with high-level Trainer abstraction.",
-        "explanation": "Manual PyTorch loops grant fine-grained control over gradient accumulation and optimization steps, while Hugging Face Trainer encapsulates boilerplate distributed training.",
-        "star_framework_tip": "Contrast low-level loop control with high-level abstraction conveniences.",
-        "common_pitfalls": [
-          "Forgetting to call optimizer.zero_grad() in manual loops"
-        ],
-        "references": [
-          {
-            "title": "PyTorch Tutorials",
-            "url": "https://pytorch.org/tutorials/"
-          }
-        ]
-      },
-      {
-        "id": "j3",
-        "question": "What hardware considerations (VRAM, precision) are critical when executing 01 Quantization Shrinking Models For Edge And Cpu Deployment?",
+        "id": "m5_l1_j1",
+        "question": "What is the difference between Post-Training Quantization (PTQ) and Quantization-Aware Training (QAT)?",
         "complexity": "Easy",
         "companies": [
           "NVIDIA",
-          "General"
+          "Intel",
+          "ARM"
         ],
-        "core_intent": "Assesses hardware and memory awareness during training.",
-        "preparation_guide": "Discuss FP32 vs FP16/BF16 mixed precision, gradient checkpointing, and GPU memory allocation.",
-        "explanation": "Mixed precision (FP16/BF16) cuts memory usage by nearly half and accelerates matrix multiplication on Tensor Cores.",
-        "star_framework_tip": "Explain memory consumption formulas for model weights, gradients, and optimizer states.",
+        "core_intent": "Checks knowledge of quantization methods.",
+        "preparation_guide": "Contrast quantizing post-training vs. simulating quantization during training.",
+        "explanation": "PTQ quantizes weights and activations after training is complete, without retraining. QAT simulates quantization error during the training process, allowing the model to adapt and minimize accuracy loss from quantization.",
+        "star_framework_tip": "Explain the complexity vs. accuracy trade-off of each method.",
         "common_pitfalls": [
-          "Underestimating AdamW optimizer state memory consumption (8 bytes per parameter)"
+          "Claiming QAT is computationally cheaper than PTQ (QAT requires a full training pass)."
         ],
         "references": [
           {
-            "title": "NVIDIA Automatic Mixed Precision",
-            "url": "https://developer.nvidia.com/"
-          }
-        ]
-      },
-      {
-        "id": "j4",
-        "question": "How do you evaluate and monitor training stability for 01 Quantization Shrinking Models For Edge And Cpu Deployment?",
-        "complexity": "Easy",
-        "companies": [
-          "General"
-        ],
-        "core_intent": "Tests loss monitoring and validation metric tracking.",
-        "preparation_guide": "Discuss training loss vs validation loss curves, perplexity metrics, and TensorBoard/WandB logging.",
-        "explanation": "Monitoring loss curves helps identify overfitting early and ensures gradient norms remain stable.",
-        "star_framework_tip": "Detail how tracking perplexity and validation loss prevents overtraining.",
-        "common_pitfalls": [
-          "Evaluating model performance only on training loss"
-        ],
-        "references": [
-          {
-            "title": "Weights & Biases Documentation",
-            "url": "https://docs.wandb.ai/"
-          }
-        ]
-      },
-      {
-        "id": "j5",
-        "question": "What dataset formatting and tokenization preparation steps are required for 01 Quantization Shrinking Models For Edge And Cpu Deployment?",
-        "complexity": "Easy",
-        "companies": [
-          "Hugging Face",
-          "Meta"
-        ],
-        "core_intent": "Assesses data preparation and tokenization skills.",
-        "preparation_guide": "Cover BPE/WordPiece tokenization, padding, truncation, and max_length alignment.",
-        "explanation": "Tokenizers convert raw text into input_ids and attention_masks, padded to uniform batch dimensions.",
-        "star_framework_tip": "Show a tokenizer call returning input_ids, attention_mask, and labels.",
-        "common_pitfalls": [
-          "Not setting labels equal to input_ids for causal language modeling"
-        ],
-        "references": [
-          {
-            "title": "Hugging Face Tokenizers",
-            "url": "https://huggingface.co/docs/tokenizers/"
+            "title": "PyTorch Quantization Guide",
+            "url": "https://pytorch.org/docs/stable/quantization.html"
           }
         ]
       }
     ],
     "mid_level": [
       {
-        "id": "m1",
-        "question": "How do you implement parameter-efficient fine-tuning (PEFT) like LoRA or QLoRA for 01 Quantization Shrinking Models For Edge And Cpu Deployment? What are the key hyperparameter choices?",
-        "complexity": "Medium",
-        "companies": [
-          "Meta",
-          "Google",
-          "OpenAI"
-        ],
-        "core_intent": "Evaluates PEFT and LoRA implementation depth for 01 Quantization Shrinking Models For Edge And Cpu Deployment.",
-        "preparation_guide": "Discuss rank (r), alpha scaling, target modules (q_proj, v_proj), and 4-bit NormalFloat quantization (NF4).",
-        "explanation": "LoRA freezes pre-trained weights and injects trainable rank-decomposition matrices into attention layers, reducing trainable parameters by >99% while preserving accuracy.",
-        "star_framework_tip": "State recommended rank (r=8 or 16) and alpha (32) configurations, and explain memory savings.",
-        "common_pitfalls": [
-          "Targeting only attention modules when target modules should include MLP layers for best performance"
-        ],
-        "references": [
-          {
-            "title": "LoRA Paper (Hu et al.)",
-            "url": "https://arxiv.org/abs/2106.09685"
-          }
-        ]
-      },
-      {
-        "id": "m2",
-        "question": "How do you debug exploding or vanishing gradients during 01 Quantization Shrinking Models For Edge And Cpu Deployment execution?",
+        "id": "m5_l1_m1",
+        "question": "Explain symmetric vs. asymmetric integer quantization, and how scale and zero-point parameters map floats to integers.",
         "complexity": "Medium",
         "companies": [
           "Google",
-          "Meta"
-        ],
-        "core_intent": "Tests numerical stability and gradient clipping techniques.",
-        "preparation_guide": "Explain gradient norm clipping (`torch.nn.utils.clip_grad_norm_`), learning rate warmup schedules, and weight initialization.",
-        "explanation": "Gradient clipping caps the maximum norm of gradients during backpropagation, preventing numerical instability and NaN loss values.",
-        "star_framework_tip": "Show how `clip_grad_norm_` is inserted before `optimizer.step()`.",
-        "common_pitfalls": [
-          "Clipping gradients after calling optimizer.step() instead of before"
-        ],
-        "references": [
-          {
-            "title": "PyTorch Gradient Clipping",
-            "url": "https://pytorch.org/docs/stable/nn.html#torch.nn.utils.clip_grad_norm_"
-          }
-        ]
-      },
-      {
-        "id": "m3",
-        "question": "How do you optimize data loading and batch collating throughput for 01 Quantization Shrinking Models For Edge And Cpu Deployment to eliminate GPU starvation?",
-        "complexity": "Medium",
-        "companies": [
           "NVIDIA",
-          "Meta"
-        ],
-        "core_intent": "Evaluates PyTorch DataLoader performance engineering.",
-        "preparation_guide": "Discuss `num_workers`, `pin_memory=True`, `DataCollatorForLanguageModeling`, and dynamic padding.",
-        "explanation": "GPU starvation occurs when CPU data preprocessing lags behind GPU execution. Using multi-process data loading with pinned memory ensures continuous GPU tensor feeding.",
-        "star_framework_tip": "Quantify throughput improvements achieved by dynamic padding vs fixed padding.",
-        "common_pitfalls": [
-          "Setting num_workers=0 in production training scripts"
-        ],
-        "references": [
-          {
-            "title": "PyTorch Performance Tuning Guide",
-            "url": "https://pytorch.org/tutorials/recipes/recipes/tuning_guide.html"
-          }
-        ]
-      },
-      {
-        "id": "m4",
-        "question": "What evaluation metrics beyond Perplexity would you use to assess domain-specific task performance in 01 Quantization Shrinking Models For Edge And Cpu Deployment?",
-        "complexity": "Medium",
-        "companies": [
-          "Google",
-          "Anthropic"
-        ],
-        "core_intent": "Assesses task-specific model evaluation methodologies.",
-        "preparation_guide": "Discuss ROUGE, BLEU, Exact Match (EM), F1 score, and LLM-based benchmark evaluations (MMLU, GSM8K).",
-        "explanation": "While Perplexity measures raw language modeling probability, downstream tasks require domain metrics like ROUGE-L for summarization or Exact Match for extraction.",
-        "star_framework_tip": "Compare surface-level n-gram metrics (ROUGE) with semantic benchmark evaluation.",
-        "common_pitfalls": [
-          "Relying strictly on loss/perplexity without evaluating generative task outputs"
-        ],
-        "references": [
-          {
-            "title": "Hugging Face Evaluate Library",
-            "url": "https://huggingface.co/docs/evaluate/"
-          }
-        ]
-      },
-      {
-        "id": "m5",
-        "question": "How do you implement post-training quantization (GPTQ, AWQ, GGUF) for serving 01 Quantization Shrinking Models For Edge And Cpu Deployment on resource-constrained edge devices?",
-        "complexity": "Medium",
-        "companies": [
-          "Meta",
           "Microsoft"
         ],
-        "core_intent": "Evaluates model quantization and edge serving strategies.",
-        "preparation_guide": "Compare INT8 vs INT4 quantization, calibration datasets in AWQ/GPTQ, and llama.cpp/GGUF format execution.",
-        "explanation": "AWQ and GPTQ quantize model weights to 4-bit integers by analyzing activation channels on calibration datasets, enabling high-speed CPU/edge execution with minimal perplexity degradation.",
-        "star_framework_tip": "Explain weight-only quantization vs activation quantization and state RAM savings.",
+        "core_intent": "Tests understanding of quantization mathematics.",
+        "preparation_guide": "Write down mapping equations: $q = \\text{clip}(\\text{round}(r / S) + Z, q_{min}, q_{max})$.",
+        "explanation": "Asymmetric quantization maps a float range $[min, max]$ to an integer range $[q_{min}, q_{max}]$ using a scale $S$ and a zero-point $Z$: $q = \\text{clip}(\\text{round}(r/S) + Z)$. Symmetric quantization centers the float range around zero, setting $Z=0$. This simplifies calculations but can waste quantization levels if distributions are highly asymmetric.",
+        "star_framework_tip": "Write out the quantization formula and explain what each parameter represents.",
         "common_pitfalls": [
-          "Quantizing models without representative calibration data"
+          "Assuming zero-point is always zero (it is only zero in symmetric quantization)."
         ],
-        "references": [
-          {
-            "title": "AWQ Paper (Lin et al.)",
-            "url": "https://arxiv.org/abs/2306.00978"
-          }
-        ]
+        "references": []
       }
     ],
     "senior": [
       {
-        "id": "s1",
-        "question": "Architect a distributed multi-GPU training and serving infrastructure for 01 Quantization Shrinking Models For Edge And Cpu Deployment utilizing DeepSpeed / FSDP and vLLM / TensorRT-LLM.",
-        "complexity": "System Design",
-        "companies": [
-          "NVIDIA",
-          "Google",
-          "Meta",
-          "OpenAI"
-        ],
-        "core_intent": "Evaluates senior distributed AI infrastructure and serving system design around 01 Quantization Shrinking Models For Edge And Cpu Deployment.",
-        "preparation_guide": "Detail ZeRO stage 1/2/3 partitioning, Fully Sharded Data Parallel (FSDP), PagedAttention in vLLM, continuous batching, and speculative decoding.",
-        "explanation": "### Enterprise Distributed SLM Architecture\n\nScaling training and serving for 01 Quantization Shrinking Models For Edge And Cpu Deployment involves DeepSpeed/FSDP to shard optimizer states, gradients, and parameters across GPUs, alongside vLLM for high-throughput serving with dynamic KV-cache paging.",
-        "star_framework_tip": "Draw the distributed architecture, detail ZeRO memory scaling equations, and explain PagedAttention.",
-        "common_pitfalls": [
-          "Failing to account for inter-GPU communication bandwidth bottlenecks (NVLink vs PCIe)"
-        ],
-        "references": [
-          {
-            "title": "PyTorch FSDP Documentation",
-            "url": "https://pytorch.org/docs/stable/fsdp.html"
-          }
-        ]
-      },
-      {
-        "id": "s2",
-        "question": "How would you build an automated end-to-end continuous retraining pipeline for 01 Quantization Shrinking Models For Edge And Cpu Deployment triggered by data drift in production monitoring?",
-        "complexity": "System Design",
-        "companies": [
-          "Google",
-          "Meta"
-        ],
-        "core_intent": "Tests MLOps pipeline automation, data drift detection, and automated model governance.",
-        "preparation_guide": "Discuss embedding-based drift detection, automated dataset curation, LoRA retraining triggers, automated safety auditing, and progressive canary deployment.",
-        "explanation": "An enterprise SLM MLOps pipeline monitors production inference embeddings for distribution shifts, automatically triggering synthetic data enrichment, LoRA retraining, model card generation, and canary rollout.",
-        "star_framework_tip": "Outline pipeline triggers, automated evaluation gates, model card generation, and rollback safety.",
-        "common_pitfalls": [
-          "Retraining on unvetted user feedback data without safety auditing"
-        ],
-        "references": [
-          {
-            "title": "Google MLOps Architecture",
-            "url": "https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-in-machine-learning"
-          }
-        ]
-      },
-      {
-        "id": "s3",
-        "question": "Deep dive into FlashAttention-2 / FlashAttention-3 memory optimizations and explain how exact attention computation bypasses memory bandwidth limits during 01 Quantization Shrinking Models For Edge And Cpu Deployment execution.",
+        "id": "m5_l1_s1",
+        "question": "Compare the AWQ and GPTQ quantization algorithms. How do they minimize perplexity degradation in 4-bit models?",
         "complexity": "Hard",
         "companies": [
           "NVIDIA",
           "Meta",
           "Google"
         ],
-        "core_intent": "Evaluates low-level GPU kernel optimization and attention mechanics.",
-        "preparation_guide": "Discuss HBM vs SRAM memory hierarchies, tiling algorithms, online softmax scaling, and IO-awareness.",
-        "explanation": "FlashAttention avoids materializing the quadratic N x N intermediate attention matrix in High Bandwidth Memory (HBM) by tiling query, key, and value blocks in fast SRAM and using online softmax rescaling.",
-        "star_framework_tip": "Explain the IO memory bound problem in standard attention vs tiled SRAM execution in FlashAttention.",
+        "core_intent": "Evaluates knowledge of state-of-the-art quantization techniques.",
+        "preparation_guide": "Explain activation-aware channel scaling (AWQ) vs. second-order Taylor expansion updates (GPTQ).",
+        "explanation": "GPTQ uses second-order optimization information to update remaining weights after quantizing a column. AWQ keeps the top 1% of salient weights in higher precision or scales them based on activation magnitudes. AWQ is activation-aware and does not rely on complex weight modifications, making it highly robust.",
+        "star_framework_tip": "Deconstruct the optimization formulas for each algorithm.",
         "common_pitfalls": [
-          "Confusing exact attention (FlashAttention) with approximate attention mechanisms"
+          "Stating that AWQ requires training labels (both are unsupervised and require only calibration text)."
         ],
         "references": [
           {
-            "title": "FlashAttention Paper (Dao et al.)",
-            "url": "https://arxiv.org/abs/2205.14135"
-          }
-        ]
-      },
-      {
-        "id": "s4",
-        "question": "How do you design and execute a comprehensive Safety Audit, Bias Evaluation, and Model Card generation protocol before deploying 01 Quantization Shrinking Models For Edge And Cpu Deployment to production?",
-        "complexity": "System Design",
-        "companies": [
-          "Anthropic",
-          "Google",
-          "Meta"
-        ],
-        "core_intent": "Tests Responsible AI governance, safety red-teaming, and model transparency.",
-        "preparation_guide": "Cover red-teaming benchmarks (BOLD, RealToxicityPrompts), hallucination audits, carbon footprint tracking, and standard Model Card schemas (Mitchell et al.).",
-        "explanation": "Responsible SLM deployment requires systematic auditing across demographic bias metrics, toxicity generation thresholds, adversarial jailbreaks, and documenting unintended use cases in a machine-readable Model Card.",
-        "star_framework_tip": "Detail the 6 core sections of a standard Model Card and cite automated red-teaming tools.",
-        "common_pitfalls": [
-          "Deploying models without documenting intended domain boundaries and known failure modes"
-        ],
-        "references": [
-          {
-            "title": "Model Cards Paper (Mitchell et al.)",
-            "url": "https://arxiv.org/abs/1810.03993"
+            "title": "AWQ: Activation-aware Weight Quantization",
+            "url": "https://arxiv.org/abs/2306.00978"
           }
         ]
       }
