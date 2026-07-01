@@ -18,6 +18,98 @@
           "Forgetting to divide gradients by the accumulation steps count, which inflates step updates."
         ],
         "references": []
+      },
+      {
+        "id": "m3_l2_j2",
+        "question": "What does the Hugging Face Trainer give you out of the box compared to a manual PyTorch loop?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests when to use the high-level API.",
+        "preparation_guide": "List the built-in concerns the Trainer handles.",
+        "explanation": "The Trainer handles the loop, device placement, mixed precision, gradient accumulation, learning-rate scheduling, gradient clipping, checkpointing, evaluation, logging, and distributed execution from a single configuration. A manual loop gives full control for custom logic but means re-implementing all of that yourself. Use the Trainer for standard training and a manual loop when you need non-standard behavior.",
+        "star_framework_tip": "Enumerate the handled concerns, then state the control trade-off.",
+        "common_pitfalls": [
+          "Hand-rolling a loop for a standard job and reintroducing bugs the Trainer avoids."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m3_l2_j3",
+        "question": "What is a learning-rate schedule with warmup and decay, and why use it?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Tests basic optimization scheduling.",
+        "preparation_guide": "Explain warmup stability and decay convergence.",
+        "explanation": "Warmup ramps the learning rate up from near zero over the first steps to avoid destabilizing the freshly initialized model, then a decay (e.g., cosine or linear) gradually lowers it so training settles into a good minimum. Together they stabilize early training and improve final quality versus a constant rate.",
+        "star_framework_tip": "Tie warmup to early stability and decay to final convergence.",
+        "common_pitfalls": [
+          "Starting at full learning rate and diverging in the first steps."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m3_l2_j4",
+        "question": "What is the difference between an epoch and a step, and how does batch size relate to the number of steps?",
+        "complexity": "Easy",
+        "companies": [
+          "Amazon",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests core training vocabulary.",
+        "preparation_guide": "Define both and the batch-size relationship.",
+        "explanation": "A step is one optimizer update on one (effective) batch; an epoch is one full pass over the training data. With a larger batch size, each step consumes more examples, so an epoch takes fewer steps. The effective batch (physical batch times gradient-accumulation steps times devices) is what determines steps per epoch.",
+        "star_framework_tip": "Define step and epoch, then derive steps from the effective batch size.",
+        "common_pitfalls": [
+          "Confusing physical batch size with the effective batch when computing steps."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m3_l2_j5",
+        "question": "Which TrainingArguments fields do you almost always set, and why?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests practical configuration literacy.",
+        "preparation_guide": "Recall the high-impact arguments.",
+        "explanation": "Typically you set learning rate, per-device batch size, gradient accumulation steps, number of epochs or max steps, weight decay, warmup, precision (bf16/fp16), and the evaluation, logging, and save strategies. These control optimization, memory, and how progress is measured and checkpointed.",
+        "star_framework_tip": "Group the fields by what they control: optimization, memory, and bookkeeping.",
+        "common_pitfalls": [
+          "Leaving eval/save strategy unset and ending with no usable checkpoints."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -43,6 +135,98 @@
             "url": "https://pytorch.org/docs/stable/amp.html"
           }
         ]
+      },
+      {
+        "id": "m3_l2_m2",
+        "question": "What is gradient clipping, and how does it differ from the gradient scaling used in mixed precision?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "NVIDIA",
+          "Microsoft"
+        ],
+        "core_intent": "Tests two often-confused stabilizers.",
+        "preparation_guide": "Separate exploding-gradient control from fp16 underflow handling.",
+        "explanation": "Gradient clipping caps the gradient norm (or value) before the optimizer step to prevent occasional huge updates from destabilizing training. Gradient scaling (AMP) multiplies the loss by a factor so small fp16 gradients do not underflow to zero, then unscales before the step. One bounds large gradients; the other preserves small ones in low precision.",
+        "star_framework_tip": "Contrast 'cap the big' (clipping) with 'rescue the small' (AMP scaling).",
+        "common_pitfalls": [
+          "Thinking the AMP GradScaler also performs gradient clipping."
+        ],
+        "references": [
+          {
+            "title": "PyTorch Automatic Mixed Precision",
+            "url": "https://pytorch.org/docs/stable/amp.html"
+          }
+        ]
+      },
+      {
+        "id": "m3_l2_m3",
+        "question": "How do you implement evaluation, checkpointing, and early stopping with the Trainer?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Amazon",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the eval/checkpoint workflow.",
+        "preparation_guide": "Map the strategies and the metric-driven best-model logic.",
+        "explanation": "Set an evaluation strategy (per steps or epoch) with a compute_metrics function, a matching save strategy, and load_best_model_at_end with a chosen metric; add the EarlyStoppingCallback to halt when validation stops improving. The Trainer then evaluates on schedule, keeps the best checkpoint by your metric, and stops early to save compute.",
+        "star_framework_tip": "Name the strategies, the metric for best-model selection, and the early-stopping callback.",
+        "common_pitfalls": [
+          "Saving on a different cadence than evaluating, so the best checkpoint is never kept."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m3_l2_m4",
+        "question": "What is a data collator, and why is dynamic padding (or DataCollatorForLanguageModeling) used?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Google",
+          "Meta"
+        ],
+        "core_intent": "Tests batch assembly mechanics.",
+        "preparation_guide": "Explain per-batch padding and label construction.",
+        "explanation": "A collator assembles a list of examples into a padded batch tensor at iteration time. Dynamic padding pads each batch only to its longest sequence rather than a global maximum, cutting wasted computation. DataCollatorForLanguageModeling additionally builds the shifted labels (and masking for MLM), so the loss targets are constructed correctly per batch.",
+        "star_framework_tip": "Tie dynamic padding to compute savings and the LM collator to correct labels.",
+        "common_pitfalls": [
+          "Padding every batch to the global max length and wasting compute."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m3_l2_m5",
+        "question": "How do you correctly resume training from a checkpoint?",
+        "complexity": "Medium",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "NVIDIA"
+        ],
+        "core_intent": "Tests state restoration beyond just weights.",
+        "preparation_guide": "List the states that must be restored together.",
+        "explanation": "Resuming correctly restores not only the model weights but also the optimizer state, learning-rate scheduler state, global step/epoch, RNG state, and (for AMP) the scaler state. The Trainer does this via resume_from_checkpoint; in a manual loop you must save and reload each piece, or the run silently restarts the schedule and momentum, hurting results.",
+        "star_framework_tip": "Enumerate model + optimizer + scheduler + step + RNG + scaler as the full state.",
+        "common_pitfalls": [
+          "Reloading only the weights and resetting the optimizer and schedule."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
       }
     ],
     "senior": [
@@ -63,6 +247,75 @@
           "Only reducing batch size to solve NaN loss errors, which does not address the underlying numerical precision issues."
         ],
         "references": []
+      },
+      {
+        "id": "m3_l2_s2",
+        "question": "How do you diagnose a training run whose loss plateaus early or slowly diverges (not NaN)?",
+        "complexity": "Hard",
+        "companies": [
+          "Google",
+          "NVIDIA",
+          "Meta"
+        ],
+        "core_intent": "Tests systematic optimization debugging.",
+        "preparation_guide": "Provide an ordered hypothesis list across data, optimization, and precision.",
+        "explanation": "Work through likely causes in order: learning rate too low (plateau) or too high (divergence), missing or wrong warmup, a bad data mixture or shuffling bug, label/loss construction errors, too-aggressive weight decay or clipping, and precision issues (try bf16). Inspect gradient norms and per-source loss, run a tiny overfit test on a few batches to confirm the model can learn, then change one variable at a time.",
+        "star_framework_tip": "Give an ordered checklist and the overfit-a-few-batches sanity test.",
+        "common_pitfalls": [
+          "Changing several hyperparameters at once so the cause stays unknown."
+        ],
+        "references": [
+          {
+            "title": "Decoupled Weight Decay Regularization (AdamW)",
+            "url": "https://arxiv.org/abs/1711.05101"
+          }
+        ]
+      },
+      {
+        "id": "m3_l2_s3",
+        "question": "When should you subclass the Trainer versus use callbacks, and how would you add a custom loss and metric logging?",
+        "complexity": "System Design",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests extending the training framework cleanly.",
+        "preparation_guide": "Distinguish behavior changes from observation hooks.",
+        "explanation": "Use callbacks for observation and side effects (logging, early stopping, custom scheduling) that hook into lifecycle events without altering core logic. Subclass the Trainer when you must change the computation itself, for example overriding compute_loss for a custom objective or get_train_dataloader for custom sampling. Keep custom metrics in compute_metrics. Prefer the least invasive option to stay compatible with future versions.",
+        "star_framework_tip": "Rule: callbacks to observe, subclass to change computation; override compute_loss for custom loss.",
+        "common_pitfalls": [
+          "Subclassing for something a callback could do, creating brittle code."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m3_l2_s4",
+        "question": "Architect a multi-GPU training setup with Accelerate/Trainer, covering logging, checkpointing, and reproducibility.",
+        "complexity": "System Design",
+        "companies": [
+          "NVIDIA",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests distributed training engineering.",
+        "preparation_guide": "Address launch, rank-aware IO, and determinism.",
+        "explanation": "Launch with accelerate (or torchrun), letting the Trainer handle gradient sync; ensure only the main process writes logs and checkpoints to avoid races, and gather metrics across ranks before logging. Save full training state for resumable runs, set seeds and deterministic flags per process, pin library versions, and validate that single-GPU and multi-GPU runs agree on a small job before scaling.",
+        "star_framework_tip": "Cover launch, main-process-only IO, cross-rank metric gather, and determinism.",
+        "common_pitfalls": [
+          "Letting every rank write checkpoints/logs and corrupting outputs."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Accelerate documentation",
+            "url": "https://huggingface.co/docs/accelerate"
+          }
+        ]
       }
     ]
   }

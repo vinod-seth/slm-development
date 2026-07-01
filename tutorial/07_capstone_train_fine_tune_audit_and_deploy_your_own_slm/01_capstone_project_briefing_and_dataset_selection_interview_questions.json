@@ -18,6 +18,98 @@
           "Selecting a model too large for the budget or hardware constraints."
         ],
         "references": []
+      },
+      {
+        "id": "m7_l1_j2",
+        "question": "How do you define success criteria and metrics for a capstone SLM project before you start building?",
+        "complexity": "Easy",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests goal-setting before implementation.",
+        "preparation_guide": "Turn a goal into measurable targets and budgets.",
+        "explanation": "Translate the goal into a concrete task metric (e.g., tool-call accuracy, exact match, rubric score) with a target threshold, plus non-functional budgets for latency, memory, and cost. Fix an evaluation set that represents real inputs and decide the bar for 'good enough' up front, so progress is measurable and you avoid moving goalposts later.",
+        "star_framework_tip": "State the task metric, target threshold, and latency/cost budgets before coding.",
+        "common_pitfalls": [
+          "Starting to train with no defined success metric or acceptance threshold."
+        ],
+        "references": [
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
+      },
+      {
+        "id": "m7_l1_j3",
+        "question": "How do you choose a base model for your capstone?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Tests model selection judgment.",
+        "preparation_guide": "Balance size, license, domain fit, and tokenizer.",
+        "explanation": "Pick a base that fits your latency/memory budget, has a license permitting your use, overlaps your domain and language, and has a tokenizer with low fertility on your text. Run a quick zero/few-shot baseline on a sample of your task; a model already close before fine-tuning will adapt with less data and forget less.",
+        "star_framework_tip": "Check budget, license, domain fit, tokenizer, then a quick baseline.",
+        "common_pitfalls": [
+          "Choosing by leaderboard rank alone, ignoring license and budget fit."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m7_l1_j4",
+        "question": "What makes a good dataset for a domain SLM project?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Amazon",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests data-quality intuition.",
+        "preparation_guide": "Recall relevance, quality, diversity, and size.",
+        "explanation": "A good dataset is relevant to the target task, high quality (clean, correctly labeled), diverse enough to cover the real input distribution, and free of duplicates and leakage. For fine-tuning, a few thousand well-curated, varied examples usually beat a large noisy set, especially for a small model with limited capacity.",
+        "star_framework_tip": "Prioritize relevance, quality, and diversity over raw size.",
+        "common_pitfalls": [
+          "Maximizing dataset size while ignoring quality and coverage."
+        ],
+        "references": [
+          {
+            "title": "Deduplicating Training Data Makes LMs Better",
+            "url": "https://arxiv.org/abs/2107.06499"
+          }
+        ]
+      },
+      {
+        "id": "m7_l1_j5",
+        "question": "How do you decide between fine-tuning an existing model and training from scratch for a capstone?",
+        "complexity": "Easy",
+        "companies": [
+          "Meta",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests the build-approach decision.",
+        "preparation_guide": "Weigh data/compute against control.",
+        "explanation": "Almost always fine-tune: pretraining requires enormous data and compute, while fine-tuning reuses a capable base and needs only task data. Train from scratch only if no suitable base exists (e.g., a very unusual domain, language, or a research goal) and you have the resources. For a capstone, fine-tuning a strong small base is the practical default.",
+        "star_framework_tip": "Default to fine-tuning; reserve from-scratch for rare, well-resourced cases.",
+        "common_pitfalls": [
+          "Attempting from-scratch pretraining on a capstone budget."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -37,6 +129,106 @@
           "Failing to address data duplicates, which leads to validation leakage."
         ],
         "references": []
+      },
+      {
+        "id": "m7_l1_m2",
+        "question": "How do you estimate how much data a fine-tuning task needs, and what do you do if you have too little?",
+        "complexity": "Medium",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests data-quantity planning.",
+        "preparation_guide": "Cover estimation and augmentation strategies.",
+        "explanation": "Estimate empirically: start small, plot a learning curve (quality vs training-set size), and see where gains flatten. If you have too little data, use data augmentation, generate and filter synthetic examples from a stronger model, mix in related data, lean on PEFT (which needs less data), or offload knowledge to RAG so the model needs fewer examples to learn behavior.",
+        "star_framework_tip": "Use a learning curve to estimate, then augment/synthesize/RAG if short.",
+        "common_pitfalls": [
+          "Guessing a fixed number instead of measuring a learning curve."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face TRL documentation",
+            "url": "https://huggingface.co/docs/trl"
+          },
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m7_l1_m3",
+        "question": "How do you plan splits and evaluation for a domain project to get trustworthy numbers?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Amazon",
+          "Microsoft"
+        ],
+        "core_intent": "Tests evaluation planning.",
+        "preparation_guide": "Cover leakage-safe splits and representative eval.",
+        "explanation": "Deduplicate first, then split by a natural key (document, user, time) so near-duplicates do not cross splits, reserving a test set touched only once. Ensure the eval set represents real inputs, decontaminate against any pretraining data, and plan disaggregated metrics plus multiple seeds so the reported numbers are honest and reproducible.",
+        "star_framework_tip": "Emphasize dedup-before-split, key-based splitting, and a one-touch test set.",
+        "common_pitfalls": [
+          "Random-row splits that leak near-duplicates from train into test."
+        ],
+        "references": [
+          {
+            "title": "Deduplicating Training Data Makes LMs Better",
+            "url": "https://arxiv.org/abs/2107.06499"
+          },
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
+      },
+      {
+        "id": "m7_l1_m4",
+        "question": "What legal, licensing, and privacy checks do you run on data and the base model before building?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Tests pre-build compliance diligence.",
+        "preparation_guide": "Cover license propagation and PII handling.",
+        "explanation": "Confirm the base model's license permits your intended use and redistribution, verify each data source's license and that you have rights/consent to use it, and scan for and handle PII (removal, anonymization, or a lawful basis). Record provenance so obligations can be traced. These checks prevent legal exposure and are increasingly required for compliance.",
+        "star_framework_tip": "Check base-model license, data rights/consent, and PII before building.",
+        "common_pitfalls": [
+          "Fine-tuning on scraped or unlicensed data without checking rights."
+        ],
+        "references": [
+          {
+            "title": "Datasheets for Datasets (Gebru et al.)",
+            "url": "https://arxiv.org/abs/1803.09010"
+          }
+        ]
+      },
+      {
+        "id": "m7_l1_m5",
+        "question": "How do you define a minimal viable baseline and iterate toward the goal?",
+        "complexity": "Medium",
+        "companies": [
+          "Amazon",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests incremental methodology.",
+        "preparation_guide": "Describe the prompting -> RAG -> fine-tune ladder.",
+        "explanation": "Establish the cheapest baseline first: a well-prompted base model measured on your eval set. If it falls short on knowledge, add RAG; if it falls short on behavior/format/latency, fine-tune (LoRA/QLoRA). Iterate only as far up the ladder as needed to hit the target, measuring at each step, so you avoid over-engineering and know exactly what each technique bought.",
+        "star_framework_tip": "Climb prompting -> RAG -> fine-tuning only as far as the metric requires.",
+        "common_pitfalls": [
+          "Jumping straight to fine-tuning without a measured prompting baseline."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
       }
     ],
     "senior": [
@@ -57,6 +249,79 @@
           "Underestimating hyperparameter optimization duration and cost."
         ],
         "references": []
+      },
+      {
+        "id": "m7_l1_s2",
+        "question": "Scope an end-to-end capstone plan with milestones, risks, and go/no-go criteria under a fixed budget.",
+        "complexity": "System Design",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests project planning and risk management.",
+        "preparation_guide": "Lay out phases, gates, and contingencies.",
+        "explanation": "Phase the project: define success metrics and data plan; build a prompting/RAG baseline; curate data and run a small fine-tune; evaluate and audit; quantize and serve; monitor. Put a go/no-go gate after the baseline and after evaluation, budget compute and time per phase with buffer, and identify risks (insufficient data, quality shortfall, latency miss) with contingencies (augment data, larger base, adjust scope). Keep the plan iterative so a failing gate reshapes scope early.",
+        "star_framework_tip": "Present phased milestones with go/no-go gates, budgets, and risk contingencies.",
+        "common_pitfalls": [
+          "Committing the full budget to training before validating a baseline."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m7_l1_s3",
+        "question": "A stakeholder gives ambiguous requirements. How do you turn them into a testable SLM specification?",
+        "complexity": "Hard",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests requirements engineering.",
+        "preparation_guide": "Convert vague goals into measurable acceptance criteria.",
+        "explanation": "Interview the stakeholder to pin down the concrete task, real example inputs and desired outputs, the definition of a correct answer, hard constraints (latency, cost, privacy, on-device), and the consequences of errors. Convert these into an acceptance test set with metrics and thresholds and an explicit out-of-scope list, then confirm the spec with the stakeholder before building. Distinguish confirmed requirements from assumptions and flag the latter.",
+        "star_framework_tip": "Elicit examples and constraints, then codify metrics, thresholds, and out-of-scope.",
+        "common_pitfalls": [
+          "Building to a vague brief and discovering the mismatch only at delivery."
+        ],
+        "references": [
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          }
+        ]
+      },
+      {
+        "id": "m7_l1_s4",
+        "question": "For a concrete business scenario, how do you decide SLM vs LLM, on-device vs cloud, and fine-tune vs RAG, defending the trade-offs?",
+        "complexity": "Hard",
+        "companies": [
+          "Amazon",
+          "NVIDIA",
+          "Microsoft"
+        ],
+        "core_intent": "Tests holistic solution architecture.",
+        "preparation_guide": "Map requirements to each axis with justification.",
+        "explanation": "Drive each decision from requirements: choose an SLM when the task is narrow and cost/latency/privacy dominate, an LLM for broad open-ended reasoning; on-device when privacy or offline/latency demand it, cloud for scale and larger models; fine-tuning for consistent skill/format/latency, RAG for fresh or large knowledge, and often both together. Justify with the metric, budget, and risk implications, and note that a fine-tuned SLM plus RAG on-device is a common sweet spot for regulated, high-volume tasks.",
+        "star_framework_tip": "Tie each axis to the governing requirement and defend with cost/latency/privacy trade-offs.",
+        "common_pitfalls": [
+          "Picking on-device or fine-tuning by default without tying it to requirements."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          },
+          {
+            "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+            "url": "https://arxiv.org/abs/2305.14314"
+          }
+        ]
       }
     ]
   }

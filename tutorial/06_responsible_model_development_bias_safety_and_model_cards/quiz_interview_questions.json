@@ -18,6 +18,75 @@
           "Assuming safety alignment is handled purely by prompt filtering."
         ],
         "references": []
+      },
+      {
+        "id": "m6_quiz_j2",
+        "question": "What is red-teaming in the context of language-model safety?",
+        "complexity": "Easy",
+        "companies": [
+          "Anthropic",
+          "OpenAI",
+          "Microsoft"
+        ],
+        "core_intent": "Reviews adversarial testing.",
+        "preparation_guide": "Recall adversarial probing for harmful behavior.",
+        "explanation": "Red-teaming is deliberately attacking a model with adversarial prompts to find ways it produces harmful, biased, or unsafe outputs, so those weaknesses can be fixed before and during deployment.",
+        "star_framework_tip": "Define it as adversarial probing to surface failures.",
+        "common_pitfalls": [
+          "Confusing red-teaming with standard accuracy benchmarking."
+        ],
+        "references": [
+          {
+            "title": "Red Teaming Language Models (Perez et al.)",
+            "url": "https://arxiv.org/abs/2202.03286"
+          }
+        ]
+      },
+      {
+        "id": "m6_quiz_j3",
+        "question": "Why are model cards important in AI development?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Reviews documentation value.",
+        "preparation_guide": "Recall transparency for responsible use.",
+        "explanation": "Model cards give the transparency users need to decide whether and how to use a model responsibly: intended use, performance, limitations, and license. They set expectations and reduce foreseeable misuse.",
+        "star_framework_tip": "Tie cards to transparency and responsible-use decisions.",
+        "common_pitfalls": [
+          "Viewing cards as optional marketing rather than responsible-use documentation."
+        ],
+        "references": [
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          }
+        ]
+      },
+      {
+        "id": "m6_quiz_j4",
+        "question": "Where does language-model bias mainly originate?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Reviews the source of bias.",
+        "preparation_guide": "Recall training data and pipeline choices.",
+        "explanation": "Bias mainly originates in training data that reflects social and historical biases, amplified by modeling and sampling choices; it shows up as stereotyping (representational harm) and unequal performance across groups (allocational harm).",
+        "star_framework_tip": "Name data as the main source and the two harm types.",
+        "common_pitfalls": [
+          "Assuming bias is purely an algorithmic artifact unrelated to data."
+        ],
+        "references": [
+          {
+            "title": "BBQ: A Hand-Built Bias Benchmark for QA",
+            "url": "https://arxiv.org/abs/2110.08193"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -38,6 +107,79 @@
           "Believing jailbreak vectors can be solved completely with static regex filters."
         ],
         "references": []
+      },
+      {
+        "id": "m6_quiz_m2",
+        "question": "Why report evaluation results disaggregated by subgroup rather than only in aggregate?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Reviews responsible reporting.",
+        "preparation_guide": "Recall that averages hide disparities.",
+        "explanation": "A strong average can hide large gaps across groups, languages, or input types, so disaggregated metrics reveal where the model fails specific users and let those disparities be addressed and disclosed.",
+        "star_framework_tip": "State that aggregates mask subgroup failures.",
+        "common_pitfalls": [
+          "Trusting a single overall metric as evidence of fairness."
+        ],
+        "references": [
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
+      },
+      {
+        "id": "m6_quiz_m3",
+        "question": "Among SFT, RLHF, DPO, and Constitutional AI, which is most resource-efficient for safety alignment, and why?",
+        "complexity": "Medium",
+        "companies": [
+          "Anthropic",
+          "OpenAI",
+          "Google"
+        ],
+        "core_intent": "Reviews alignment-method efficiency.",
+        "preparation_guide": "Compare pipeline complexity.",
+        "explanation": "DPO is typically the most resource-efficient because it optimizes directly on preference pairs without training a separate reward model or running an RL loop, unlike RLHF; SFT alone does not capture preferences, and Constitutional AI mainly reduces human labeling by using AI feedback, which can be combined with DPO.",
+        "star_framework_tip": "Name DPO and justify by its simpler pipeline.",
+        "common_pitfalls": [
+          "Assuming full RLHF is necessary for safety alignment."
+        ],
+        "references": [
+          {
+            "title": "Direct Preference Optimization (Rafailov et al.)",
+            "url": "https://arxiv.org/abs/2305.18290"
+          },
+          {
+            "title": "Constitutional AI: Harmlessness from AI Feedback",
+            "url": "https://arxiv.org/abs/2212.08073"
+          }
+        ]
+      },
+      {
+        "id": "m6_quiz_m4",
+        "question": "What belongs in a model card's 'limitations' section, and why does it matter for safe deployment?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Hugging Face"
+        ],
+        "core_intent": "Reviews limitation documentation.",
+        "preparation_guide": "Recall specific, actionable limitations.",
+        "explanation": "It should list specific conditions where the model degrades (domains, languages, long or ambiguous inputs), representative failure examples, and recommended safeguards, so deployers can build safe systems around the model rather than discovering failures in production.",
+        "star_framework_tip": "Stress specific, actionable limitations with mitigations.",
+        "common_pitfalls": [
+          "Writing a vague 'may make mistakes' note instead of concrete failure conditions."
+        ],
+        "references": [
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          }
+        ]
       }
     ],
     "senior": [
@@ -58,6 +200,56 @@
           "Failing to handle moderation layer latency, leading to slow response times."
         ],
         "references": []
+      },
+      {
+        "id": "m6_quiz_s2",
+        "question": "Design a pre-deployment responsible-AI gate for an SLM.",
+        "complexity": "System Design",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Amazon"
+        ],
+        "core_intent": "Synthesizes the chapter into a release gate.",
+        "preparation_guide": "Cover bias, safety, docs, and sign-off.",
+        "explanation": "Before release, require: bias evaluation disaggregated by group, a safety/red-team pass with acceptable harm and false-refusal rates, a complete model card and datasheet (intended use, limitations, license, data provenance), capability evals meeting thresholds, and a monitoring/incident plan. Automate what you can in CI, require human sign-off for high-stakes uses, and version all evidence for audit and rollback.",
+        "star_framework_tip": "List the bias/safety/docs/eval checks plus sign-off and audit trail.",
+        "common_pitfalls": [
+          "Gating on capability metrics while skipping bias, safety, and documentation."
+        ],
+        "references": [
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          },
+          {
+            "title": "Red Teaming Language Models (Perez et al.)",
+            "url": "https://arxiv.org/abs/2202.03286"
+          }
+        ]
+      },
+      {
+        "id": "m6_quiz_s3",
+        "question": "Architect continuous post-deployment safety monitoring and incident response for an SLM.",
+        "complexity": "System Design",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Amazon"
+        ],
+        "core_intent": "Synthesizes safety operations.",
+        "preparation_guide": "Cover detection, drift, response, and feedback.",
+        "explanation": "Run input/output harm classifiers on production traffic, sample flagged cases for human review, and track safety metrics over time to detect drift and emerging jailbreaks. Provide a fast mitigation path (system-prompt patch, refusal rules, routing to a safer model), an incident-response runbook with severity tiers, and a loop that converts new failures into red-team cases and safety-training data, all logged for audit while respecting user privacy.",
+        "star_framework_tip": "Combine online detection + drift tracking + fast mitigation/IR + a feedback loop.",
+        "common_pitfalls": [
+          "Treating pre-launch safety testing as sufficient with no live monitoring."
+        ],
+        "references": [
+          {
+            "title": "Red Teaming Language Models (Perez et al.)",
+            "url": "https://arxiv.org/abs/2202.03286"
+          }
+        ]
       }
     ]
   }

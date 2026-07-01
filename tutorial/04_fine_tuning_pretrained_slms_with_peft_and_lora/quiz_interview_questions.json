@@ -18,6 +18,75 @@
           "Believing that increasing rank automatically scales up adapter activations."
         ],
         "references": []
+      },
+      {
+        "id": "m4_quiz_j2",
+        "question": "What does the rank r control in a LoRA configuration?",
+        "complexity": "Easy",
+        "companies": [
+          "Microsoft",
+          "Hugging Face",
+          "Google"
+        ],
+        "core_intent": "Reviews LoRA capacity.",
+        "preparation_guide": "Recall r as the low-rank update's capacity.",
+        "explanation": "r sets the rank of the low-rank update matrices, determining the adapter's capacity and how many trainable parameters it adds; higher r means more capacity (and more parameters and overfitting risk), lower r means a cheaper, more regularized adapter.",
+        "star_framework_tip": "State r as the capacity/parameter dial.",
+        "common_pitfalls": [
+          "Confusing r with the alpha scaling factor."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
+      },
+      {
+        "id": "m4_quiz_j3",
+        "question": "Why fine-tune a pretrained model instead of training from scratch?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Reviews transfer learning.",
+        "preparation_guide": "Recall data/compute savings from reused knowledge.",
+        "explanation": "Fine-tuning reuses the language, knowledge, and representations learned during pretraining, so it adapts to a task with far less data and compute and avoids relearning language from scratch.",
+        "star_framework_tip": "Say it reuses pretrained knowledge to save data and compute.",
+        "common_pitfalls": [
+          "Thinking from-scratch training is feasible for typical task budgets."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
+      },
+      {
+        "id": "m4_quiz_j4",
+        "question": "In instruction fine-tuning, why are prompt tokens masked from the loss?",
+        "complexity": "Easy",
+        "companies": [
+          "OpenAI",
+          "Hugging Face",
+          "Google"
+        ],
+        "core_intent": "Reviews SFT masking.",
+        "preparation_guide": "Recall loss-on-response-only.",
+        "explanation": "Masking the prompt makes the loss apply only to the assistant response, so the model learns to generate good answers rather than to predict the user's words, improving instruction following.",
+        "star_framework_tip": "State response-only loss as the reason.",
+        "common_pitfalls": [
+          "Training on the whole sequence including the prompt."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face TRL documentation",
+            "url": "https://huggingface.co/docs/trl"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -37,6 +106,83 @@
           "Claiming targeting more layers decreases computational throughput (it has minimal impact on latency)."
         ],
         "references": []
+      },
+      {
+        "id": "m4_quiz_m2",
+        "question": "How does the LoRA alpha interact with r, and what is the effect of scaling alpha?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "Hugging Face",
+          "Google"
+        ],
+        "core_intent": "Reviews LoRA scaling.",
+        "preparation_guide": "Recall the alpha/r factor.",
+        "explanation": "The adapter update is scaled by alpha/r, so alpha controls how strongly the low-rank update influences the base relative to its rank. Raising alpha increases the update's effect; because of the division by r, alpha and r must be tuned together to keep the effective scale sensible.",
+        "star_framework_tip": "Explain the alpha/r scaling and joint tuning.",
+        "common_pitfalls": [
+          "Treating alpha as an absolute scale independent of r."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
+      },
+      {
+        "id": "m4_quiz_m3",
+        "question": "When would you choose QLoRA over LoRA over full fine-tuning?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "NVIDIA",
+          "Hugging Face"
+        ],
+        "core_intent": "Reviews the fine-tuning decision.",
+        "preparation_guide": "Map each to its resource/quality regime.",
+        "explanation": "Use full fine-tuning when you need maximum quality and have ample memory and per-task storage. Use LoRA when you want most of the quality with far less memory and tiny per-task checkpoints. Use QLoRA when even the base does not fit, since 4-bit loading plus adapters enables fine-tuning large models on a single consumer GPU, accepting a small quality cost.",
+        "star_framework_tip": "Decision rule by memory budget: full FT -> LoRA -> QLoRA as memory tightens.",
+        "common_pitfalls": [
+          "Reaching for full fine-tuning when LoRA/QLoRA would meet the need cheaply."
+        ],
+        "references": [
+          {
+            "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+            "url": "https://arxiv.org/abs/2305.14314"
+          },
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
+      },
+      {
+        "id": "m4_quiz_m4",
+        "question": "How does instruction tuning relate to and precede preference optimization?",
+        "complexity": "Medium",
+        "companies": [
+          "OpenAI",
+          "Anthropic",
+          "Hugging Face"
+        ],
+        "core_intent": "Reviews the alignment pipeline order.",
+        "preparation_guide": "Explain SFT as the base for DPO/RLHF.",
+        "explanation": "Instruction tuning (SFT) teaches the model to follow instructions by imitating demonstrations, producing a competent assistant. Preference optimization (DPO or RLHF) then refines that model using comparative feedback to prefer better, safer responses. SFT comes first because preference methods work best when starting from a model that already follows instructions.",
+        "star_framework_tip": "Sequence SFT (imitate) then preference optimization (rank).",
+        "common_pitfalls": [
+          "Applying DPO/RLHF to a base model that has not been instruction-tuned."
+        ],
+        "references": [
+          {
+            "title": "Direct Preference Optimization (Rafailov et al.)",
+            "url": "https://arxiv.org/abs/2305.18290"
+          },
+          {
+            "title": "Training LMs to Follow Instructions with Human Feedback (InstructGPT)",
+            "url": "https://arxiv.org/abs/2203.02155"
+          }
+        ]
       }
     ],
     "senior": [
@@ -57,6 +203,56 @@
           "Attempting to merge models trained with different base vocabulary architectures."
         ],
         "references": []
+      },
+      {
+        "id": "m4_quiz_s2",
+        "question": "Design a cost-effective way to serve dozens of task-specific LoRA adapters on shared infrastructure.",
+        "complexity": "System Design",
+        "companies": [
+          "NVIDIA",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Synthesizes LoRA deployment.",
+        "preparation_guide": "Cover shared base, swappable adapters, and batching.",
+        "explanation": "Keep a single base model resident in GPU memory and load small adapters on demand, hot-swapping or even batching requests across different adapters with a serving stack that supports it. Maintain an adapter registry with versioning and a base-model fallback. This amortizes the costly base across many tenants and makes adding a task a few-megabyte deployment instead of a full model.",
+        "star_framework_tip": "Center on one resident base plus swappable, versioned adapters with multi-adapter batching.",
+        "common_pitfalls": [
+          "Serving a separate merged full model per task and exhausting memory."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face PEFT documentation",
+            "url": "https://huggingface.co/docs/peft"
+          }
+        ]
+      },
+      {
+        "id": "m4_quiz_s3",
+        "question": "After domain fine-tuning, your SLM has lost general ability. Propose a remediation plan.",
+        "complexity": "Hard",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Synthesizes forgetting remedies.",
+        "preparation_guide": "Combine data, method, and evaluation fixes.",
+        "explanation": "Re-run fine-tuning with a lower learning rate and fewer epochs, mix general-purpose data back in (rehearsal), and switch to LoRA so the frozen base preserves general knowledge; if a merged model already forgot, retrain from the base rather than continuing. Add held-out general benchmarks to the eval gate so forgetting is caught automatically next time, and keep adapter versions for rollback.",
+        "star_framework_tip": "Combine smaller updates + data replay + PEFT, and add general-eval gating.",
+        "common_pitfalls": [
+          "Continuing to fine-tune the already-degraded model instead of restarting from the base."
+        ],
+        "references": [
+          {
+            "title": "Overcoming Catastrophic Forgetting (EWC)",
+            "url": "https://arxiv.org/abs/1612.00796"
+          },
+          {
+            "title": "Hugging Face PEFT documentation",
+            "url": "https://huggingface.co/docs/peft"
+          }
+        ]
       }
     ]
   }

@@ -23,6 +23,98 @@
             "url": "https://huggingface.co/docs/transformers/training"
           }
         ]
+      },
+      {
+        "id": "m4_l1_j2",
+        "question": "What is transfer learning, and why does it work so well for language models?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the foundational idea behind fine-tuning.",
+        "preparation_guide": "Explain reusing general representations for a new task.",
+        "explanation": "Transfer learning reuses a model trained on a large general task as the starting point for a related task. Pretraining teaches broad language structure, world knowledge, and reusable representations, so fine-tuning only has to adapt those features to your specific task rather than learn language from scratch, which saves enormous data and compute.",
+        "star_framework_tip": "Frame pretrained weights as reusable general features the task adapts.",
+        "common_pitfalls": [
+          "Thinking fine-tuning relearns language rather than adapting existing features."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
+      },
+      {
+        "id": "m4_l1_j3",
+        "question": "What is the difference between feature-based transfer (frozen backbone) and full fine-tuning?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests two transfer strategies.",
+        "preparation_guide": "Contrast freezing vs updating the backbone.",
+        "explanation": "Feature-based transfer freezes the pretrained model and trains only a new head on top of its fixed representations, which is cheap and stable but limited. Full fine-tuning updates all weights, adapting the representations themselves for higher ceiling performance at greater cost and higher risk of forgetting. PEFT methods like LoRA sit between these extremes.",
+        "star_framework_tip": "Position frozen-backbone, full FT, and PEFT on a cost-vs-adaptability scale.",
+        "common_pitfalls": [
+          "Assuming a frozen backbone always matches full fine-tuning quality."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
+      },
+      {
+        "id": "m4_l1_j4",
+        "question": "Why does fine-tuning typically require far less data than pretraining?",
+        "complexity": "Easy",
+        "companies": [
+          "Meta",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the data-efficiency intuition.",
+        "preparation_guide": "Connect prior knowledge to small task datasets.",
+        "explanation": "The pretrained model already encodes grammar, semantics, and world knowledge, so fine-tuning only needs enough examples to point those capabilities at the target task or style. That is often thousands of examples rather than the billions of tokens pretraining needs, which is why specialized SLMs are practical to build.",
+        "star_framework_tip": "Say the heavy lifting is done in pretraining; fine-tuning just steers.",
+        "common_pitfalls": [
+          "Expecting to need pretraining-scale data for a simple fine-tune."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
+      },
+      {
+        "id": "m4_l1_j5",
+        "question": "Why do you use a much smaller learning rate when fine-tuning than when pretraining?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests a key fine-tuning hyperparameter.",
+        "preparation_guide": "Explain preserving pretrained knowledge.",
+        "explanation": "A large learning rate would overwrite the carefully learned pretrained weights, erasing useful knowledge (catastrophic forgetting) and destabilizing training. A small learning rate makes gentle adjustments that adapt the model to the task while preserving its general abilities, which is why fine-tuning rates are typically orders of magnitude lower than pretraining rates.",
+        "star_framework_tip": "Tie the small rate to preserving pretrained knowledge while adapting.",
+        "common_pitfalls": [
+          "Reusing the pretraining learning rate and wiping out pretrained knowledge."
+        ],
+        "references": [
+          {
+            "title": "Overcoming Catastrophic Forgetting (EWC)",
+            "url": "https://arxiv.org/abs/1612.00796"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -43,6 +135,106 @@
           "Claiming catastrophic forgetting is a dataset size issue instead of a parameter modification issue."
         ],
         "references": []
+      },
+      {
+        "id": "m4_l1_m2",
+        "question": "What is the difference between full fine-tuning and parameter-efficient fine-tuning (PEFT), and when do you choose each?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "Hugging Face",
+          "Google"
+        ],
+        "core_intent": "Tests the core fine-tuning trade-off.",
+        "preparation_guide": "Compare cost, storage, forgetting, and ceiling.",
+        "explanation": "Full fine-tuning updates every weight, giving the highest ceiling but needing large memory, a full checkpoint per task, and risking forgetting. PEFT (LoRA, adapters, prompt tuning) trains a small number of added parameters while freezing the base, drastically cutting memory and per-task storage and reducing forgetting, at a small quality cost on hard tasks. Choose PEFT for most SLM fine-tunes and full FT only when you need maximum quality and have the resources.",
+        "star_framework_tip": "Lay out cost/storage/forgetting/ceiling and default to PEFT for SLMs.",
+        "common_pitfalls": [
+          "Defaulting to full fine-tuning when LoRA would suffice at a fraction of the cost."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face PEFT documentation",
+            "url": "https://huggingface.co/docs/peft"
+          },
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
+      },
+      {
+        "id": "m4_l1_m3",
+        "question": "How do you mitigate catastrophic forgetting during fine-tuning?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Tests practical remedies for forgetting.",
+        "preparation_guide": "List the levers across learning rate, data, and method.",
+        "explanation": "Use a small learning rate and few epochs, mix in some general or original-task data (rehearsal/replay), prefer PEFT/LoRA so the base stays frozen, and consider regularization that anchors important weights (e.g., EWC). Validate on held-out general benchmarks, not just the target task, so you can detect forgetting before it ships.",
+        "star_framework_tip": "Group remedies into smaller updates, data replay, PEFT, and regularization, plus general-eval monitoring.",
+        "common_pitfalls": [
+          "Measuring only target-task gains while general ability quietly degrades."
+        ],
+        "references": [
+          {
+            "title": "Overcoming Catastrophic Forgetting (EWC)",
+            "url": "https://arxiv.org/abs/1612.00796"
+          }
+        ]
+      },
+      {
+        "id": "m4_l1_m4",
+        "question": "Why does LoRA/PEFT inherently reduce catastrophic forgetting compared to full fine-tuning?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "Hugging Face",
+          "Google"
+        ],
+        "core_intent": "Tests the mechanism behind PEFT's robustness.",
+        "preparation_guide": "Connect frozen base weights to retained knowledge.",
+        "explanation": "Because the pretrained weights are frozen and only small added parameters are trained, the model's original knowledge is structurally preserved; the adapter learns a focused adjustment rather than overwriting the backbone. You can even disable or swap adapters to recover the base behavior, which full fine-tuning cannot do since it mutates the weights in place.",
+        "star_framework_tip": "Stress that frozen base weights cannot be overwritten, so general knowledge survives.",
+        "common_pitfalls": [
+          "Assuming PEFT eliminates forgetting entirely rather than reducing it."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face PEFT documentation",
+            "url": "https://huggingface.co/docs/peft"
+          },
+          {
+            "title": "Overcoming Catastrophic Forgetting (EWC)",
+            "url": "https://arxiv.org/abs/1612.00796"
+          }
+        ]
+      },
+      {
+        "id": "m4_l1_m5",
+        "question": "What signals tell you a base model is a good starting point for your task?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Tests model-selection judgment.",
+        "preparation_guide": "List domain fit, size, tokenizer, license, and baseline performance.",
+        "explanation": "Look for domain and language overlap with your task, a size that meets your latency/memory budget, a tokenizer with low fertility on your text, a permissive license for your use, and strong zero/few-shot baseline performance on a small sample of your task. A model that is already close before fine-tuning will adapt with less data and forget less.",
+        "star_framework_tip": "Check domain fit, size, tokenizer, license, and a quick baseline before committing.",
+        "common_pitfalls": [
+          "Picking by leaderboard rank alone, ignoring license and tokenizer fit."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
       }
     ],
     "senior": [
@@ -63,6 +255,79 @@
           "Only monitoring the target task performance during fine-tuning evaluations."
         ],
         "references": []
+      },
+      {
+        "id": "m4_l1_s2",
+        "question": "Design a continual / sequential fine-tuning strategy across multiple tasks that avoids forgetting.",
+        "complexity": "System Design",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests continual-learning system design.",
+        "preparation_guide": "Cover adapters-per-task, replay, and evaluation.",
+        "explanation": "Prefer task-specific LoRA adapters over one shared base, so each task is isolated and the base never changes; route to the right adapter at inference. If a single merged model is required, use rehearsal (mix prior-task data), regularization (EWC-style anchoring of important weights), and conservative learning rates, and continuously evaluate every prior task to catch regressions. Version adapters and keep a rollback path.",
+        "star_framework_tip": "Lead with per-task adapters; fall back to replay + regularization if one model is mandatory.",
+        "common_pitfalls": [
+          "Sequentially full-fine-tuning one model and overwriting earlier tasks."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face PEFT documentation",
+            "url": "https://huggingface.co/docs/peft"
+          },
+          {
+            "title": "Overcoming Catastrophic Forgetting (EWC)",
+            "url": "https://arxiv.org/abs/1612.00796"
+          }
+        ]
+      },
+      {
+        "id": "m4_l1_s3",
+        "question": "How do you decide between fine-tuning, retrieval-augmented generation, and prompt engineering for a given problem?",
+        "complexity": "Hard",
+        "companies": [
+          "Microsoft",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Tests the build-decision framework.",
+        "preparation_guide": "Map each approach to the kind of gap it closes.",
+        "explanation": "Use prompt engineering first for behavior achievable with instructions and examples (cheapest, no training). Use RAG when the gap is knowledge or freshness, injecting documents at inference rather than baking facts into weights. Use fine-tuning when you need a consistent style, format, skill, or latency that prompting cannot reliably deliver, or to compress behavior into a smaller model. They combine: a fine-tuned SLM with RAG is common.",
+        "star_framework_tip": "Match prompting->behavior, RAG->knowledge, fine-tuning->skill/format, and note they stack.",
+        "common_pitfalls": [
+          "Fine-tuning to add facts that RAG would supply more cheaply and freshly."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m4_l1_s4",
+        "question": "Why do low-rank updates suffice for fine-tuning (the intrinsic-dimension argument behind LoRA)?",
+        "complexity": "Hard",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Meta"
+        ],
+        "core_intent": "Tests the theory motivating LoRA.",
+        "preparation_guide": "Explain that task adaptation lives in a low-dimensional subspace.",
+        "explanation": "Empirically, adapting a large pretrained model to a downstream task requires changing weights only within a low-dimensional subspace; the effective 'intrinsic dimension' of fine-tuning is small. LoRA exploits this by constraining the weight update to a low-rank product (B times A), capturing most of the needed change with a tiny number of parameters, which is why it matches full fine-tuning on many tasks.",
+        "star_framework_tip": "Connect the small intrinsic dimension of adaptation to LoRA's low-rank update.",
+        "common_pitfalls": [
+          "Assuming every weight must change substantially to adapt a model."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
       }
     ]
   }

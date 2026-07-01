@@ -23,6 +23,102 @@
             "url": "https://arxiv.org/abs/2309.06180"
           }
         ]
+      },
+      {
+        "id": "m5_l2_j2",
+        "question": "What is the KV cache, and why does it matter for serving throughput and memory?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Tests the central serving data structure.",
+        "preparation_guide": "Explain reuse of past keys/values and its memory cost.",
+        "explanation": "During generation the model caches the keys and values of all previous tokens so each new token's attention does not recompute the whole sequence, making decoding fast. The cost is memory that grows with sequence length, layers, and concurrent requests, so KV-cache size often limits how many requests and how long a context a server can handle at once.",
+        "star_framework_tip": "Tie the cache to fast decode but growing per-request memory that caps concurrency.",
+        "common_pitfalls": [
+          "Ignoring the KV cache when reasoning about serving memory limits."
+        ],
+        "references": [
+          {
+            "title": "Efficient Memory Management for LLM Serving (PagedAttention)",
+            "url": "https://arxiv.org/abs/2309.06180"
+          }
+        ]
+      },
+      {
+        "id": "m5_l2_j3",
+        "question": "What is the difference between latency and throughput, and between time-to-first-token and inter-token latency?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Amazon",
+          "Microsoft"
+        ],
+        "core_intent": "Tests serving performance vocabulary.",
+        "preparation_guide": "Define each and what users feel.",
+        "explanation": "Latency is how long one request takes; throughput is how many requests/tokens the system handles per second. Time-to-first-token (TTFT) is the wait before output starts (dominated by prefill), while inter-token latency (TPOT) is the gap between streamed tokens (the decode speed). Users feel TTFT as responsiveness and TPOT as reading speed; operators optimize throughput for cost.",
+        "star_framework_tip": "Separate per-request latency (TTFT, TPOT) from system throughput.",
+        "common_pitfalls": [
+          "Conflating throughput gains with per-request latency improvements."
+        ],
+        "references": [
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          }
+        ]
+      },
+      {
+        "id": "m5_l2_j4",
+        "question": "What is token streaming, and why does it improve the user experience?",
+        "complexity": "Easy",
+        "companies": [
+          "OpenAI",
+          "Amazon",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests a basic serving feature.",
+        "preparation_guide": "Explain incremental delivery and perceived latency.",
+        "explanation": "Streaming sends each token as it is generated rather than waiting for the full response, so the user sees output begin almost immediately. It does not make total generation faster, but it sharply improves perceived responsiveness and lets clients render progressively, which matters for chat and long answers.",
+        "star_framework_tip": "Say it improves perceived latency by showing output as it is produced.",
+        "common_pitfalls": [
+          "Claiming streaming reduces total generation time."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Text Generation Inference",
+            "url": "https://github.com/huggingface/text-generation-inference"
+          }
+        ]
+      },
+      {
+        "id": "m5_l2_j5",
+        "question": "Why use a dedicated inference server (vLLM, TGI, Ollama) instead of calling model.generate inside a simple Flask app?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Hugging Face",
+          "Amazon"
+        ],
+        "core_intent": "Tests why purpose-built serving exists.",
+        "preparation_guide": "Contrast naive serving with optimized engines.",
+        "explanation": "A naive Flask wrapper processes one request at a time with no batching or KV-cache management, wasting the GPU and collapsing under load. Dedicated engines add continuous batching, paged KV-cache memory, optimized kernels, streaming, and quantized-model support, delivering far higher throughput and lower cost. Use them for any real serving workload.",
+        "star_framework_tip": "List the optimizations dedicated engines add over a hand-rolled endpoint.",
+        "common_pitfalls": [
+          "Shipping model.generate in Flask to production and hitting throughput walls."
+        ],
+        "references": [
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          },
+          {
+            "title": "Hugging Face Text Generation Inference",
+            "url": "https://github.com/huggingface/text-generation-inference"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -42,6 +138,102 @@
           "Blocking the event loop by running generation synchronously inside the endpoint definition."
         ],
         "references": []
+      },
+      {
+        "id": "m5_l2_m2",
+        "question": "Explain continuous (in-flight) batching in depth and how it differs from static batching.",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Tests the key throughput technique.",
+        "preparation_guide": "Contrast fixed batches with per-iteration scheduling.",
+        "explanation": "Static batching groups a fixed set of requests and runs them together until all finish, so short requests wait for the longest and the GPU idles as the batch drains. Continuous batching schedules at the token level: finished sequences leave and new requests join the running batch every iteration, keeping the GPU saturated. This dramatically raises throughput under mixed-length, bursty traffic.",
+        "star_framework_tip": "Frame it as per-iteration request admission/eviction versus fixed-batch waiting.",
+        "common_pitfalls": [
+          "Thinking continuous batching just means a larger fixed batch size."
+        ],
+        "references": [
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          }
+        ]
+      },
+      {
+        "id": "m5_l2_m3",
+        "question": "What are the prefill and decode phases of generation, and why do they have different compute profiles?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Google",
+          "Amazon"
+        ],
+        "core_intent": "Tests understanding of the two-phase inference cost.",
+        "preparation_guide": "Explain compute-bound prefill vs memory-bound decode.",
+        "explanation": "Prefill processes the entire prompt in parallel to build the KV cache; it is compute-bound and sets TTFT. Decode then generates one token at a time, each step reading the whole KV cache and weights for a single new token, which is memory-bandwidth-bound and sets inter-token latency. Because they stress different resources, optimizations (and even chunked/disaggregated scheduling) treat them separately.",
+        "star_framework_tip": "Pair prefill (parallel, compute-bound, TTFT) with decode (sequential, memory-bound, TPOT).",
+        "common_pitfalls": [
+          "Assuming decode is compute-bound like prefill."
+        ],
+        "references": [
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          }
+        ]
+      },
+      {
+        "id": "m5_l2_m4",
+        "question": "How do you reduce time-to-first-token and tail latency on a serving system?",
+        "complexity": "Medium",
+        "companies": [
+          "Amazon",
+          "NVIDIA",
+          "Google"
+        ],
+        "core_intent": "Tests latency engineering.",
+        "preparation_guide": "List concrete levers.",
+        "explanation": "Lower TTFT with chunked prefill (interleaving prompt processing with decode), prompt/prefix caching for shared system prompts, smaller or quantized models, and faster kernels. Control tail latency with request prioritization and admission control, capping max concurrent sequences and context length, and autoscaling so queues do not build. Measure p50/p95/p99 separately, since tail behavior, not the mean, drives SLAs.",
+        "star_framework_tip": "Give TTFT levers (chunked prefill, prefix cache) and tail levers (prioritization, admission, autoscale).",
+        "common_pitfalls": [
+          "Optimizing average latency while p99 violations persist."
+        ],
+        "references": [
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          }
+        ]
+      },
+      {
+        "id": "m5_l2_m5",
+        "question": "What are the trade-offs of serving a quantized model (e.g., AWQ/GPTQ in vLLM)?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Hugging Face",
+          "Amazon"
+        ],
+        "core_intent": "Tests quantization in the serving context.",
+        "preparation_guide": "Balance memory/throughput against accuracy and kernel support.",
+        "explanation": "Quantized weights cut model memory, freeing room for a larger KV cache and more concurrent requests, and can speed memory-bound decode. The trade-offs are a small accuracy drop, dependence on optimized quantized kernels (not every method is equally fast on every GPU), and possible overhead from dequantization. Validate both quality and measured throughput on the target hardware rather than assuming a speedup.",
+        "star_framework_tip": "Pair the memory/concurrency win with accuracy and kernel-support caveats.",
+        "common_pitfalls": [
+          "Assuming any quantization automatically speeds up serving on any GPU."
+        ],
+        "references": [
+          {
+            "title": "AWQ: Activation-aware Weight Quantization",
+            "url": "https://arxiv.org/abs/2306.00978"
+          },
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          }
+        ]
       }
     ],
     "senior": [
@@ -65,6 +257,91 @@
           {
             "title": "Fast Inference from Transformers via Speculative Decoding",
             "url": "https://arxiv.org/abs/2211.17111"
+          }
+        ]
+      },
+      {
+        "id": "m5_l2_s2",
+        "question": "Design a multi-tenant SLM serving system with per-tenant rate limits, fairness, and cost attribution.",
+        "complexity": "System Design",
+        "companies": [
+          "Amazon",
+          "NVIDIA",
+          "Microsoft"
+        ],
+        "core_intent": "Tests production multi-tenancy.",
+        "preparation_guide": "Cover scheduling fairness, quotas, isolation, and metering.",
+        "explanation": "Put a gateway in front that authenticates tenants, enforces per-tenant rate limits and quotas, and tags requests. Use a scheduler that batches across tenants while ensuring fairness (e.g., weighted fair queuing) so a heavy tenant cannot starve others, and isolate noisy neighbors with concurrency caps. Meter tokens per tenant for cost attribution and billing, expose per-tenant latency metrics, and autoscale on queue depth. Provide a fallback/smaller model for overflow.",
+        "star_framework_tip": "Cover gateway quotas, fair scheduling, isolation, token metering, and autoscaling.",
+        "common_pitfalls": [
+          "Sharing one queue with no fairness, letting one tenant degrade everyone."
+        ],
+        "references": [
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          }
+        ]
+      },
+      {
+        "id": "m5_l2_s3",
+        "question": "Architect an on-device / CPU-only serving pipeline for an SLM (e.g., a desktop or mobile app).",
+        "complexity": "System Design",
+        "companies": [
+          "Apple",
+          "Intel",
+          "Qualcomm"
+        ],
+        "core_intent": "Tests edge/CPU deployment design.",
+        "preparation_guide": "Cover format, runtime, memory, threading, and updates.",
+        "explanation": "Ship a quantized GGUF (or ONNX/Core ML) model and run it with a CPU/NPU-optimized runtime (llama.cpp, ONNX Runtime, Core ML). Size the model so weights plus KV cache fit the device budget at the target context, tune thread count and use a quantized KV cache and short context where possible, and warm the model to hide load latency. Deliver updates as signed, delta-downloaded artifacts with rollback, and degrade gracefully (smaller model) on low-end hardware.",
+        "star_framework_tip": "Walk format -> runtime -> memory/threads -> warmup -> signed OTA updates.",
+        "common_pitfalls": [
+          "Shipping an unquantized model and exhausting device memory at long context."
+        ],
+        "references": [
+          {
+            "title": "llama.cpp (GGUF inference)",
+            "url": "https://github.com/ggerganov/llama.cpp"
+          },
+          {
+            "title": "ONNX Runtime",
+            "url": "https://onnxruntime.ai"
+          }
+        ]
+      },
+      {
+        "id": "m5_l2_s4",
+        "question": "How do you choose a serving stack among vLLM, TGI, llama.cpp, and ONNX/TensorRT-LLM for given constraints?",
+        "complexity": "Hard",
+        "companies": [
+          "NVIDIA",
+          "Hugging Face",
+          "Amazon"
+        ],
+        "core_intent": "Tests stack selection.",
+        "preparation_guide": "Map each engine to its sweet spot.",
+        "explanation": "vLLM and TGI target high-throughput GPU serving with continuous batching and paged KV cache, ideal for server workloads. llama.cpp/Ollama excel at CPU and consumer-GPU local/edge inference via GGUF. TensorRT-LLM gives top performance on NVIDIA GPUs at the cost of build complexity and lock-in, while ONNX Runtime offers broad cross-hardware portability. Choose based on hardware, throughput/latency targets, portability needs, and operational complexity you can absorb.",
+        "star_framework_tip": "Match each engine to hardware and throughput/portability constraints, not hype.",
+        "common_pitfalls": [
+          "Defaulting to one engine regardless of whether the workload is server or edge."
+        ],
+        "references": [
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          },
+          {
+            "title": "NVIDIA TensorRT-LLM",
+            "url": "https://github.com/NVIDIA/TensorRT-LLM"
+          },
+          {
+            "title": "llama.cpp (GGUF inference)",
+            "url": "https://github.com/ggerganov/llama.cpp"
+          },
+          {
+            "title": "ONNX Runtime",
+            "url": "https://onnxruntime.ai"
           }
         ]
       }

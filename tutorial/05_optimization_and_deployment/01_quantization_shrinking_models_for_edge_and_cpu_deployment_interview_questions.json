@@ -24,6 +24,106 @@
             "url": "https://pytorch.org/docs/stable/quantization.html"
           }
         ]
+      },
+      {
+        "id": "m5_l1_j2",
+        "question": "What does quantization actually do to a model, and what memory savings do INT8 and INT4 give?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Intel",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests the basic mechanism and payoff.",
+        "preparation_guide": "Connect precision reduction to the memory multiplier.",
+        "explanation": "Quantization stores weights (and sometimes activations) in lower-precision integers instead of 16- or 32-bit floats, mapping float ranges to integer levels. Versus FP16, INT8 roughly halves memory and INT4 roughly quarters it, so a model that needs several gigabytes in FP16 can fit a laptop or phone after quantization, with modest quality loss.",
+        "star_framework_tip": "State precision reduction and the ~2x (INT8) / ~4x (INT4) savings vs FP16.",
+        "common_pitfalls": [
+          "Confusing quantization (precision) with pruning (removing weights)."
+        ],
+        "references": [
+          {
+            "title": "GPTQ: Accurate Post-Training Quantization",
+            "url": "https://arxiv.org/abs/2210.17323"
+          }
+        ]
+      },
+      {
+        "id": "m5_l1_j3",
+        "question": "What is the difference between weight-only and weight-plus-activation quantization?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Intel",
+          "Microsoft"
+        ],
+        "core_intent": "Tests what gets quantized.",
+        "preparation_guide": "Contrast the two scopes and their difficulty.",
+        "explanation": "Weight-only quantization compresses just the stored weights (dequantizing for compute), which is simpler and the common choice for memory-bound SLM inference. Weight-plus-activation quantization also quantizes the activations so integer math can run end to end (faster on integer hardware), but activations have outliers that make it harder to do without accuracy loss.",
+        "star_framework_tip": "Say weight-only is simpler/memory-focused; activation quantization is harder but enables integer compute.",
+        "common_pitfalls": [
+          "Assuming all 4-bit methods quantize activations too."
+        ],
+        "references": [
+          {
+            "title": "SmoothQuant: Post-Training Quantization for LLMs",
+            "url": "https://arxiv.org/abs/2211.10438"
+          }
+        ]
+      },
+      {
+        "id": "m5_l1_j4",
+        "question": "What is the GGUF format, and what do names like Q4_K_M mean?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Intel",
+          "NVIDIA"
+        ],
+        "core_intent": "Tests the practical local-deployment format.",
+        "preparation_guide": "Explain GGUF and k-quant naming.",
+        "explanation": "GGUF is the single-file format used by llama.cpp to store quantized models with metadata for CPU and GPU inference. Names like Q4_K_M indicate the bit-width (4-bit), the k-quant scheme (K), and a size/quality tier (S/M/L), so you can trade file size against accuracy. It is the standard for running SLMs locally via llama.cpp and Ollama.",
+        "star_framework_tip": "Decode the name: bits, k-quant scheme, quality tier.",
+        "common_pitfalls": [
+          "Treating GGUF as a model architecture rather than a storage/inference format."
+        ],
+        "references": [
+          {
+            "title": "llama.cpp (GGUF inference)",
+            "url": "https://github.com/ggerganov/llama.cpp"
+          },
+          {
+            "title": "Ollama",
+            "url": "https://ollama.com"
+          }
+        ]
+      },
+      {
+        "id": "m5_l1_j5",
+        "question": "How much accuracy does 4-bit quantization typically cost, and why is it acceptable for SLMs?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Hugging Face",
+          "Intel"
+        ],
+        "core_intent": "Tests the quality/efficiency balance.",
+        "preparation_guide": "Give the rough degradation and the deployment rationale.",
+        "explanation": "With good methods (e.g., AWQ, GPTQ, k-quants), 4-bit weight quantization usually costs only a small perplexity/accuracy drop, often a few percent or less, while cutting memory ~4x. For SLMs that must fit edge devices, that trade is almost always worth it, and you validate the specific drop on your task before shipping.",
+        "star_framework_tip": "Pair the small typical drop with the large memory win and a task check.",
+        "common_pitfalls": [
+          "Assuming 4-bit is lossless, or that the drop is the same for every model and task."
+        ],
+        "references": [
+          {
+            "title": "AWQ: Activation-aware Weight Quantization",
+            "url": "https://arxiv.org/abs/2306.00978"
+          },
+          {
+            "title": "GPTQ: Accurate Post-Training Quantization",
+            "url": "https://arxiv.org/abs/2210.17323"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -44,6 +144,106 @@
           "Assuming zero-point is always zero (it is only zero in symmetric quantization)."
         ],
         "references": []
+      },
+      {
+        "id": "m5_l1_m2",
+        "question": "What are activation outliers, and why do they make activation quantization hard?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Intel",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the core difficulty in low-bit inference.",
+        "preparation_guide": "Explain outlier features and their effect on scale.",
+        "explanation": "In large transformers a few activation channels take on very large magnitudes (outlier features). A single quantization scale must cover that huge range, which crushes the precision available to the many normal values, causing big accuracy loss. This is why naive activation quantization fails and methods like LLM.int8() (keep outliers in higher precision) and SmoothQuant (rescale to tame outliers) were developed.",
+        "star_framework_tip": "Center on outliers stretching the scale and starving normal values of precision.",
+        "common_pitfalls": [
+          "Assuming activations quantize as easily as weights."
+        ],
+        "references": [
+          {
+            "title": "LLM.int8(): 8-bit Matrix Multiplication for Transformers",
+            "url": "https://arxiv.org/abs/2208.07339"
+          },
+          {
+            "title": "SmoothQuant: Post-Training Quantization for LLMs",
+            "url": "https://arxiv.org/abs/2211.10438"
+          }
+        ]
+      },
+      {
+        "id": "m5_l1_m3",
+        "question": "What is group-wise (block-wise) quantization, and how does group size trade size against accuracy?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Intel",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests a key accuracy lever.",
+        "preparation_guide": "Explain per-group scales and the size trade-off.",
+        "explanation": "Instead of one scale per tensor, group-wise quantization assigns a separate scale (and zero-point) to small groups of weights (e.g., 32, 64, or 128 elements). Smaller groups track local value ranges better, improving accuracy, but store more scale metadata, slightly increasing size. Group size (e.g., 128) is the standard knob balancing fidelity and footprint.",
+        "star_framework_tip": "Tie smaller groups to better accuracy but more metadata overhead.",
+        "common_pitfalls": [
+          "Believing group size has no effect on either accuracy or file size."
+        ],
+        "references": [
+          {
+            "title": "GPTQ: Accurate Post-Training Quantization",
+            "url": "https://arxiv.org/abs/2210.17323"
+          }
+        ]
+      },
+      {
+        "id": "m5_l1_m4",
+        "question": "How does the choice of calibration data affect post-training quantization quality?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Intel",
+          "Microsoft"
+        ],
+        "core_intent": "Tests a subtle but important PTQ detail.",
+        "preparation_guide": "Explain why representative calibration matters.",
+        "explanation": "PTQ methods like GPTQ and AWQ use a small calibration set to estimate activation statistics and choose scales that minimize error. If the calibration data is unrepresentative of the deployment distribution (wrong domain or too little), the chosen scales fit the wrong ranges and accuracy suffers. Use a few hundred samples drawn from data similar to real inputs.",
+        "star_framework_tip": "Stress that calibration data must match the deployment distribution.",
+        "common_pitfalls": [
+          "Calibrating on random or off-domain text and getting degraded quantized accuracy."
+        ],
+        "references": [
+          {
+            "title": "AWQ: Activation-aware Weight Quantization",
+            "url": "https://arxiv.org/abs/2306.00978"
+          },
+          {
+            "title": "GPTQ: Accurate Post-Training Quantization",
+            "url": "https://arxiv.org/abs/2210.17323"
+          }
+        ]
+      },
+      {
+        "id": "m5_l1_m5",
+        "question": "When should you choose Quantization-Aware Training over Post-Training Quantization, and at what cost?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Intel",
+          "Google"
+        ],
+        "core_intent": "Tests the PTQ/QAT decision.",
+        "preparation_guide": "Map the choice to bit-width and accuracy needs.",
+        "explanation": "PTQ is fast and data-light and is sufficient for 8-bit and often 4-bit weight quantization. QAT simulates quantization during training so the model learns to tolerate it, recovering accuracy at aggressive low bit-widths or when PTQ degrades too much. The cost is a full training/fine-tuning run with quantization in the loop, so reserve QAT for accuracy-critical, very-low-bit deployments.",
+        "star_framework_tip": "Default to PTQ; escalate to QAT for low-bit or accuracy-critical cases despite its training cost.",
+        "common_pitfalls": [
+          "Reaching for QAT when PTQ would already meet the accuracy bar."
+        ],
+        "references": [
+          {
+            "title": "GPTQ: Accurate Post-Training Quantization",
+            "url": "https://arxiv.org/abs/2210.17323"
+          }
+        ]
       }
     ],
     "senior": [
@@ -67,6 +267,83 @@
           {
             "title": "AWQ: Activation-aware Weight Quantization",
             "url": "https://arxiv.org/abs/2306.00978"
+          }
+        ]
+      },
+      {
+        "id": "m5_l1_s2",
+        "question": "Explain SmoothQuant: how does it make activation quantization viable?",
+        "complexity": "Hard",
+        "companies": [
+          "NVIDIA",
+          "Intel",
+          "Microsoft"
+        ],
+        "core_intent": "Tests a leading activation-quantization technique.",
+        "preparation_guide": "Explain migrating difficulty from activations to weights.",
+        "explanation": "SmoothQuant observes that activation outliers, not weights, cause most quantization error, and that weights are easy to quantize. It applies a per-channel scaling that divides the activations by a factor and multiplies the corresponding weights by it, mathematically equivalent but shifting the dynamic-range burden onto the (robust) weights. This lets both activations and weights be quantized to low precision with minimal accuracy loss, enabling fast integer inference.",
+        "star_framework_tip": "Center on the equivalence transform that moves outlier difficulty onto weights.",
+        "common_pitfalls": [
+          "Describing SmoothQuant as just clipping or dropping outliers."
+        ],
+        "references": [
+          {
+            "title": "SmoothQuant: Post-Training Quantization for LLMs",
+            "url": "https://arxiv.org/abs/2211.10438"
+          },
+          {
+            "title": "LLM.int8(): 8-bit Matrix Multiplication for Transformers",
+            "url": "https://arxiv.org/abs/2208.07339"
+          }
+        ]
+      },
+      {
+        "id": "m5_l1_s3",
+        "question": "Design an evaluation pipeline to choose a quantization configuration for an SLM.",
+        "complexity": "System Design",
+        "companies": [
+          "NVIDIA",
+          "Amazon",
+          "Intel"
+        ],
+        "core_intent": "Tests rigorous config selection.",
+        "preparation_guide": "Cover quality, latency, and size across bit-widths.",
+        "explanation": "Sweep candidate configs (e.g., INT8, 4-bit GPTQ/AWQ, k-quant tiers) and for each measure perplexity and task-specific accuracy on a representative, contamination-checked set, plus latency/throughput and file size on the target hardware. Plot the quality-vs-size/latency frontier and pick the smallest/fastest config that clears your quality bar with margin, validating on real device conditions rather than a dev box.",
+        "star_framework_tip": "Measure quality + latency + size per config and pick on the Pareto frontier with a quality floor.",
+        "common_pitfalls": [
+          "Choosing the smallest model by size alone without checking task quality on-device."
+        ],
+        "references": [
+          {
+            "title": "AWQ: Activation-aware Weight Quantization",
+            "url": "https://arxiv.org/abs/2306.00978"
+          },
+          {
+            "title": "Perplexity of fixed-length models (Hugging Face)",
+            "url": "https://huggingface.co/docs/transformers/perplexity"
+          }
+        ]
+      },
+      {
+        "id": "m5_l1_s4",
+        "question": "Compare quantization, distillation, and pruning as compression strategies. When do you combine them?",
+        "complexity": "Hard",
+        "companies": [
+          "Google",
+          "NVIDIA",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the full compression toolbox.",
+        "preparation_guide": "Contrast what each reduces and how they stack.",
+        "explanation": "Quantization lowers numeric precision (smaller, faster, easy to apply post-hoc). Distillation trains a smaller student to mimic a teacher (smaller architecture, needs training data/compute). Pruning removes weights or structures (sparsity; needs hardware/software support to realize speedups, often plus fine-tuning). They are complementary: a common pipeline distills to a smaller model, then quantizes it for deployment, with optional structured pruning where the runtime supports sparse execution.",
+        "star_framework_tip": "Map each to what it reduces, then describe distill-then-quantize as the common stack.",
+        "common_pitfalls": [
+          "Treating them as interchangeable rather than complementary compression axes."
+        ],
+        "references": [
+          {
+            "title": "GPTQ: Accurate Post-Training Quantization",
+            "url": "https://arxiv.org/abs/2210.17323"
           }
         ]
       }

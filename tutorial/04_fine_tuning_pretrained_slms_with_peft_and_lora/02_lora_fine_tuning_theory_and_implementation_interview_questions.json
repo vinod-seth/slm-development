@@ -24,6 +24,106 @@
             "url": "https://arxiv.org/abs/2106.09685"
           }
         ]
+      },
+      {
+        "id": "m4_l2_j2",
+        "question": "What do the LoRA hyperparameters r (rank), alpha, and dropout control?",
+        "complexity": "Easy",
+        "companies": [
+          "Microsoft",
+          "Hugging Face",
+          "Google"
+        ],
+        "core_intent": "Tests basic LoRA configuration.",
+        "preparation_guide": "Map each hyperparameter to its effect.",
+        "explanation": "r is the rank of the low-rank update and sets the adapter's capacity and parameter count. alpha is a scaling factor applied as alpha/r to the update, controlling how strongly the adapter affects the base. LoRA dropout regularizes the adapter to reduce overfitting on small datasets. Together they trade capacity against overfitting.",
+        "star_framework_tip": "Pair r->capacity, alpha->update strength, dropout->regularization.",
+        "common_pitfalls": [
+          "Confusing alpha with the rank or treating it as an absolute scale."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          },
+          {
+            "title": "Hugging Face PEFT documentation",
+            "url": "https://huggingface.co/docs/peft"
+          }
+        ]
+      },
+      {
+        "id": "m4_l2_j3",
+        "question": "Why are the LoRA matrices initialized so the adapter starts as a no-op?",
+        "complexity": "Easy",
+        "companies": [
+          "Microsoft",
+          "Hugging Face",
+          "Meta"
+        ],
+        "core_intent": "Tests an implementation detail with a real purpose.",
+        "preparation_guide": "Explain zero-init of B and random A.",
+        "explanation": "LoRA initializes one matrix (B) to zeros and the other (A) randomly, so their product B times A is zero at the start. This means the adapted model initially behaves exactly like the pretrained base, and training smoothly departs from a known-good point instead of jolting the model with a random update.",
+        "star_framework_tip": "Say the zero product means training starts from the unchanged base.",
+        "common_pitfalls": [
+          "Initializing both matrices randomly and destabilizing early training."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
+      },
+      {
+        "id": "m4_l2_j4",
+        "question": "Which layers do you typically apply LoRA to, and why?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests target-module selection.",
+        "preparation_guide": "Recall attention and MLP projections.",
+        "explanation": "LoRA is commonly applied to the attention projections (query, key, value, output) and increasingly to the MLP/FFN projections (gate, up, down). Targeting more linear layers gives the adapter more places to influence the model and usually improves quality, at the cost of more adapter parameters.",
+        "star_framework_tip": "List the attention and MLP projections and note broader targeting helps.",
+        "common_pitfalls": [
+          "Applying LoRA only to query/value and leaving quality on the table."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          },
+          {
+            "title": "Hugging Face PEFT documentation",
+            "url": "https://huggingface.co/docs/peft"
+          }
+        ]
+      },
+      {
+        "id": "m4_l2_j5",
+        "question": "What training memory savings does LoRA provide, and why?",
+        "complexity": "Easy",
+        "companies": [
+          "Microsoft",
+          "NVIDIA",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests the source of LoRA's efficiency.",
+        "preparation_guide": "Connect frozen base to optimizer-state savings.",
+        "explanation": "Because the base weights are frozen, they need no gradients or optimizer states; only the small adapter matrices do. Since optimizer state (AdamW keeps two tensors per trainable parameter) is the largest training cost, restricting it to a tiny adapter collapses that cost, which is what lets LoRA fine-tune on modest GPUs.",
+        "star_framework_tip": "Attribute the savings to no optimizer state for the frozen base.",
+        "common_pitfalls": [
+          "Thinking LoRA also shrinks the base model's memory (only quantization does)."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -44,6 +144,106 @@
           "Initializing both matrices randomly, which introduces noise and disrupts pre-trained representations at the start of training."
         ],
         "references": []
+      },
+      {
+        "id": "m4_l2_m2",
+        "question": "How does the alpha/r scaling work, and how should you set alpha relative to r?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "Hugging Face",
+          "Google"
+        ],
+        "core_intent": "Tests correct LoRA scaling.",
+        "preparation_guide": "Explain the alpha/r factor and common heuristics.",
+        "explanation": "The adapter output is scaled by alpha divided by r, so increasing r without adjusting alpha would otherwise change the effective update magnitude; the division keeps it stable. A common heuristic is to set alpha around equal to or a small multiple of r (so the scale stays near a constant), then tune. The point is that alpha and r interact, so they should be chosen together.",
+        "star_framework_tip": "Explain the alpha/r ratio and tune them jointly, not independently.",
+        "common_pitfalls": [
+          "Cranking r up while leaving alpha fixed and unintentionally shrinking the update."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
+      },
+      {
+        "id": "m4_l2_m3",
+        "question": "What exactly is QLoRA, beyond 'LoRA on a quantized model'?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "Hugging Face",
+          "NVIDIA"
+        ],
+        "core_intent": "Tests precise knowledge of QLoRA's components.",
+        "preparation_guide": "Name NF4, double quantization, and paged optimizers.",
+        "explanation": "QLoRA loads the frozen base in 4-bit NormalFloat (NF4), a data type tuned for normally distributed weights, and trains LoRA adapters on top. It adds double quantization (quantizing the quantization constants) to save more memory and paged optimizers to handle memory spikes without out-of-memory crashes. The combination fine-tunes large models on a single consumer GPU with minimal quality loss.",
+        "star_framework_tip": "List NF4 + double quantization + paged optimizers as the three pieces.",
+        "common_pitfalls": [
+          "Describing QLoRA as ordinary 4-bit loading with no other components."
+        ],
+        "references": [
+          {
+            "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+            "url": "https://arxiv.org/abs/2305.14314"
+          },
+          {
+            "title": "bitsandbytes",
+            "url": "https://github.com/bitsandbytes-foundation/bitsandbytes"
+          }
+        ]
+      },
+      {
+        "id": "m4_l2_m4",
+        "question": "What are the trade-offs of a higher versus lower LoRA rank r?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "Hugging Face",
+          "Amazon"
+        ],
+        "core_intent": "Tests capacity tuning.",
+        "preparation_guide": "Balance capacity, overfitting, and parameter count.",
+        "explanation": "A higher rank gives the adapter more capacity to fit complex tasks but adds parameters, raises overfitting risk on small datasets, and increases memory; a lower rank is cheaper and more regularized but may underfit hard tasks. Start with a small rank, increase only if the task underfits, and pair changes with alpha and validation.",
+        "star_framework_tip": "Frame r as a capacity dial: too low underfits, too high overfits and costs more.",
+        "common_pitfalls": [
+          "Assuming a very high rank always improves quality."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
+      },
+      {
+        "id": "m4_l2_m5",
+        "question": "How do you merge LoRA adapters into the base, and what caveats apply with a quantized base?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "NVIDIA"
+        ],
+        "core_intent": "Tests deployment of LoRA weights.",
+        "preparation_guide": "Explain merging math and the quantization caveat.",
+        "explanation": "Merging adds the scaled low-rank update (alpha/r times B times A) back into the base weight matrices, producing a single model with no extra inference layers or latency. The caveat is that you cannot cleanly merge into a 4-bit quantized base; you typically dequantize to fp16, merge, then re-quantize, accepting a small quality shift. Keep the unmerged adapter for flexibility and swapping.",
+        "star_framework_tip": "Describe the add-back merge and the dequantize-merge-requantize path for QLoRA.",
+        "common_pitfalls": [
+          "Merging directly into a 4-bit base and corrupting the weights."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          },
+          {
+            "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+            "url": "https://arxiv.org/abs/2305.14314"
+          }
+        ]
       }
     ],
     "senior": [
@@ -67,6 +267,91 @@
           {
             "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
             "url": "https://arxiv.org/abs/2305.14314"
+          }
+        ]
+      },
+      {
+        "id": "m4_l2_s2",
+        "question": "Compare LoRA with other PEFT methods (prefix/prompt tuning, adapters, IA3, DoRA). What are the trade-offs?",
+        "complexity": "Hard",
+        "companies": [
+          "Microsoft",
+          "Hugging Face",
+          "Google"
+        ],
+        "core_intent": "Tests breadth across the PEFT landscape.",
+        "preparation_guide": "Summarize each method and where it wins.",
+        "explanation": "Prompt and prefix tuning prepend learned vectors and train very few parameters but can be less expressive and sensitive. Bottleneck adapters insert small layers and add some inference latency unless merged. IA3 scales activations with tiny learned vectors, extremely parameter-light. DoRA decomposes weights into magnitude and direction and often beats LoRA at the same budget. LoRA remains the default for its strong quality, mergeability (zero added latency), and tooling.",
+        "star_framework_tip": "Give one line per method and end with why LoRA is the usual default.",
+        "common_pitfalls": [
+          "Treating all PEFT methods as equivalent in expressiveness and latency."
+        ],
+        "references": [
+          {
+            "title": "Prefix-Tuning: Optimizing Continuous Prompts",
+            "url": "https://arxiv.org/abs/2101.00190"
+          },
+          {
+            "title": "The Power of Scale for Parameter-Efficient Prompt Tuning",
+            "url": "https://arxiv.org/abs/2104.08691"
+          },
+          {
+            "title": "Few-Shot PEFT is Better and Cheaper than ICL (IA3/T-Few)",
+            "url": "https://arxiv.org/abs/2205.05638"
+          },
+          {
+            "title": "DoRA: Weight-Decomposed Low-Rank Adaptation",
+            "url": "https://arxiv.org/abs/2402.09353"
+          }
+        ]
+      },
+      {
+        "id": "m4_l2_s3",
+        "question": "Design a system to serve many task-specific LoRA adapters on one shared base model cost-effectively.",
+        "complexity": "System Design",
+        "companies": [
+          "NVIDIA",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests multi-adapter serving architecture.",
+        "preparation_guide": "Cover shared base, dynamic adapter loading, and batching.",
+        "explanation": "Keep one base model resident in GPU memory and store adapters separately, loading or hot-swapping the small adapter weights per request; modern serving stacks can even batch requests that use different adapters together. This amortizes the expensive base across many tasks, keeps per-tenant cost low, and lets you add or update a task by shipping a few megabytes of adapter rather than a full model. Add an adapter registry, versioning, and a fallback to the base.",
+        "star_framework_tip": "Center on one resident base plus swappable adapters, with multi-adapter batching.",
+        "common_pitfalls": [
+          "Loading a separately merged full model per task and exhausting GPU memory."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face PEFT documentation",
+            "url": "https://huggingface.co/docs/peft"
+          }
+        ]
+      },
+      {
+        "id": "m4_l2_s4",
+        "question": "A LoRA fine-tune underperforms full fine-tuning on a complex task. What would you investigate?",
+        "complexity": "Hard",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests systematic LoRA debugging.",
+        "preparation_guide": "List the knobs that close the gap.",
+        "explanation": "Check whether the rank is too low for the task, whether enough modules are targeted (add the MLP projections, not just attention), the alpha/r scaling and learning rate, the number of epochs and data quality, and whether the base model is a good fit. Often raising rank and targeting all linear layers, with a tuned learning rate, recovers most of the gap; if not, the task may genuinely need full fine-tuning.",
+        "star_framework_tip": "Walk rank, target modules, alpha/LR, epochs/data, then concede full FT if needed.",
+        "common_pitfalls": [
+          "Concluding LoRA cannot work before tuning rank and target modules."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          },
+          {
+            "title": "Hugging Face PEFT documentation",
+            "url": "https://huggingface.co/docs/peft"
           }
         ]
       }

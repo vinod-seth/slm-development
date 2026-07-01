@@ -23,6 +23,175 @@
             "url": "https://pytorch.org/docs/stable/cuda.html"
           }
         ]
+      },
+      {
+        "id": "m1_l3_j2",
+        "question": "What is the difference between conda, venv, and pip, and why use isolated environments for ML projects?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Checks basic environment-management hygiene.",
+        "preparation_guide": "Know what each tool does and why isolation matters.",
+        "explanation": "pip installs Python packages; venv creates a lightweight isolated Python environment; conda manages both Python and non-Python binaries (including some CUDA components) and can create environments too. Isolation keeps each project's dependency versions separate, avoiding conflicts and making the setup reproducible. For ML, conda is handy for binary/CUDA management, while venv plus pip is lighter and common in containers.",
+        "star_framework_tip": "Map each tool to its scope (packages, env, binaries) and lead with the isolation benefit.",
+        "common_pitfalls": [
+          "Installing everything into the global Python and hitting version conflicts later."
+        ],
+        "references": [
+          {
+            "title": "PyTorch — Get Started (CUDA install)",
+            "url": "https://pytorch.org/get-started/locally/"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_j3",
+        "question": "Which core Hugging Face libraries make up a typical SLM training stack, and what does each do?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests familiarity with the standard tooling.",
+        "preparation_guide": "Be able to name the libraries and their one-line role.",
+        "explanation": "transformers provides model classes and the Trainer; datasets handles data loading and processing; tokenizers provides fast tokenization; accelerate abstracts device placement and distributed/mixed-precision training; peft implements parameter-efficient methods like LoRA; bitsandbytes enables 8-bit/4-bit weights and optimizers; and trl provides supervised fine-tuning and preference-optimization trainers.",
+        "star_framework_tip": "List the library and its job; group them as model, data, training, and efficiency.",
+        "common_pitfalls": [
+          "Conflating transformers (models) with datasets (data) or accelerate (orchestration)."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          },
+          {
+            "title": "Hugging Face Accelerate documentation",
+            "url": "https://huggingface.co/docs/accelerate"
+          },
+          {
+            "title": "Hugging Face TRL (SFT/DPO)",
+            "url": "https://huggingface.co/docs/trl"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_j4",
+        "question": "What free GPU options can a beginner use to train or fine-tune an SLM, and what are their limits?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Hugging Face"
+        ],
+        "core_intent": "Checks awareness of accessible compute and its constraints.",
+        "preparation_guide": "Know the common free tiers and their main limitations.",
+        "explanation": "Google Colab offers a free GPU (commonly a T4) with session time limits and usage caps; Kaggle Notebooks offer a weekly GPU quota (e.g., T4 or P100). Both are great for small SLM fine-tuning but are limited by VRAM, idle timeouts, and lack of persistent storage, so you must checkpoint frequently and keep runs short or resumable.",
+        "star_framework_tip": "Name the platform, the typical GPU, and the timeout/VRAM caveat.",
+        "common_pitfalls": [
+          "Assuming free tiers can train large models or run for many hours uninterrupted."
+        ],
+        "references": [
+          {
+            "title": "Google Colab",
+            "url": "https://colab.research.google.com"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_j5",
+        "question": "What is the difference between the CUDA driver, the CUDA toolkit/runtime, and the CUDA version PyTorch ships with?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests a frequent source of setup confusion.",
+        "preparation_guide": "Separate the three layers and the compatibility rule.",
+        "explanation": "The CUDA driver is the kernel-level component tied to your GPU and OS; the CUDA toolkit/runtime provides compilers and libraries; and PyTorch ships with its own bundled CUDA runtime, so you usually do not install a matching toolkit yourself. The key rule is forward compatibility: the installed driver must be at least as new as the version PyTorch's runtime requires.",
+        "star_framework_tip": "State the three layers, then the 'driver >= runtime requirement' rule.",
+        "common_pitfalls": [
+          "Trying to match the system CUDA toolkit to PyTorch when only the driver matters."
+        ],
+        "references": [
+          {
+            "title": "NVIDIA CUDA Compatibility",
+            "url": "https://docs.nvidia.com/deploy/cuda-compatibility/"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_j6",
+        "question": "How do you check available GPU memory and current utilization while training?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Google",
+          "Meta"
+        ],
+        "core_intent": "Tests practical monitoring skills.",
+        "preparation_guide": "Know both the system tool and the in-framework calls.",
+        "explanation": "From the shell, nvidia-smi shows per-GPU memory use, utilization, temperature, and running processes; watch -n 1 nvidia-smi refreshes it live. Inside PyTorch, torch.cuda.memory_allocated() and torch.cuda.memory_reserved() report allocator state, and torch.cuda.max_memory_allocated() reports the peak, which is useful for tuning batch size.",
+        "star_framework_tip": "Pair the external tool (nvidia-smi) with the in-code calls for precise tuning.",
+        "common_pitfalls": [
+          "Reading only allocated memory and ignoring reserved/cached memory."
+        ],
+        "references": [
+          {
+            "title": "PyTorch — Get Started (CUDA install)",
+            "url": "https://pytorch.org/get-started/locally/"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_j7",
+        "question": "What is mixed-precision training, and why does it help on small GPUs?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the most common memory/speed optimization.",
+        "preparation_guide": "Explain 16-bit compute and the fp16 vs bf16 distinction at a high level.",
+        "explanation": "Mixed-precision training stores and computes most values in 16-bit (fp16 or bf16) while keeping a few sensitive operations in 32-bit. This roughly halves activation memory and speeds up math on modern GPUs, letting you fit larger batches or models on a small card. bf16 (on Ampere and newer) has a wider numeric range than fp16, so it is more stable and usually needs no loss scaling.",
+        "star_framework_tip": "State the memory/speed win first, then note bf16's stability advantage.",
+        "common_pitfalls": [
+          "Assuming fp16 is always safe without loss scaling."
+        ],
+        "references": [
+          {
+            "title": "PyTorch Automatic Mixed Precision",
+            "url": "https://pytorch.org/docs/stable/amp.html"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_j8",
+        "question": "Why should you pin dependency versions and set random seeds in a training project?",
+        "complexity": "Easy",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Amazon"
+        ],
+        "core_intent": "Tests reproducibility hygiene.",
+        "preparation_guide": "Connect pinning and seeding to reproducible results.",
+        "explanation": "Pinning exact package versions (in a lockfile) prevents an upstream update from silently changing behavior or breaking your run, so others can reproduce your environment. Setting seeds for Python, NumPy, and PyTorch makes data shuffling and initialization deterministic. Full determinism on GPU also requires enabling deterministic algorithms and fixing cuDNN flags, at some speed cost.",
+        "star_framework_tip": "Separate environment reproducibility (pinning) from run reproducibility (seeds).",
+        "common_pitfalls": [
+          "Believing a fixed seed alone guarantees bit-identical GPU results."
+        ],
+        "references": [
+          {
+            "title": "PyTorch — Get Started (CUDA install)",
+            "url": "https://pytorch.org/get-started/locally/"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -48,6 +217,148 @@
             "url": "https://docs.nvidia.com/deploy/cuda-compatibility/"
           }
         ]
+      },
+      {
+        "id": "m1_l3_m2",
+        "question": "bf16 versus fp16: when do you choose which, and what is the role of gradient scaling?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests precise understanding of half-precision formats.",
+        "preparation_guide": "Compare numeric range and the need for a gradient scaler.",
+        "explanation": "fp16 has a narrow exponent range, so small gradients can underflow to zero; it therefore needs dynamic loss/gradient scaling to keep them representable. bf16 has the same exponent range as fp32 (but fewer mantissa bits), so it rarely overflows or underflows and usually needs no scaler, making it simpler and more stable. Prefer bf16 on Ampere or newer hardware; fall back to fp16 with a scaler on older GPUs.",
+        "star_framework_tip": "Lead with the range difference, then map it to whether a scaler is required.",
+        "common_pitfalls": [
+          "Using fp16 without a gradient scaler and getting NaNs or stalled training."
+        ],
+        "references": [
+          {
+            "title": "PyTorch Automatic Mixed Precision",
+            "url": "https://pytorch.org/docs/stable/amp.html"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_m3",
+        "question": "What is gradient accumulation, and how does it let you train with a small VRAM budget?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Meta",
+          "Amazon"
+        ],
+        "core_intent": "Tests a core memory-saving training technique.",
+        "preparation_guide": "Explain how it simulates a larger batch.",
+        "explanation": "Gradient accumulation runs several small micro-batches forward and backward, summing their gradients, and only steps the optimizer after N micro-batches. This yields the same effective batch size as one large batch without ever holding a large batch in memory, trading extra time for lower peak VRAM. Remember to scale the learning rate or loss appropriately for the effective batch size.",
+        "star_framework_tip": "Frame it as 'big effective batch, small physical batch, more steps.'",
+        "common_pitfalls": [
+          "Forgetting that the effective batch size changes optimizer/learning-rate behavior."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Accelerate documentation",
+            "url": "https://huggingface.co/docs/accelerate"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_m4",
+        "question": "What is gradient (activation) checkpointing, and what is its trade-off?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "NVIDIA",
+          "Microsoft"
+        ],
+        "core_intent": "Tests another memory-vs-compute technique.",
+        "preparation_guide": "Explain recomputation in the backward pass.",
+        "explanation": "Gradient checkpointing discards intermediate activations during the forward pass and recomputes them during the backward pass, cutting activation memory substantially in exchange for roughly 20-30% extra compute. It lets you fit longer sequences or larger models on a constrained GPU and composes well with mixed precision and gradient accumulation.",
+        "star_framework_tip": "State the memory saving and the compute cost in one breath.",
+        "common_pitfalls": [
+          "Enabling it everywhere and being surprised that each step is noticeably slower."
+        ],
+        "references": [
+          {
+            "title": "PyTorch Automatic Mixed Precision",
+            "url": "https://pytorch.org/docs/stable/amp.html"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_m5",
+        "question": "How does 4-bit quantized fine-tuning (QLoRA via bitsandbytes) change your environment requirements?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "Hugging Face",
+          "NVIDIA"
+        ],
+        "core_intent": "Tests setup for the most popular low-resource fine-tuning method.",
+        "preparation_guide": "Know the libraries and the VRAM impact.",
+        "explanation": "QLoRA loads the frozen base model in 4-bit (NF4) and trains small LoRA adapters on top, so it needs bitsandbytes plus a compatible CUDA build, along with peft and transformers. The payoff is a dramatic VRAM reduction — fine-tuning models that would normally need far more memory on a single consumer GPU — at a small quality cost versus full-precision fine-tuning.",
+        "star_framework_tip": "Name the stack (bitsandbytes + peft) and quantify the VRAM win.",
+        "common_pitfalls": [
+          "Forgetting that bitsandbytes needs a matching CUDA build to load 4-bit weights."
+        ],
+        "references": [
+          {
+            "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+            "url": "https://arxiv.org/abs/2305.14314"
+          },
+          {
+            "title": "bitsandbytes (4-bit / 8-bit)",
+            "url": "https://github.com/bitsandbytes-foundation/bitsandbytes"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_m6",
+        "question": "What is Hugging Face Accelerate, and when do you need it instead of the plain Trainer?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests understanding of the orchestration layer.",
+        "preparation_guide": "Distinguish Trainer convenience from custom-loop flexibility.",
+        "explanation": "Accelerate abstracts device placement, distributed training, and mixed precision behind a thin API, so the same code runs on CPU, one GPU, multiple GPUs, or TPUs. The Trainer already uses Accelerate under the hood for standard fine-tuning. Reach for Accelerate directly when you write a custom training loop or need fine control over a multi-device or multi-node setup that the Trainer abstracts away.",
+        "star_framework_tip": "Say Trainer for standard jobs, Accelerate for custom loops and explicit distributed control.",
+        "common_pitfalls": [
+          "Hand-rolling device placement when Accelerate would handle it portably."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Accelerate documentation",
+            "url": "https://huggingface.co/docs/accelerate"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_m7",
+        "question": "How do you diagnose and fix CUDA out-of-memory errors during training?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Tests practical troubleshooting under hardware limits.",
+        "preparation_guide": "Have an ordered list of memory-reduction levers.",
+        "explanation": "Work through levers in order: reduce batch size and use gradient accumulation to keep the effective batch; enable mixed precision and gradient checkpointing; shorten the maximum sequence length; switch to a smaller model or LoRA/4-bit fine-tuning; and clear cached memory between phases. Also check for leaks such as accumulating tensors in a list or retaining the computation graph across steps.",
+        "star_framework_tip": "Order the fixes from cheap config changes to structural ones, then check for leaks.",
+        "common_pitfalls": [
+          "Only lowering batch size and ignoring sequence length, checkpointing, and leaks."
+        ],
+        "references": [
+          {
+            "title": "PyTorch Automatic Mixed Precision",
+            "url": "https://pytorch.org/docs/stable/amp.html"
+          }
+        ]
       }
     ],
     "senior": [
@@ -71,6 +382,106 @@
           {
             "title": "NVIDIA PyTorch Docker",
             "url": "https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_s2",
+        "question": "Design a reproducible, portable training environment for a team (pinned dependencies, CUDA, data, seeds). What components are needed?",
+        "complexity": "System Design",
+        "companies": [
+          "Microsoft",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Tests environment engineering beyond a single notebook.",
+        "preparation_guide": "Cover dependency locking, containerization, data versioning, and config.",
+        "explanation": "Use a lockfile (pip-tools, uv, poetry, or a conda env file) to pin exact versions, and a Dockerfile built on a pinned CUDA base image so the GPU stack is identical everywhere. Centralize a seed-setting utility, version data and artifacts (DVC or the Hugging Face Hub), externalize hyperparameters into config files, and add a small CI smoke test that runs a few steps to catch environment breakage early.",
+        "star_framework_tip": "Walk the layers: deps -> container -> data versioning -> config -> CI check.",
+        "common_pitfalls": [
+          "Pinning Python packages but leaving the CUDA base image or driver unpinned."
+        ],
+        "references": [
+          {
+            "title": "PyTorch — Get Started (CUDA install)",
+            "url": "https://pytorch.org/get-started/locally/"
+          },
+          {
+            "title": "DVC — Data Version Control",
+            "url": "https://dvc.org"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_s3",
+        "question": "You must train an SLM across multiple GPUs. Compare DDP, FSDP, and DeepSpeed ZeRO and when to use each.",
+        "complexity": "System Design",
+        "companies": [
+          "NVIDIA",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests knowledge of distributed-training strategies.",
+        "preparation_guide": "Map each strategy to the memory/communication trade-off.",
+        "explanation": "Distributed Data Parallel (DDP) replicates the whole model on each GPU and syncs gradients — simplest and fastest when the model fits in one GPU. FSDP and DeepSpeed ZeRO shard parameters, gradients, and optimizer states across GPUs so models that do not fit on one device can still train, at the cost of more communication. ZeRO stages 1, 2, and 3 progressively shard optimizer state, then gradients, then parameters, trading bandwidth for memory.",
+        "star_framework_tip": "Decision rule: model fits -> DDP; model doesn't fit -> FSDP/ZeRO with the right stage.",
+        "common_pitfalls": [
+          "Reaching for ZeRO-3 when DDP would be faster because the model already fits."
+        ],
+        "references": [
+          {
+            "title": "PyTorch Fully Sharded Data Parallel (FSDP)",
+            "url": "https://pytorch.org/docs/stable/fsdp.html"
+          },
+          {
+            "title": "DeepSpeed ZeRO",
+            "url": "https://www.deepspeed.ai/tutorials/zero/"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_s4",
+        "question": "Architect a cost-efficient cloud setup for intermittent SLM training using spot instances.",
+        "complexity": "System Design",
+        "companies": [
+          "Amazon",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests cost-aware infrastructure design.",
+        "preparation_guide": "Balance interruption risk against savings with checkpointing.",
+        "explanation": "Use spot or preemptible GPU instances for big savings, but make training fully resumable: checkpoint frequently to object storage, persist the optimizer state and step count, and have the job auto-resume from the latest checkpoint on restart. Combine bf16 and gradient checkpointing to fit on cheaper GPUs, right-size the instance to the model, and tear down idle resources. The design trades some orchestration complexity for large cost reductions.",
+        "star_framework_tip": "Center the answer on 'frequent checkpoints + auto-resume' as the enabler of spot pricing.",
+        "common_pitfalls": [
+          "Using spot instances without resumable checkpointing and losing hours of progress."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Accelerate documentation",
+            "url": "https://huggingface.co/docs/accelerate"
+          }
+        ]
+      },
+      {
+        "id": "m1_l3_s5",
+        "question": "How do you ensure environment parity between a free Colab prototype and a production training run?",
+        "complexity": "Hard",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests the prototype-to-production transition.",
+        "preparation_guide": "Identify the sources of drift between a notebook and a production job.",
+        "explanation": "Drift comes from unpinned packages, hidden notebook state, mismatched CUDA/driver versions, and inline secrets or paths. Close the gap by containerizing the run, pinning versions with a lockfile, externalizing configuration and secrets, matching the CUDA base image and driver, logging the full environment (pip freeze), and validating on a small data slice before scaling. The notebook becomes a thin client over the same reproducible image the production job uses.",
+        "star_framework_tip": "Enumerate the drift sources, then give the mitigation for each.",
+        "common_pitfalls": [
+          "Shipping notebook code to production without pinning versions or removing hidden cell state."
+        ],
+        "references": [
+          {
+            "title": "PyTorch — Get Started (CUDA install)",
+            "url": "https://pytorch.org/get-started/locally/"
           }
         ]
       }

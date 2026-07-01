@@ -18,6 +18,144 @@
           "Claiming SLMs cannot execute zero-shot tasks at all."
         ],
         "references": []
+      },
+      {
+        "id": "m1_quiz_j2",
+        "question": "In one line each, give the three main reasons to choose an SLM over an LLM.",
+        "complexity": "Easy",
+        "companies": [
+          "Meta",
+          "Apple",
+          "Microsoft"
+        ],
+        "core_intent": "Reviews the core value proposition from Lesson 1.",
+        "preparation_guide": "Recall the three pillars cleanly.",
+        "explanation": "Latency (on-device generation with no network round-trip), privacy (data stays local, easing HIPAA/GDPR), and cost (no per-token API charges at scale). These three drive most real SLM adoption decisions.",
+        "star_framework_tip": "Answer in exactly three labeled pillars.",
+        "common_pitfalls": [
+          "Listing only cost and forgetting privacy and latency."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_quiz_j3",
+        "question": "True or false: an SLM is defined by a single fixed parameter count everyone agrees on. Explain.",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Hugging Face",
+          "Google"
+        ],
+        "core_intent": "Reviews the nuance that 'small' is deployment-relative.",
+        "preparation_guide": "Recall NVIDIA's deployment-based definition.",
+        "explanation": "False. There is no universal numeric cutoff; common usage puts SLMs under a few billion parameters, but NVIDIA's working definition is deployment-relative — a model that runs on a common consumer device fast enough to serve one user — so the practical ceiling rises as hardware improves.",
+        "star_framework_tip": "Say 'false' and give the deployment-relative reason.",
+        "common_pitfalls": [
+          "Insisting on a hard 3B line as the official definition."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_quiz_j4",
+        "question": "What does next-token prediction train a model to do, in plain terms?",
+        "complexity": "Easy",
+        "companies": [
+          "OpenAI",
+          "Google",
+          "Meta"
+        ],
+        "core_intent": "Reviews the training objective from Lesson 2.",
+        "preparation_guide": "State the objective without jargon.",
+        "explanation": "It trains the model to predict the most likely next token given everything before it, adjusting its weights so real continuations get higher probability. Repeated over huge amounts of text, this self-supervised objective is what teaches the model language.",
+        "star_framework_tip": "Keep it to one plain sentence about predicting the next token.",
+        "common_pitfalls": [
+          "Describing it as classification with human labels."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m1_quiz_j5",
+        "question": "Which subword tokenization algorithm repeatedly merges the most frequent adjacent symbol pair?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Hugging Face",
+          "Meta"
+        ],
+        "core_intent": "Reviews tokenizer basics from Lesson 2.",
+        "preparation_guide": "Recall the defining rule of BPE.",
+        "explanation": "Byte-Pair Encoding (BPE). It starts from characters and iteratively merges the most frequent adjacent pair into a new token until it reaches the target vocabulary size.",
+        "star_framework_tip": "Name BPE and its one-line merge rule.",
+        "common_pitfalls": [
+          "Confusing BPE's frequency rule with WordPiece's likelihood rule."
+        ],
+        "references": [
+          {
+            "title": "Neural Machine Translation of Rare Words with Subword Units (BPE, Sennrich et al.)",
+            "url": "https://arxiv.org/abs/1508.07909"
+          }
+        ]
+      },
+      {
+        "id": "m1_quiz_j6",
+        "question": "What single PyTorch call confirms that your GPU is visible to the framework?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Reviews environment verification from Lesson 3.",
+        "preparation_guide": "Recall the GPU-detection call.",
+        "explanation": "torch.cuda.is_available() returns True when PyTorch can see a working CUDA GPU; torch.cuda.get_device_name(0) then prints the device name. If it returns False, the driver, CUDA build, or PyTorch install is mismatched.",
+        "star_framework_tip": "Give the call and the immediate follow-up to print the device.",
+        "common_pitfalls": [
+          "Assuming a False result means the GPU is broken rather than a setup mismatch."
+        ],
+        "references": [
+          {
+            "title": "PyTorch — Get Started (CUDA install)",
+            "url": "https://pytorch.org/get-started/locally/"
+          }
+        ]
+      },
+      {
+        "id": "m1_quiz_j7",
+        "question": "What happens to outputs at very low temperature versus very high temperature?",
+        "complexity": "Easy",
+        "companies": [
+          "OpenAI",
+          "Google",
+          "Anthropic"
+        ],
+        "core_intent": "Reviews decoding controls from Lesson 2.",
+        "preparation_guide": "Recall temperature's effect on the distribution.",
+        "explanation": "Low temperature sharpens the distribution toward the most likely tokens, giving deterministic, focused, sometimes repetitive output. High temperature flattens the distribution, giving more diverse and creative but less reliable output. Temperature near zero approaches greedy decoding.",
+        "star_framework_tip": "Contrast 'sharp and safe' with 'flat and diverse.'",
+        "common_pitfalls": [
+          "Thinking higher temperature improves factual accuracy."
+        ],
+        "references": [
+          {
+            "title": "The Curious Case of Neural Text Degeneration (nucleus/top-p, Holtzman et al.)",
+            "url": "https://arxiv.org/abs/1904.09751"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -37,6 +175,121 @@
           "Overlooking the output projection weights when calculating vocabulary memory."
         ],
         "references": []
+      },
+      {
+        "id": "m1_quiz_m2",
+        "question": "Trace the chain from tokenization choice to sequence length to training memory in a small model.",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Hugging Face",
+          "Microsoft"
+        ],
+        "core_intent": "Synthesizes Lesson 2 tokenization with training cost.",
+        "preparation_guide": "Connect vocabulary, fertility, sequence length, and memory.",
+        "explanation": "A smaller vocabulary fragments text into more tokens (higher fertility), producing longer sequences; attention and activation memory grow with sequence length, raising training cost. A larger vocabulary shortens sequences but enlarges the embedding and softmax matrices, which are a big share of an SLM's parameters. So the tokenizer choice directly shapes both sequence length and the model's memory footprint.",
+        "star_framework_tip": "Walk the causal chain explicitly: vocab -> fertility -> length -> memory.",
+        "common_pitfalls": [
+          "Considering only sequence length and ignoring the embedding-matrix cost."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Tokenizers documentation",
+            "url": "https://huggingface.co/docs/tokenizers"
+          }
+        ]
+      },
+      {
+        "id": "m1_quiz_m3",
+        "question": "Why does over-training a small model far past its Chinchilla compute-optimal point make sense?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "DeepMind",
+          "Meta"
+        ],
+        "core_intent": "Reviews the inference-optimal argument from Lesson 1.",
+        "preparation_guide": "Separate training-optimal from inference-optimal goals.",
+        "explanation": "Chinchilla gives the token count that is compute-optimal for training a given size. But SLMs are built to be cheap at inference and deployed at huge volume, so it pays to keep training on far more tokens than training-optimal. This packs more capability into the fixed small parameter budget, improving downstream quality even though the training compute is no longer 'optimal.'",
+        "star_framework_tip": "Frame it as paying more at train time to win repeatedly at inference time.",
+        "common_pitfalls": [
+          "Conflating training efficiency with deployed inference quality."
+        ],
+        "references": [
+          {
+            "title": "Training Compute-Optimal LLMs / Chinchilla (Hoffmann et al.)",
+            "url": "https://arxiv.org/abs/2203.15556"
+          }
+        ]
+      },
+      {
+        "id": "m1_quiz_m4",
+        "question": "How do mixed precision and gradient accumulation together let you fine-tune on a single consumer GPU?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Synthesizes two Lesson 3 techniques.",
+        "preparation_guide": "Explain how each lever lowers peak memory.",
+        "explanation": "Mixed precision stores activations and many computations in 16-bit, roughly halving activation memory and speeding up math. Gradient accumulation keeps the physical batch tiny while summing gradients over several micro-batches to reach a useful effective batch size. Together they cut peak VRAM enough to fit fine-tuning on one consumer GPU, trading a bit of extra time for the memory savings.",
+        "star_framework_tip": "Attribute the specific saving to each technique, then combine them.",
+        "common_pitfalls": [
+          "Assuming the two are redundant rather than addressing different memory costs."
+        ],
+        "references": [
+          {
+            "title": "PyTorch Automatic Mixed Precision",
+            "url": "https://pytorch.org/docs/stable/amp.html"
+          }
+        ]
+      },
+      {
+        "id": "m1_quiz_m5",
+        "question": "Why must the fine-tuning tokenizer match the pretraining tokenizer, and what breaks if it doesn't?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Reviews the tokenizer-mismatch failure from Lesson 2.",
+        "preparation_guide": "Explain the ID-to-embedding binding.",
+        "explanation": "Token IDs index specific learned embeddings, so a different tokenizer maps the same text to different IDs that point at the wrong embeddings. The result is silently degraded output with no error. Always load the model's own tokenizer; if you extend the vocabulary, resize and initialize the new embedding rows deliberately.",
+        "star_framework_tip": "Stress that the failure is silent and stems from ID-embedding misalignment.",
+        "common_pitfalls": [
+          "Mixing tokenizers because both happen to be BPE-based."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m1_quiz_m6",
+        "question": "Given strict privacy and latency requirements, justify an on-device SLM and name one model that fits a phone.",
+        "complexity": "Medium",
+        "companies": [
+          "Apple",
+          "Google",
+          "Qualcomm"
+        ],
+        "core_intent": "Synthesizes Lesson 1 trade-offs with the current landscape.",
+        "preparation_guide": "Tie the requirements to on-device benefits and a concrete model.",
+        "explanation": "On-device inference keeps all input data local (satisfying strict privacy) and removes the network round-trip (low, predictable latency, works offline). A model in the 1-3B range such as Llama 3.2 1B/3B, Gemma 3 1B, or SmolLM3 can run on a modern phone at 4-bit quantization within a small memory budget, making it a fit for these constraints.",
+        "star_framework_tip": "Connect each requirement to an on-device property, then name a fitting model.",
+        "common_pitfalls": [
+          "Naming a 7B+ model that will not fit a phone's memory budget."
+        ],
+        "references": [
+          {
+            "title": "Llama 3.2: edge & mobile models (Meta)",
+            "url": "https://ai.meta.com/blog/llama-3-2-connect-2024-vision-edge-mobile-devices/"
+          }
+        ]
       }
     ],
     "senior": [
@@ -56,6 +309,102 @@
           "Using random splits on highly repetitive web-scraped data, which inherently leaks samples."
         ],
         "references": []
+      },
+      {
+        "id": "m1_quiz_s2",
+        "question": "Design a quick go/no-go evaluation deciding whether an SLM can replace an LLM for a specific production task.",
+        "complexity": "System Design",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Synthesizes the evaluation discipline introduced across the chapter.",
+        "preparation_guide": "Define the task set, metrics, and budgets up front.",
+        "explanation": "Build a representative task-specific eval set with a real metric (exact match, tool-call accuracy, or a rubric judge), set explicit quality, latency, and cost thresholds, and run the SLM head-to-head against the incumbent LLM. Inspect tail and out-of-distribution behavior, not just averages. Go if the SLM clears the quality bar within budget; otherwise, try fine-tuning or RAG, or route only the easy cases to the SLM with an LLM fallback.",
+        "star_framework_tip": "Lead with capability-on-task, then describe the eval set, thresholds, and the fallback path.",
+        "common_pitfalls": [
+          "Deciding from a generic leaderboard rather than the actual task data."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_quiz_s3",
+        "question": "A multilingual SLM scores well in English but poorly in Hindi and Tamil. Diagnose across tokenization, data, and evaluation.",
+        "complexity": "Hard",
+        "companies": [
+          "Google",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Synthesizes tokenizer fairness with data and eval reasoning.",
+        "preparation_guide": "Separate tokenizer inflation, data imbalance, and eval artifacts.",
+        "explanation": "Check tokenizer fertility first: an English-centric vocabulary fragments Indic scripts into many tokens, inflating cost and shrinking effective context. Then check the training-data mix for under-representation of those languages, and verify the evaluation itself — prompts, references, and metrics may be biased toward English. Fixes include a balanced multilingual tokenizer or vocabulary extension, rebalanced or augmented data, and language-appropriate eval sets.",
+        "star_framework_tip": "Diagnose in three layers (tokenizer, data, eval) and give a fix for each.",
+        "common_pitfalls": [
+          "Blaming model capacity before checking tokenizer fertility and data balance."
+        ],
+        "references": [
+          {
+            "title": "SentencePiece (Kudo & Richardson)",
+            "url": "https://arxiv.org/abs/1808.06226"
+          }
+        ]
+      },
+      {
+        "id": "m1_quiz_s4",
+        "question": "Architect a minimal end-to-end Module-1 pipeline: environment, tokenizer choice, data-leakage check, and baseline evaluation.",
+        "complexity": "System Design",
+        "companies": [
+          "Microsoft",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Synthesizes the whole chapter into one workflow.",
+        "preparation_guide": "Sequence the stages and name the key decision at each.",
+        "explanation": "Start with a pinned, containerized environment (PyTorch + CUDA, Hugging Face stack, seeds). Choose or extend a tokenizer by measuring fertility and OOV on the target corpus. Run a leakage check by deduplicating and ensuring no overlap between train and held-out splits (including near-duplicates). Establish a baseline by measuring perplexity and a task metric before any training, so later improvements are measurable. Each stage feeds the next.",
+        "star_framework_tip": "Present it as an ordered pipeline with one critical decision per stage.",
+        "common_pitfalls": [
+          "Skipping the leakage check, which inflates baseline metrics and misleads later comparisons."
+        ],
+        "references": [
+          {
+            "title": "Perplexity of fixed-length models (Hugging Face)",
+            "url": "https://huggingface.co/docs/transformers/perplexity"
+          },
+          {
+            "title": "Hugging Face Tokenizers documentation",
+            "url": "https://huggingface.co/docs/tokenizers"
+          }
+        ]
+      },
+      {
+        "id": "m1_quiz_s5",
+        "question": "Explain the full chain from logits to a sampled token, and where temperature, top-p, and repetition penalty each intervene.",
+        "complexity": "Hard",
+        "companies": [
+          "OpenAI",
+          "Google",
+          "Anthropic"
+        ],
+        "core_intent": "Deep review of the decoding pipeline from Lesson 2.",
+        "preparation_guide": "Order the transformations correctly.",
+        "explanation": "The model emits raw logits over the vocabulary. A repetition penalty first adjusts logits for tokens or n-grams already produced. Temperature then scales the logits to sharpen or flatten them. Softmax converts the result to probabilities. Top-p (or top-k) truncates to the high-probability set, the distribution is renormalized, and a token is sampled. Each control acts at a distinct stage, which is why they compose rather than conflict.",
+        "star_framework_tip": "Walk the stages in order and attach each control to its step.",
+        "common_pitfalls": [
+          "Putting temperature after softmax or treating top-p as acting on raw logits."
+        ],
+        "references": [
+          {
+            "title": "The Curious Case of Neural Text Degeneration (nucleus/top-p, Holtzman et al.)",
+            "url": "https://arxiv.org/abs/1904.09751"
+          }
+        ]
       }
     ]
   }

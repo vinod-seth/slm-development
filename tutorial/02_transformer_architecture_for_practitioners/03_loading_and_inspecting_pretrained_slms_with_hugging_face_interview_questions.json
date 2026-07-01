@@ -23,6 +23,98 @@
             "url": "https://huggingface.co/docs/transformers/model_doc/auto"
           }
         ]
+      },
+      {
+        "id": "m2_l3_j2",
+        "question": "What does from_pretrained do, and how do you control the dtype and device it loads on?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests basic model loading.",
+        "preparation_guide": "Know caching, dtype, and device placement arguments.",
+        "explanation": "from_pretrained downloads the weights and config from the Hub (caching them locally for reuse) and instantiates the model. You control precision with the dtype argument (e.g., bf16) and placement with device_map or by moving the model to a device; loading directly in low precision avoids a transient full-precision copy.",
+        "star_framework_tip": "Mention caching plus the dtype/device arguments.",
+        "common_pitfalls": [
+          "Loading in full precision then converting, wasting peak memory."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m2_l3_j3",
+        "question": "Why must you load the tokenizer that matches the model, and how do you do it?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Reinforces the tokenizer-model pairing.",
+        "preparation_guide": "Use AutoTokenizer.from_pretrained with the same checkpoint.",
+        "explanation": "Token IDs index the model's learned embeddings, so the tokenizer must be the one the model was trained with; otherwise text maps to the wrong IDs and output degrades silently. Load it with AutoTokenizer.from_pretrained using the same checkpoint name as the model.",
+        "star_framework_tip": "Stress the ID-embedding binding and use the same checkpoint string.",
+        "common_pitfalls": [
+          "Mixing a model with a different tokenizer because both are BPE."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m2_l3_j4",
+        "question": "How do you inspect a loaded model's architecture and count its parameters in code?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "NVIDIA",
+          "Google"
+        ],
+        "core_intent": "Tests basic model introspection.",
+        "preparation_guide": "Know how to read the config and sum parameters.",
+        "explanation": "Printing the model shows its module tree; model.config exposes hidden size, layers, heads, and vocabulary; and summing p.numel() over model.parameters() gives the total parameter count (filtering by requires_grad gives the trainable count). These checks confirm you loaded what you expected.",
+        "star_framework_tip": "Pair the config read with the parameter-sum one-liner.",
+        "common_pitfalls": [
+          "Reporting total parameters when the question is about trainable parameters."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m2_l3_j5",
+        "question": "What is device_map='auto', and when should you use it?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "NVIDIA",
+          "Amazon"
+        ],
+        "core_intent": "Tests automatic device placement.",
+        "preparation_guide": "Explain sharding across devices and offload.",
+        "explanation": "device_map='auto' (via Accelerate) automatically distributes a model's layers across available GPUs, and can offload overflow to CPU or disk, so models larger than one GPU still load. It is convenient for inference of bigger models; for single-GPU SLMs that fit comfortably, explicit placement is simpler and faster.",
+        "star_framework_tip": "Note it enables multi-device/offload loading and when it is overkill.",
+        "common_pitfalls": [
+          "Using auto offload and then being surprised by slow CPU-offloaded inference."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Accelerate documentation",
+            "url": "https://huggingface.co/docs/accelerate"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -43,6 +135,102 @@
           "Modifying model.config directly after loading without adjusting weights buffers, which can corrupt attention masks during forward passes."
         ],
         "references": []
+      },
+      {
+        "id": "m2_l3_m2",
+        "question": "What is the safetensors format, and why is it preferred over pickle-based .bin checkpoints?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests checkpoint format and security awareness.",
+        "preparation_guide": "Contrast safety and load speed.",
+        "explanation": "PyTorch .bin checkpoints use Python pickle, which can execute arbitrary code on load, a real supply-chain risk. safetensors stores only tensor data in a simple, zero-copy format, so it cannot run code and loads faster with memory mapping. Prefer safetensors for any model pulled from an untrusted source.",
+        "star_framework_tip": "Lead with the pickle code-execution risk, then the speed benefit.",
+        "common_pitfalls": [
+          "Treating .bin and safetensors as equally safe."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m2_l3_m3",
+        "question": "How do you load a model in 8-bit or 4-bit with bitsandbytes, and what are the trade-offs?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "NVIDIA",
+          "Microsoft"
+        ],
+        "core_intent": "Tests quantized loading for memory savings.",
+        "preparation_guide": "Know the config flags and the quality/compatibility costs.",
+        "explanation": "Passing a BitsAndBytesConfig (load_in_8bit or load_in_4bit, e.g., NF4) loads weights in low precision, cutting memory several-fold and enabling QLoRA-style fine-tuning. Trade-offs are a small accuracy drop, a CUDA build dependency, and slower kernels than native fp16 in some cases; it shines when memory, not raw speed, is the constraint.",
+        "star_framework_tip": "Pair the memory win with the accuracy/compatibility caveats.",
+        "common_pitfalls": [
+          "Expecting 4-bit loading to also speed up inference in every case."
+        ],
+        "references": [
+          {
+            "title": "bitsandbytes",
+            "url": "https://github.com/bitsandbytes-foundation/bitsandbytes"
+          },
+          {
+            "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+            "url": "https://arxiv.org/abs/2305.14314"
+          }
+        ]
+      },
+      {
+        "id": "m2_l3_m4",
+        "question": "What does trust_remote_code do, and what is the security implication?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests a concrete supply-chain risk.",
+        "preparation_guide": "Explain that it runs repo-provided Python.",
+        "explanation": "Some Hub models ship custom modeling code; trust_remote_code=True lets Transformers import and execute that Python from the repository. That can be necessary for novel architectures but means running third-party code, so enable it only for sources you trust, after reviewing the code, ideally pinned to a specific revision.",
+        "star_framework_tip": "Say it executes repo code; gate it on trust, review, and a pinned revision.",
+        "common_pitfalls": [
+          "Enabling it blindly to silence an error without reading the code."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m2_l3_m5",
+        "question": "How do you run a quick generation sanity check and verify the tokenizer and chat template are correct?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Meta",
+          "Amazon"
+        ],
+        "core_intent": "Tests practical post-load validation.",
+        "preparation_guide": "Describe a minimal round-trip and template check.",
+        "explanation": "Encode a known prompt, generate a few tokens, and decode to confirm coherent output and a proper EOS stop. Verify the tokenizer round-trips text (encode then decode), check special tokens are set, and for instruct models apply the model's chat template so roles are formatted as trained. Mismatches show up as gibberish, missing stops, or ignored instructions.",
+        "star_framework_tip": "Give a concrete encode-generate-decode plus apply_chat_template check.",
+        "common_pitfalls": [
+          "Skipping the chat template and then blaming the model for poor instruction following."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
       }
     ],
     "senior": [
@@ -63,6 +251,79 @@
           "Downloading model weights to perform shape validations instead of verifying configurations beforehand."
         ],
         "references": []
+      },
+      {
+        "id": "m2_l3_s2",
+        "question": "What is the supply-chain threat model when loading models from a public hub, and how do you mitigate it?",
+        "complexity": "Hard",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Amazon"
+        ],
+        "core_intent": "Tests security thinking around third-party weights.",
+        "preparation_guide": "Enumerate threats and concrete mitigations.",
+        "explanation": "Threats include malicious pickle payloads, custom modeling code (trust_remote_code), typosquatted or tampered repos, and backdoored or biased weights. Mitigations: prefer safetensors, pin exact revisions/commit hashes, verify checksums and signatures, review or sandbox any remote code, scan and evaluate weights before production, and pull through an internal mirror with provenance tracking.",
+        "star_framework_tip": "Pair each threat with a specific control and end with provenance/mirroring.",
+        "common_pitfalls": [
+          "Trusting a model purely because it has many downloads."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m2_l3_s3",
+        "question": "How would you inspect and modify a config to change RoPE scaling / context length, and what are the risks?",
+        "complexity": "Hard",
+        "companies": [
+          "Meta",
+          "Google",
+          "Alibaba"
+        ],
+        "core_intent": "Tests safe context-window extension.",
+        "preparation_guide": "Explain rope_scaling and the need to validate after changing it.",
+        "explanation": "The config exposes the trained context length and any RoPE scaling settings; adjusting rope_scaling (e.g., linear or dynamic NTK) lets a model attend over longer contexts than trained. The risk is quality degradation outside the trained range and higher KV-cache memory, so any change must be validated with long-context evals and a memory check rather than assumed to work.",
+        "star_framework_tip": "Note the knob (rope_scaling) and that extension demands re-evaluation, not faith.",
+        "common_pitfalls": [
+          "Raising max length in the config and assuming long-context quality is unaffected."
+        ],
+        "references": [
+          {
+            "title": "RoFormer: Rotary Position Embedding (RoPE)",
+            "url": "https://arxiv.org/abs/2104.09864"
+          }
+        ]
+      },
+      {
+        "id": "m2_l3_s4",
+        "question": "Design a model-registry and validation gate for an organization that pulls third-party SLMs into production.",
+        "complexity": "System Design",
+        "companies": [
+          "Microsoft",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Tests governance for incoming models, extending the security theme.",
+        "preparation_guide": "Cover provenance, automated checks, and an approval gate.",
+        "explanation": "Ingest models through an internal registry that records source, revision hash, and license. Run an automated gate before promotion: enforce safetensors, scan for remote code, verify config against expected architecture limits, run capability and safety evals, and capture a model card. Only models passing the gate are signed and made available to services, with the registry providing an audit trail and rollback.",
+        "star_framework_tip": "Walk the pipeline: ingest -> automated checks -> evals -> sign/approve -> serve, with audit trail.",
+        "common_pitfalls": [
+          "Allowing teams to pull arbitrary checkpoints directly into production with no gate."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Model Cards",
+            "url": "https://huggingface.co/docs/hub/model-cards"
+          },
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          }
+        ]
       }
     ]
   }

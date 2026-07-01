@@ -18,6 +18,75 @@
           "Attributing model quantization properties directly to residual connections."
         ],
         "references": []
+      },
+      {
+        "id": "m2_quiz_j2",
+        "question": "In one sentence, what does a single attention head compute?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "OpenAI"
+        ],
+        "core_intent": "Reviews the attention mechanism.",
+        "preparation_guide": "State the QK-similarity weighted sum of values.",
+        "explanation": "A head computes attention scores from query-key similarity, softmaxes them into weights, and returns a weighted sum of the value vectors, letting each token gather information from relevant other tokens.",
+        "star_framework_tip": "One line: weighted sum of values by query-key similarity.",
+        "common_pitfalls": [
+          "Describing attention as simple averaging without the learned QK weighting."
+        ],
+        "references": [
+          {
+            "title": "Attention Is All You Need (Vaswani et al.)",
+            "url": "https://arxiv.org/abs/1706.03762"
+          }
+        ]
+      },
+      {
+        "id": "m2_quiz_j3",
+        "question": "Why do deep transformers rely on residual connections?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Reviews gradient flow.",
+        "preparation_guide": "Recall the gradient-highway intuition.",
+        "explanation": "Residual connections add each sublayer's input to its output, giving gradients a direct path through the network so very deep stacks train stably without vanishing gradients.",
+        "star_framework_tip": "Mention the gradient highway enabling depth.",
+        "common_pitfalls": [
+          "Confusing residuals with normalization."
+        ],
+        "references": [
+          {
+            "title": "On Layer Normalization in the Transformer Architecture",
+            "url": "https://arxiv.org/abs/2002.04745"
+          }
+        ]
+      },
+      {
+        "id": "m2_quiz_j4",
+        "question": "During training, which memory consumer is usually the largest surprise beyond the weights?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Amazon",
+          "Meta"
+        ],
+        "core_intent": "Reviews the training memory budget.",
+        "preparation_guide": "Recall optimizer states and activations.",
+        "explanation": "Optimizer states (AdamW keeps two extra tensors per parameter) and activations (scaling with batch and sequence length) usually dominate, which is why training needs far more memory than the weights alone.",
+        "star_framework_tip": "Name optimizer state and activations as the hidden costs.",
+        "common_pitfalls": [
+          "Budgeting only for weights."
+        ],
+        "references": [
+          {
+            "title": "Decoupled Weight Decay Regularization (AdamW)",
+            "url": "https://arxiv.org/abs/1711.05101"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -37,6 +106,75 @@
           "Claiming Pre-LN is computationally slower than Post-LN."
         ],
         "references": []
+      },
+      {
+        "id": "m2_quiz_m2",
+        "question": "When does Grouped-Query Attention matter most, and why?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Meta",
+          "NVIDIA"
+        ],
+        "core_intent": "Reviews GQA's practical payoff.",
+        "preparation_guide": "Connect GQA to KV-cache size at long context.",
+        "explanation": "GQA matters most at long context and on memory-constrained hardware, because the KV cache grows with context length and number of KV heads; sharing KV heads shrinks that cache substantially while keeping quality close to full multi-head attention.",
+        "star_framework_tip": "Tie GQA's benefit to KV-cache pressure during long-context inference.",
+        "common_pitfalls": [
+          "Thinking GQA reduces the quadratic attention compute rather than the KV cache."
+        ],
+        "references": [
+          {
+            "title": "GQA: Training Generalized Multi-Query Transformer Models",
+            "url": "https://arxiv.org/abs/2305.13245"
+          }
+        ]
+      },
+      {
+        "id": "m2_quiz_m3",
+        "question": "Why does the quadratic cost of attention limit practical context length, and name one mitigation.",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Reviews attention scaling.",
+        "preparation_guide": "Recall the N x N matrix and a fix.",
+        "explanation": "Attention compares all token pairs, so memory and compute grow with the square of sequence length, which caps affordable context on small hardware. FlashAttention makes attention memory linear (via tiling and online softmax) and is a common mitigation, alongside sliding-window or sparse attention.",
+        "star_framework_tip": "State the N x N cost and one concrete mitigation.",
+        "common_pitfalls": [
+          "Confusing the quadratic attention cost with linear KV-cache growth."
+        ],
+        "references": [
+          {
+            "title": "FlashAttention (Dao et al.)",
+            "url": "https://arxiv.org/abs/2205.14135"
+          }
+        ]
+      },
+      {
+        "id": "m2_quiz_m4",
+        "question": "Explain the ~16-bytes-per-parameter estimate for mixed-precision AdamW training.",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Reviews the training memory rule.",
+        "preparation_guide": "Break it into components.",
+        "explanation": "It sums 2 bytes for fp16 weights, 2 for fp16 gradients, 4 for the fp32 master weights, and 8 for the two fp32 Adam moment buffers, totaling about 16 bytes per parameter, before activations.",
+        "star_framework_tip": "Recite the byte breakdown rather than just the number.",
+        "common_pitfalls": [
+          "Omitting the fp32 master copy or the optimizer moments."
+        ],
+        "references": [
+          {
+            "title": "Decoupled Weight Decay Regularization (AdamW)",
+            "url": "https://arxiv.org/abs/1711.05101"
+          }
+        ]
       }
     ],
     "senior": [
@@ -56,6 +194,68 @@
           "Stating that FlashAttention changes the mathematical output of attention (it is exact attention, not approximate)."
         ],
         "references": []
+      },
+      {
+        "id": "m2_quiz_s2",
+        "question": "Why does the KV cache, not the weights, often cap long-context inference on small GPUs, and what are two mitigations?",
+        "complexity": "Hard",
+        "companies": [
+          "NVIDIA",
+          "Google",
+          "Apple"
+        ],
+        "core_intent": "Synthesizes attention memory and deployment limits.",
+        "preparation_guide": "Explain KV-cache growth and concrete fixes.",
+        "explanation": "At long context the KV cache grows linearly with sequence length, layers, and KV heads, and can exceed the (often quantized) weight footprint, so memory runs out even though the model itself fits. Mitigations include Grouped-Query Attention to shrink KV heads, a quantized KV cache, sliding-window attention, and PagedAttention-style allocation to reduce fragmentation.",
+        "star_framework_tip": "Distinguish static weight memory from growing KV memory, then give two fixes.",
+        "common_pitfalls": [
+          "Assuming the advertised max context is usable regardless of device memory."
+        ],
+        "references": [
+          {
+            "title": "GQA: Training Generalized Multi-Query Transformer Models",
+            "url": "https://arxiv.org/abs/2305.13245"
+          },
+          {
+            "title": "Efficient Memory Management for LLM Serving (PagedAttention)",
+            "url": "https://arxiv.org/abs/2309.06180"
+          }
+        ]
+      },
+      {
+        "id": "m2_quiz_s3",
+        "question": "Specify an architecture for a ~1B on-device SLM and justify each major choice.",
+        "complexity": "System Design",
+        "companies": [
+          "Meta",
+          "Google",
+          "Mistral AI"
+        ],
+        "core_intent": "Synthesizes the chapter into a concrete design.",
+        "preparation_guide": "Choose depth/width, attention, norm, activation, position, and embeddings with rationale.",
+        "explanation": "A ~1B on-device model would use GQA to keep the KV cache small, RMSNorm with Pre-LN for stable warmup-free training, SwiGLU for quality per parameter, RoPE for parameter-free relative positions and length flexibility, tied embeddings to reclaim the large embedding matrix, and a moderate context length matched to the device memory budget. Each choice maximizes capability per parameter and per byte.",
+        "star_framework_tip": "Justify every component against on-device memory and stability constraints.",
+        "common_pitfalls": [
+          "Copying a large-model recipe without adapting it to the device budget."
+        ],
+        "references": [
+          {
+            "title": "GQA: Training Generalized Multi-Query Transformer Models",
+            "url": "https://arxiv.org/abs/2305.13245"
+          },
+          {
+            "title": "Root Mean Square Layer Normalization (RMSNorm)",
+            "url": "https://arxiv.org/abs/1910.07467"
+          },
+          {
+            "title": "GLU Variants Improve Transformer (SwiGLU, Shazeer)",
+            "url": "https://arxiv.org/abs/2002.05202"
+          },
+          {
+            "title": "RoFormer: Rotary Position Embedding (RoPE)",
+            "url": "https://arxiv.org/abs/2104.09864"
+          }
+        ]
       }
     ]
   }

@@ -23,6 +23,102 @@
             "url": "https://huggingface.co/docs/transformers/main/chat_templating"
           }
         ]
+      },
+      {
+        "id": "m4_l3_j2",
+        "question": "What is instruction fine-tuning (SFT), and how does it differ from pretraining?",
+        "complexity": "Easy",
+        "companies": [
+          "OpenAI",
+          "Hugging Face",
+          "Google"
+        ],
+        "core_intent": "Tests the purpose of SFT.",
+        "preparation_guide": "Contrast next-token pretraining with instruction-response learning.",
+        "explanation": "Instruction fine-tuning trains a pretrained model on (instruction, response) examples so it learns to follow instructions and produce helpful, well-formatted answers, rather than just continuing text. Pretraining teaches language and knowledge from raw text; SFT teaches the model to behave as an assistant on top of that foundation.",
+        "star_framework_tip": "Say pretraining learns language; SFT teaches following instructions.",
+        "common_pitfalls": [
+          "Believing a base model already follows instructions without SFT."
+        ],
+        "references": [
+          {
+            "title": "Training LMs to Follow Instructions with Human Feedback (InstructGPT)",
+            "url": "https://arxiv.org/abs/2203.02155"
+          },
+          {
+            "title": "Hugging Face TRL documentation",
+            "url": "https://huggingface.co/docs/trl"
+          }
+        ]
+      },
+      {
+        "id": "m4_l3_j3",
+        "question": "What does an instruction dataset look like structurally?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "OpenAI",
+          "Microsoft"
+        ],
+        "core_intent": "Tests data format awareness.",
+        "preparation_guide": "Describe instruction/input/output or chat-message formats.",
+        "explanation": "Each example pairs a user instruction (optionally with extra input/context) and a target response; multi-turn data is a list of role-tagged messages (system, user, assistant). The dataset is rendered into the model's chat template before tokenizing, so roles and turn boundaries match what the model expects.",
+        "star_framework_tip": "Describe single-turn instruction/response and multi-turn message lists, then templating.",
+        "common_pitfalls": [
+          "Feeding raw instruction-response pairs without applying the chat template."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face TRL documentation",
+            "url": "https://huggingface.co/docs/trl"
+          }
+        ]
+      },
+      {
+        "id": "m4_l3_j4",
+        "question": "Why do you mask the instruction/prompt tokens from the loss during SFT?",
+        "complexity": "Easy",
+        "companies": [
+          "OpenAI",
+          "Hugging Face",
+          "Google"
+        ],
+        "core_intent": "Tests the loss-masking rationale.",
+        "preparation_guide": "Explain training only on the response.",
+        "explanation": "You set the prompt tokens' labels to be ignored so the loss is computed only on the assistant's response. This teaches the model to generate good responses rather than to predict the user's words, focusing capacity on the behavior you want and improving instruction following.",
+        "star_framework_tip": "Say loss-on-response-only focuses learning on what the model should produce.",
+        "common_pitfalls": [
+          "Training on the full sequence and wasting capacity predicting the prompt."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face TRL documentation",
+            "url": "https://huggingface.co/docs/trl"
+          }
+        ]
+      },
+      {
+        "id": "m4_l3_j5",
+        "question": "What is the role of the EOS token in instruction fine-tuning?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "OpenAI",
+          "Microsoft"
+        ],
+        "core_intent": "Tests a common SFT bug source.",
+        "preparation_guide": "Explain teaching the model to stop.",
+        "explanation": "Appending the EOS token to each training response teaches the model when to stop generating. If EOS is missing or never learned, the model runs on past the answer at inference, producing rambling output or hallucinated extra turns. Correct EOS handling is essential for clean, bounded responses.",
+        "star_framework_tip": "Tie EOS to learning to stop and the run-on failure when it is absent.",
+        "common_pitfalls": [
+          "Omitting EOS from targets and getting models that never stop."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face TRL documentation",
+            "url": "https://huggingface.co/docs/trl"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -48,6 +144,106 @@
             "url": "https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html"
           }
         ]
+      },
+      {
+        "id": "m4_l3_m2",
+        "question": "How does supervised fine-tuning (SFT) differ from preference optimization (RLHF/DPO) in the alignment pipeline?",
+        "complexity": "Medium",
+        "companies": [
+          "OpenAI",
+          "Anthropic",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests the stages of alignment.",
+        "preparation_guide": "Explain demonstration learning vs preference learning.",
+        "explanation": "SFT teaches the model to imitate good demonstrations (instruction, response pairs). Preference optimization then refines it using comparisons between responses (which is better), pushing the model toward preferred behavior and away from dispreferred. RLHF does this with a reward model and reinforcement learning; DPO achieves a similar effect by optimizing directly on preference pairs without a separate reward model. SFT usually comes first and provides the base for preference tuning.",
+        "star_framework_tip": "Sequence SFT (imitate) then preference optimization (rank), and contrast RLHF vs DPO.",
+        "common_pitfalls": [
+          "Conflating SFT with RLHF/DPO as the same training step."
+        ],
+        "references": [
+          {
+            "title": "Training LMs to Follow Instructions with Human Feedback (InstructGPT)",
+            "url": "https://arxiv.org/abs/2203.02155"
+          },
+          {
+            "title": "Direct Preference Optimization (Rafailov et al.)",
+            "url": "https://arxiv.org/abs/2305.18290"
+          }
+        ]
+      },
+      {
+        "id": "m4_l3_m3",
+        "question": "How do you build and curate a high-quality instruction dataset?",
+        "complexity": "Medium",
+        "companies": [
+          "OpenAI",
+          "Hugging Face",
+          "Google"
+        ],
+        "core_intent": "Tests data quality for SFT.",
+        "preparation_guide": "Cover diversity, quality, dedup, and format consistency.",
+        "explanation": "Aim for diverse instructions covering the target task distribution, high-quality responses (human-written or strong-model-generated and filtered), consistent formatting and chat templating, deduplication, and removal of toxic or low-quality examples. Quality and diversity matter more than sheer size for SFT; a few thousand clean, varied examples often beat a noisy large set.",
+        "star_framework_tip": "Stress diversity + quality + format consistency over raw volume.",
+        "common_pitfalls": [
+          "Maximizing dataset size while ignoring quality and format consistency."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face TRL documentation",
+            "url": "https://huggingface.co/docs/trl"
+          }
+        ]
+      },
+      {
+        "id": "m4_l3_m4",
+        "question": "What is 'loss on completion only' versus full-sequence loss, and how does it affect instruction following?",
+        "complexity": "Medium",
+        "companies": [
+          "OpenAI",
+          "Hugging Face",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the masking choice's effect.",
+        "preparation_guide": "Explain the behavioral difference.",
+        "explanation": "Completion-only loss masks the prompt so the model is trained solely to produce the response, which sharpens instruction following and avoids the model learning to echo prompts. Full-sequence loss also trains on the prompt tokens, which can dilute the response signal and is more like continued pretraining. For assistant behavior, completion-only is the standard choice.",
+        "star_framework_tip": "Connect completion-only masking to stronger instruction following.",
+        "common_pitfalls": [
+          "Using full-sequence loss for chat SFT and weakening instruction following."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face TRL documentation",
+            "url": "https://huggingface.co/docs/trl"
+          }
+        ]
+      },
+      {
+        "id": "m4_l3_m5",
+        "question": "How do chat templates and role tokens prevent format mismatch between training and inference?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "OpenAI",
+          "Meta"
+        ],
+        "core_intent": "Tests templating consistency.",
+        "preparation_guide": "Explain that the same template must be used both times.",
+        "explanation": "A chat template deterministically renders messages into the exact token sequence (with role markers and special tokens) the model was trained on. Using the model's own template at both training and inference guarantees the runtime prompt matches the training distribution; a mismatch (wrong role tags, missing system block) causes degraded or ignored-instruction behavior even with a well-trained model.",
+        "star_framework_tip": "Stress applying the identical template at train and inference time.",
+        "common_pitfalls": [
+          "Hand-formatting prompts at inference instead of using apply_chat_template."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          },
+          {
+            "title": "Hugging Face TRL documentation",
+            "url": "https://huggingface.co/docs/trl"
+          }
+        ]
       }
     ],
     "senior": [
@@ -68,6 +264,91 @@
           "Failing to mask user turns in multi-turn history, which makes the model predict the user's side of the conversation."
         ],
         "references": []
+      },
+      {
+        "id": "m4_l3_s2",
+        "question": "Design an SFT pipeline for multi-turn tool-use / function-calling (agentic) data.",
+        "complexity": "System Design",
+        "companies": [
+          "OpenAI",
+          "NVIDIA",
+          "Microsoft"
+        ],
+        "core_intent": "Tests SFT for agentic SLMs.",
+        "preparation_guide": "Cover format, masking, tool results, and evaluation.",
+        "explanation": "Represent conversations as role-tagged turns including tool-call and tool-result messages, render them with the model's template, and mask everything except the assistant's tool calls and final responses so loss falls only on what the model should emit (not on tool outputs or user turns). Enforce strict JSON/function schemas, consider constrained decoding at inference, and evaluate tool-call accuracy and end-to-end task success, not just text overlap.",
+        "star_framework_tip": "Cover turn format, response/tool-call-only masking, schema enforcement, and tool-call eval.",
+        "common_pitfalls": [
+          "Computing loss on tool outputs or user turns, teaching the model to hallucinate them."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face TRL documentation",
+            "url": "https://huggingface.co/docs/trl"
+          },
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m4_l3_s3",
+        "question": "How do you prevent and detect loss of general ability ('alignment tax'/forgetting) during instruction tuning?",
+        "complexity": "Hard",
+        "companies": [
+          "Anthropic",
+          "OpenAI",
+          "Google"
+        ],
+        "core_intent": "Tests guarding broad capability during SFT.",
+        "preparation_guide": "Cover data mixing, conservative training, and general-eval monitoring.",
+        "explanation": "Mix some general-purpose or original-distribution data into the SFT set, use a modest learning rate and limited epochs, and prefer PEFT so the base is preserved. Continuously evaluate on held-out general benchmarks (reasoning, knowledge) alongside the target task, so you can spot regressions and stop before the model overfits its instruction set at the expense of broad ability.",
+        "star_framework_tip": "Pair data mixing and conservative training with general-benchmark monitoring.",
+        "common_pitfalls": [
+          "Tracking only instruction-following gains while general capability silently drops."
+        ],
+        "references": [
+          {
+            "title": "Overcoming Catastrophic Forgetting (EWC)",
+            "url": "https://arxiv.org/abs/1612.00796"
+          },
+          {
+            "title": "Hugging Face TRL documentation",
+            "url": "https://huggingface.co/docs/trl"
+          }
+        ]
+      },
+      {
+        "id": "m4_l3_s4",
+        "question": "Architect a full alignment pipeline for an SLM: SFT, preference data, and DPO, with evaluation and safety gates.",
+        "complexity": "System Design",
+        "companies": [
+          "OpenAI",
+          "Anthropic",
+          "Microsoft"
+        ],
+        "core_intent": "Tests end-to-end alignment design.",
+        "preparation_guide": "Sequence the stages with data, training, and gates.",
+        "explanation": "Start with curated SFT to establish instruction following, then collect preference pairs (human or AI feedback) and run DPO (or RLHF) to refine toward preferred, safer behavior. Insert evaluation gates after each stage for capability, instruction following, and safety (toxicity, jailbreak resistance), keep a held-out general-ability check for forgetting, and version data and checkpoints with rollback. Safety review precedes promotion.",
+        "star_framework_tip": "Walk SFT -> preference data -> DPO with capability+safety gates and rollback.",
+        "common_pitfalls": [
+          "Jumping to preference optimization without a solid SFT base or safety gates."
+        ],
+        "references": [
+          {
+            "title": "Direct Preference Optimization (Rafailov et al.)",
+            "url": "https://arxiv.org/abs/2305.18290"
+          },
+          {
+            "title": "Training LMs to Follow Instructions with Human Feedback (InstructGPT)",
+            "url": "https://arxiv.org/abs/2203.02155"
+          },
+          {
+            "title": "Constitutional AI: Harmlessness from AI Feedback",
+            "url": "https://arxiv.org/abs/2212.08073"
+          }
+        ]
       }
     ]
   }

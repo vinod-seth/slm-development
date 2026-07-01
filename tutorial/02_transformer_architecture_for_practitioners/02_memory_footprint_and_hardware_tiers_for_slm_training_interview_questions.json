@@ -18,6 +18,98 @@
           "Confusing optimizer VRAM requirements with pure weight storage requirements."
         ],
         "references": []
+      },
+      {
+        "id": "m2_l2_j2",
+        "question": "What is the bytes-per-parameter rule for FP32, FP16/BF16, INT8, and INT4, and how do you estimate weight memory?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the basic memory arithmetic.",
+        "preparation_guide": "Memorize bytes per parameter per precision.",
+        "explanation": "FP32 uses 4 bytes per parameter, FP16/BF16 use 2, INT8 uses 1, and INT4 uses about 0.5. Weight memory is roughly parameters times bytes-per-parameter: a 1.5B model needs ~6 GB in FP32, ~3 GB in FP16, ~1.5 GB in INT8, and ~0.75 GB in INT4 (before overhead).",
+        "star_framework_tip": "Give the table, then multiply by parameter count for a worked example.",
+        "common_pitfalls": [
+          "Forgetting that activations and KV cache add to the weight estimate."
+        ],
+        "references": [
+          {
+            "title": "Mixed Precision Training (Micikevicius et al.)",
+            "url": "https://arxiv.org/abs/1710.03740"
+          }
+        ]
+      },
+      {
+        "id": "m2_l2_j3",
+        "question": "What are the main consumers of GPU memory during training?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Meta",
+          "Amazon"
+        ],
+        "core_intent": "Tests awareness that weights are only part of the budget.",
+        "preparation_guide": "List the four buckets and that activations vary with batch/seq.",
+        "explanation": "Training memory comes from four sources: model weights, gradients (same size as weights), optimizer states (for AdamW, two extra tensors per parameter), and activations (which scale with batch size and sequence length). Activations and optimizer states often dominate, which is why training needs far more memory than inference.",
+        "star_framework_tip": "Name the four buckets and flag activations/optimizer state as the big ones.",
+        "common_pitfalls": [
+          "Budgeting only for weights and being surprised by out-of-memory errors."
+        ],
+        "references": [
+          {
+            "title": "Decoupled Weight Decay Regularization (AdamW)",
+            "url": "https://arxiv.org/abs/1711.05101"
+          }
+        ]
+      },
+      {
+        "id": "m2_l2_j4",
+        "question": "What hardware tiers suit SLM training at different sizes, from a laptop to multi-GPU?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Google",
+          "Amazon"
+        ],
+        "core_intent": "Tests practical hardware matching.",
+        "preparation_guide": "Map model size and method to a hardware tier.",
+        "explanation": "Small fine-tunes (sub-1B, or LoRA/QLoRA on a few-billion base) fit a single consumer GPU like a 12-24 GB card. Full from-scratch training of a 1-3B model wants a high-memory data-center GPU (e.g., A100/H100), and larger or faster runs need multiple GPUs with sharding. Free tiers (Colab/Kaggle T4) handle modest LoRA jobs.",
+        "star_framework_tip": "Match (size, method) to (consumer, single data-center, multi-GPU).",
+        "common_pitfalls": [
+          "Assuming a consumer GPU can fully pretrain a multi-billion model."
+        ],
+        "references": [
+          {
+            "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+            "url": "https://arxiv.org/abs/2305.14314"
+          }
+        ]
+      },
+      {
+        "id": "m2_l2_j5",
+        "question": "Why is inference far cheaper in memory than training for the same model?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the training-vs-inference distinction.",
+        "preparation_guide": "Explain what inference does not need to store.",
+        "explanation": "Inference only needs the weights and a modest activation/KV-cache working set, and can run in low precision. It does not store gradients or optimizer states and does not retain activations for a backward pass. That removes the largest training memory costs, so a model that needs many gigabytes to train can serve in a fraction of that.",
+        "star_framework_tip": "Contrast 'forward only, low precision' with 'forward + backward + optimizer.'",
+        "common_pitfalls": [
+          "Forgetting the KV cache still grows with context during inference."
+        ],
+        "references": [
+          {
+            "title": "Perplexity of fixed-length models (Hugging Face)",
+            "url": "https://huggingface.co/docs/transformers/perplexity"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -43,6 +135,102 @@
             "url": "https://arxiv.org/abs/1710.03740"
           }
         ]
+      },
+      {
+        "id": "m2_l2_m2",
+        "question": "Why does AdamW roughly double extra memory beyond weights, and what is the ~16-bytes-per-parameter rule for mixed-precision training?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the standard training memory estimate.",
+        "preparation_guide": "Break the 16 bytes/param into its components.",
+        "explanation": "AdamW stores two state tensors per parameter (first and second moments), so optimizer state alone is about twice the weight size. A common mixed-precision estimate is ~16 bytes per parameter: 2 (fp16 weights) + 2 (fp16 gradients) + 4 (fp32 master weights) + 8 (fp32 Adam moments). Activations are extra on top of this.",
+        "star_framework_tip": "Recite the byte breakdown so the 16-bytes figure is justified, not memorized.",
+        "common_pitfalls": [
+          "Counting only weights and gradients and omitting the fp32 master copy and moments."
+        ],
+        "references": [
+          {
+            "title": "Decoupled Weight Decay Regularization (AdamW)",
+            "url": "https://arxiv.org/abs/1711.05101"
+          },
+          {
+            "title": "Mixed Precision Training (Micikevicius et al.)",
+            "url": "https://arxiv.org/abs/1710.03740"
+          }
+        ]
+      },
+      {
+        "id": "m2_l2_m3",
+        "question": "How do activation memory and the KV cache scale, and why does gradient checkpointing help?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Meta",
+          "Amazon"
+        ],
+        "core_intent": "Tests understanding of the variable part of the budget.",
+        "preparation_guide": "Relate activations to batch x seq x layers and explain recomputation.",
+        "explanation": "Activation memory scales with batch size, sequence length, and the number of layers, because intermediate tensors are kept for the backward pass; the KV cache (at inference) grows with sequence length and layers. Gradient checkpointing discards most activations in the forward pass and recomputes them during backprop, cutting activation memory sharply at the cost of roughly 20-30% extra compute.",
+        "star_framework_tip": "Separate the activation driver (batch x seq x layers) from the checkpointing fix.",
+        "common_pitfalls": [
+          "Believing checkpointing reduces weight or optimizer memory."
+        ],
+        "references": [
+          {
+            "title": "PyTorch Automatic Mixed Precision",
+            "url": "https://pytorch.org/docs/stable/amp.html"
+          }
+        ]
+      },
+      {
+        "id": "m2_l2_m4",
+        "question": "How does sequence length blow up memory during training, and what are the mitigations?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "NVIDIA",
+          "Meta"
+        ],
+        "core_intent": "Tests the sequence-length cost across attention and activations.",
+        "preparation_guide": "Connect length to quadratic attention and linear activation growth.",
+        "explanation": "Longer sequences raise activation memory linearly per layer and historically made attention memory grow quadratically. Mitigations include FlashAttention (linear attention memory), gradient checkpointing, shorter packed sequences, sliding-window or sparse attention, and reducing batch size with gradient accumulation to hold the effective batch.",
+        "star_framework_tip": "List mitigations grouped by what they target (attention vs activations vs batch).",
+        "common_pitfalls": [
+          "Only lowering batch size while ignoring the per-token activation cost of long sequences."
+        ],
+        "references": [
+          {
+            "title": "FlashAttention (Dao et al.)",
+            "url": "https://arxiv.org/abs/2205.14135"
+          }
+        ]
+      },
+      {
+        "id": "m2_l2_m5",
+        "question": "How would you estimate up front whether a given training config will fit on a target GPU?",
+        "complexity": "Medium",
+        "companies": [
+          "Amazon",
+          "NVIDIA",
+          "Microsoft"
+        ],
+        "core_intent": "Tests budgeting discipline before launching a run.",
+        "preparation_guide": "Sum the components and leave headroom.",
+        "explanation": "Add the buckets: weights + gradients + optimizer states (use the ~16 bytes/param rule for mixed-precision AdamW) plus an activation estimate from batch, sequence length, hidden size, and layers. Compare the total against GPU memory minus a safety margin (fragmentation, framework overhead). If it exceeds the budget, apply LoRA/QLoRA, checkpointing, smaller batch with accumulation, or sharding.",
+        "star_framework_tip": "Show the additive budget, then list the levers when it overflows.",
+        "common_pitfalls": [
+          "Estimating only the static parts and ignoring activations and overhead."
+        ],
+        "references": [
+          {
+            "title": "Decoupled Weight Decay Regularization (AdamW)",
+            "url": "https://arxiv.org/abs/1711.05101"
+          }
+        ]
       }
     ],
     "senior": [
@@ -66,6 +254,83 @@
           {
             "title": "Reducing Activation Memory in Transformers",
             "url": "https://arxiv.org/abs/2205.14135"
+          }
+        ]
+      },
+      {
+        "id": "m2_l2_s2",
+        "question": "On a fixed 24 GB consumer GPU, design the largest feasible from-scratch SLM training configuration. What do you choose and why?",
+        "complexity": "System Design",
+        "companies": [
+          "NVIDIA",
+          "Meta",
+          "Google"
+        ],
+        "core_intent": "Tests end-to-end memory-aware design under a hard cap.",
+        "preparation_guide": "Choose size, precision, batch, sequence length, and techniques together.",
+        "explanation": "Target a small model (roughly a few hundred million parameters) so weights + AdamW state fit with room for activations. Use bf16 mixed precision, a modest sequence length, a small physical batch with gradient accumulation for a useful effective batch, and gradient checkpointing to free activation memory. Use 8-bit optimizer states (bitsandbytes) to shrink the largest static cost. Validate the budget before launch and leave a fragmentation margin.",
+        "star_framework_tip": "Justify each knob against the 24 GB ceiling and show the budget closes with headroom.",
+        "common_pitfalls": [
+          "Maximizing model size while leaving no room for activations and overhead."
+        ],
+        "references": [
+          {
+            "title": "bitsandbytes",
+            "url": "https://github.com/bitsandbytes-foundation/bitsandbytes"
+          },
+          {
+            "title": "PyTorch Automatic Mixed Precision",
+            "url": "https://pytorch.org/docs/stable/amp.html"
+          }
+        ]
+      },
+      {
+        "id": "m2_l2_s3",
+        "question": "Compare the memory footprints of full fine-tuning, LoRA, and QLoRA for the same base model.",
+        "complexity": "Hard",
+        "companies": [
+          "Microsoft",
+          "NVIDIA",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests quantitative reasoning about fine-tuning methods.",
+        "preparation_guide": "Explain what each method stores and trains.",
+        "explanation": "Full fine-tuning keeps weights, gradients, and optimizer states for every parameter, the heaviest option. LoRA freezes the base (no gradients/optimizer state for it) and trains only small adapter matrices, so optimizer memory collapses to the adapters while the base still occupies memory in its loaded precision. QLoRA additionally loads the frozen base in 4-bit, cutting the base footprint several-fold, which is what lets multi-billion models fine-tune on a single consumer GPU.",
+        "star_framework_tip": "Contrast what is trainable and what precision the base sits in for each method.",
+        "common_pitfalls": [
+          "Assuming LoRA reduces the base model's memory (only QLoRA's quantization does)."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          },
+          {
+            "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+            "url": "https://arxiv.org/abs/2305.14314"
+          }
+        ]
+      },
+      {
+        "id": "m2_l2_s4",
+        "question": "When does plain DDP suffice for multi-GPU SLM training, and when do you need ZeRO/FSDP sharding?",
+        "complexity": "Hard",
+        "companies": [
+          "NVIDIA",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests the distributed-memory decision.",
+        "preparation_guide": "Tie the choice to whether one replica fits in a single GPU.",
+        "explanation": "DDP replicates the full model, gradients, and optimizer states on every GPU and only syncs gradients, so it is ideal when one complete replica fits in a single GPU and you want throughput. When the model plus its AdamW state no longer fits per GPU, you need ZeRO or FSDP, which shard optimizer states, gradients, and parameters across devices, trading extra communication for the ability to train models too large for one card.",
+        "star_framework_tip": "Decision rule: replica fits -> DDP; replica doesn't fit -> shard with ZeRO/FSDP.",
+        "common_pitfalls": [
+          "Using sharding for a model that already fits, paying communication cost for no benefit."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Accelerate documentation",
+            "url": "https://huggingface.co/docs/accelerate"
           }
         ]
       }

@@ -20,7 +20,7 @@
         ],
         "references": [
           {
-            "title": "SmolLM2 Model Card",
+            "title": "SmolLM2-135M-Instruct Model Card",
             "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct"
           }
         ]
@@ -47,6 +47,258 @@
             "url": "https://github.com/jzhang38/TinyLlama"
           }
         ]
+      },
+      {
+        "id": "m1_l1_j3",
+        "question": "There is no universally agreed definition of an SLM. How did NVIDIA's 2025 position paper define one, and why is a deployment-relative definition useful?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Hugging Face",
+          "Microsoft"
+        ],
+        "core_intent": "Checks awareness that 'small' is a moving, deployment-centric target rather than a fixed parameter threshold.",
+        "preparation_guide": "Be able to state NVIDIA's working definition and explain why it ages better than a fixed parameter cutoff.",
+        "explanation": "NVIDIA's paper proposes a working definition: an SLM is a language model that can run on a common consumer device and respond fast enough to serve a single user's requests. This is useful because it is hardware-relative — as phones, laptops, and NPUs get faster, the practical 'SLM ceiling' rises, so the definition survives newer hardware rather than being pinned to a number like 3B.",
+        "star_framework_tip": "Contrast the parameter-count view with the deployment view, then say why deployment framing is more durable.",
+        "common_pitfalls": [
+          "Insisting there is one fixed numeric threshold that everyone agrees on."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_j4",
+        "question": "Name three current open SLM families a beginner could run locally, and give one distinguishing trait of each.",
+        "complexity": "Easy",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Hugging Face",
+          "Alibaba",
+          "Meta"
+        ],
+        "core_intent": "Tests awareness of today's actual SLM landscape, not models from 2 years ago.",
+        "preparation_guide": "Memorize a few families with their headline differentiator so you can answer 'which model would you pick' follow-ups.",
+        "explanation": "Examples: Phi-4-mini (3.8B, Microsoft) — strongest sub-4B math/reasoning via synthetic-data training and function calling; Gemma 3 (1B-27B, Google) — multimodal at the 4B tier and 140+ language coverage; SmolLM3-3B (Hugging Face) — fully open data+recipe with 128K context and dual-mode reasoning; Qwen3 (0.6B-4B, Alibaba) — strong multilingual and agentic/tool use; Llama 3.2 1B/3B (Meta) — tuned for edge and mobile.",
+        "star_framework_tip": "Pair each model with the single use case it wins (reasoning, multimodal, openness, multilingual, mobile).",
+        "common_pitfalls": [
+          "Naming only older models like GPT-2 or the original BERT as 'current' SLMs."
+        ],
+        "references": [
+          {
+            "title": "Phi-4-mini-instruct Model Card (Microsoft)",
+            "url": "https://huggingface.co/microsoft/Phi-4-mini-instruct"
+          },
+          {
+            "title": "Gemma open models (Google DeepMind)",
+            "url": "https://ai.google.dev/gemma"
+          },
+          {
+            "title": "SmolLM3: a fully open 3B reasoning model (Hugging Face)",
+            "url": "https://huggingface.co/blog/smollm3"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_j5",
+        "question": "What hardware can realistically run a 3B SLM, and roughly how much memory does it need at 4-bit quantization?",
+        "complexity": "Easy",
+        "companies": [
+          "Apple",
+          "Qualcomm",
+          "NVIDIA"
+        ],
+        "core_intent": "Assesses practical intuition for the memory footprint that makes SLMs deployable.",
+        "preparation_guide": "Learn the rule of thumb: bytes-per-parameter changes with precision, and KV cache adds on top.",
+        "explanation": "A 3B model at 4-bit (e.g., Q4 GGUF) needs roughly 2 GB for weights, plus KV-cache and runtime overhead, so about 3-4 GB of RAM/VRAM in practice. That fits a modern laptop, a single 8 GB consumer GPU, or higher-end phone NPUs. At FP16 the same weights would need around 6 GB before any cache.",
+        "star_framework_tip": "Give the weight estimate first (params x bytes-per-param), then add KV cache and overhead.",
+        "common_pitfalls": [
+          "Forgetting that the KV cache grows with context length and can dominate memory at long contexts."
+        ],
+        "references": [
+          {
+            "title": "Ollama — run models locally",
+            "url": "https://ollama.com"
+          },
+          {
+            "title": "llama.cpp (GGUF inference)",
+            "url": "https://github.com/ggerganov/llama.cpp"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_j6",
+        "question": "What is quantization, and why is it almost always used when deploying SLMs on-device?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Intel",
+          "Hugging Face"
+        ],
+        "core_intent": "Checks basic understanding of the most common deployment-time compression technique.",
+        "preparation_guide": "Know what precision means, the typical memory savings, and the common formats.",
+        "explanation": "Quantization stores weights (and sometimes activations) in lower precision, such as INT4 or INT8 instead of FP16. This shrinks memory roughly 2-4x and speeds up inference on memory-bound edge hardware, with usually modest quality loss. It is what makes an SLM fit a phone or laptop budget. Common formats include GGUF (llama.cpp), GPTQ, and AWQ.",
+        "star_framework_tip": "State the savings (memory + bandwidth), name a format, and acknowledge the small accuracy trade-off.",
+        "common_pitfalls": [
+          "Claiming quantization is free with zero quality impact at any bit-width."
+        ],
+        "references": [
+          {
+            "title": "GPTQ: Accurate Post-Training Quantization",
+            "url": "https://arxiv.org/abs/2210.17323"
+          },
+          {
+            "title": "AWQ: Activation-aware Weight Quantization",
+            "url": "https://arxiv.org/abs/2306.00978"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_j7",
+        "question": "Give three concrete edge or on-device use cases where an SLM is the right tool and a cloud LLM is not.",
+        "complexity": "Easy",
+        "companies": [
+          "Apple",
+          "Samsung",
+          "Microsoft"
+        ],
+        "core_intent": "Tests ability to connect SLM strengths to real, grounded deployment scenarios.",
+        "preparation_guide": "Have ready scenarios spanning connectivity, latency, and compliance constraints.",
+        "explanation": "Examples: (1) an offline mobile assistant or smart-reply feature where connectivity is not guaranteed; (2) factory visual or defect inspection on an embedded board (e.g., Jetson) with millisecond latency budgets and no external network; (3) healthcare or finance apps where patient or customer data legally cannot leave the device or local network. Offline retail point-of-sale is another.",
+        "star_framework_tip": "Tie each example to a specific constraint: no network, hard latency limit, or data-residency rule.",
+        "common_pitfalls": [
+          "Picking tasks that actually need broad world knowledge, where an SLM would underperform."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          },
+          {
+            "title": "Llama 3.2: edge & mobile vision models (Meta)",
+            "url": "https://ai.meta.com/blog/llama-3-2-connect-2024-vision-edge-mobile-devices/"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_j8",
+        "question": "What does 'on-device inference' mean, and what are its two biggest user-facing benefits?",
+        "complexity": "Easy",
+        "companies": [
+          "Apple",
+          "Google",
+          "Qualcomm"
+        ],
+        "core_intent": "Confirms the candidate understands the core value proposition that drives SLM adoption.",
+        "preparation_guide": "Be able to define on-device inference in one sentence and name the headline benefits.",
+        "explanation": "On-device inference means the model runs locally on the user's phone, laptop, or embedded hardware rather than on a remote server. The two biggest user-facing benefits are privacy (input data never leaves the device) and latency/availability (no network round-trip, so it is fast and works fully offline).",
+        "star_framework_tip": "Lead with privacy and latency, then note the secondary cost benefit at scale.",
+        "common_pitfalls": [
+          "Confusing on-device inference with simply caching cloud responses locally."
+        ],
+        "references": [
+          {
+            "title": "Llama 3.2: edge & mobile vision models (Meta)",
+            "url": "https://ai.meta.com/blog/llama-3-2-connect-2024-vision-edge-mobile-devices/"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_j9",
+        "question": "Why are SLMs generally considered more energy-efficient and sustainable than frontier LLMs?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "NVIDIA",
+          "Meta"
+        ],
+        "core_intent": "Tests understanding of the efficiency argument that motivates the whole SLM movement.",
+        "preparation_guide": "Connect parameter count to FLOPs, memory traffic, and where the model runs.",
+        "explanation": "An SLM uses far fewer FLOPs and far less memory traffic per generated token, and it can run on commodity or edge hardware instead of clusters of data-center GPUs. That means lower energy per query and no constant data-center and networking draw. At fleet scale, this difference dominates total cost and carbon footprint.",
+        "star_framework_tip": "Frame it as energy-per-token x volume, and note that scale is what makes the gap matter.",
+        "common_pitfalls": [
+          "Ignoring that training cost is amortized — the efficiency win is mainly at inference scale."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_j10",
+        "question": "What is the difference between an SLM, a quantized model, and a distilled model? Can a single model be more than one?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Checks that the candidate does not conflate three distinct concepts.",
+        "preparation_guide": "Define each term independently, then explain how they compose.",
+        "explanation": "An SLM is small by parameter count or architecture from the start. Quantization compresses an existing model by lowering numeric precision. Distillation trains a small 'student' to mimic a larger 'teacher.' They are complementary: many shipped SLMs are both distilled (to get quality) and quantized (to fit memory), so one model can be all three at once.",
+        "star_framework_tip": "Give a one-line definition of each, then state explicitly that they stack.",
+        "common_pitfalls": [
+          "Treating 'small,' 'quantized,' and 'distilled' as synonyms."
+        ],
+        "references": [
+          {
+            "title": "Distilling the Knowledge in a Neural Network (Hinton et al.)",
+            "url": "https://arxiv.org/abs/1503.02531"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_j11",
+        "question": "When should you NOT use an SLM? Give two failure modes where a larger model is the safer choice.",
+        "complexity": "Easy",
+        "companies": [
+          "OpenAI",
+          "Anthropic",
+          "Google"
+        ],
+        "core_intent": "Tests honest awareness of SLM limits, not just their strengths.",
+        "preparation_guide": "Prepare concrete task types where small models reliably underperform.",
+        "explanation": "Avoid SLMs for (1) broad open-domain knowledge or niche factual recall, where limited parametric memory causes hallucination, and (2) long-horizon, multi-step reasoning or planning, where small capacity breaks down. For these, use an LLM, or pair an SLM with retrieval (RAG) and tool use to compensate.",
+        "star_framework_tip": "Name the failure mode, the symptom (hallucination, brittleness), and the mitigation.",
+        "common_pitfalls": [
+          "Claiming SLMs now match LLMs on everything because of strong benchmark headlines."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_j12",
+        "question": "What role does retrieval-augmented generation (RAG) play in making SLMs viable for knowledge-heavy tasks?",
+        "complexity": "Easy",
+        "companies": [
+          "Microsoft",
+          "Cohere",
+          "Amazon"
+        ],
+        "core_intent": "Assesses understanding of how external knowledge offsets an SLM's limited parametric memory.",
+        "preparation_guide": "Explain why retrieval matters more for small models than for large ones.",
+        "explanation": "SLMs hold less knowledge in their weights, so they are more prone to gaps and hallucination on factual queries. RAG retrieves relevant documents at query time and places them in context, letting a small model answer from supplied evidence instead of memory. This narrows the quality gap with LLMs on domain QA while keeping the model small and cheap.",
+        "star_framework_tip": "Frame RAG as 'moving knowledge out of weights and into context,' which suits small models especially well.",
+        "common_pitfalls": [
+          "Assuming RAG fixes reasoning weaknesses — it supplies facts, not deeper reasoning capacity."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -68,8 +320,277 @@
         ],
         "references": [
           {
-            "title": "Chinchilla Scaling Laws (Hoffmann et al.)",
+            "title": "Training Compute-Optimal LLMs / Chinchilla (Hoffmann et al.)",
             "url": "https://arxiv.org/abs/2203.15556"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_m2",
+        "question": "Walk through the cost intuition: why is a 3B SLM dramatically cheaper to serve at scale than a 70B LLM?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Amazon",
+          "OpenAI"
+        ],
+        "core_intent": "Tests quantitative reasoning about inference economics.",
+        "preparation_guide": "Connect active parameters to compute, memory bandwidth, and batch throughput per GPU.",
+        "explanation": "Inference cost scales roughly with active parameters multiplied by tokens processed. A 3B model has about 23x fewer parameters than a 70B model, so each token needs far less compute and memory bandwidth, and far more requests can be batched per GPU. It can also run on cheaper or edge hardware. The NVIDIA position paper argues SLMs are often 10-30x cheaper for the narrow, repetitive calls that dominate agentic systems.",
+        "star_framework_tip": "Anchor on 'cost per token = f(active params, tokens)' and then layer in throughput and hardware tier.",
+        "common_pitfalls": [
+          "Ignoring memory bandwidth and batching, which often matter more than raw FLOPs."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_m3",
+        "question": "NVIDIA argues SLMs are the future of agentic AI. Summarize the core argument and the 'heterogeneous' nuance.",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Checks familiarity with the most influential recent position on why SLMs matter.",
+        "preparation_guide": "Be ready to restate the thesis and the caveat that it is not 'SLM-only.'",
+        "explanation": "The paper argues that agentic systems mostly perform narrow, repetitive, well-scoped subtasks — tool calls, parsing, routing, formatting — where SLMs are sufficiently capable, more economical, and easier to fine-tune and deploy. The nuance is heterogeneity: use SLMs for the specialized steps and reserve a larger LLM for the occasional open-ended or novel reasoning step, rather than replacing every model.",
+        "star_framework_tip": "State three claims (sufficiently powerful, more suitable, more economical) and then the heterogeneous-system caveat.",
+        "common_pitfalls": [
+          "Overstating it as 'LLMs are obsolete,' which the paper does not claim."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_m4",
+        "question": "What is knowledge distillation, and why is it central to the quality of modern SLMs?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Hugging Face",
+          "Microsoft"
+        ],
+        "core_intent": "Tests understanding of how small models acquire capabilities they could not learn efficiently alone.",
+        "preparation_guide": "Explain soft targets and how distillation differs from training on raw text.",
+        "explanation": "Distillation trains a small student to match a larger teacher's outputs — often soft probability distributions (logits) or generated sequences — transferring behavior and 'dark knowledge' the student could not absorb efficiently from raw text. It underpins DistilBERT, TinyLlama-style training, and the synthetic-data pipelines (teacher-generated training data) behind families like Phi.",
+        "star_framework_tip": "Distinguish learning from soft targets vs hard labels, then cite a concrete distilled model.",
+        "common_pitfalls": [
+          "Confusing distillation (behavior transfer) with quantization (precision reduction)."
+        ],
+        "references": [
+          {
+            "title": "Distilling the Knowledge in a Neural Network (Hinton et al.)",
+            "url": "https://arxiv.org/abs/1503.02531"
+          },
+          {
+            "title": "DistilBERT, a distilled version of BERT",
+            "url": "https://arxiv.org/abs/1910.01108"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_m5",
+        "question": "Microsoft's Phi family is built on 'data quality over scale.' What does that mean, and what is the trade-off?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "OpenAI",
+          "Google"
+        ],
+        "core_intent": "Tests understanding of why a sub-4B model can rival much larger ones on reasoning.",
+        "preparation_guide": "Know the synthetic/filtered-data approach and where it is weakest.",
+        "explanation": "Phi models train on heavily filtered web data plus reasoning-dense synthetic data, so a 3.8B-14B model can rival much larger models on math and reasoning (Phi-4 reports very high GSM8K and MATH scores). The trade-off is narrower world knowledge, sensitivity to prompt and chat-template format, and risk of overfitting to benchmark-style distributions, so it can be weaker on open-domain trivia.",
+        "star_framework_tip": "Pair the strength (reasoning density) with the cost (breadth and format sensitivity).",
+        "common_pitfalls": [
+          "Assuming high reasoning benchmarks imply broad factual coverage."
+        ],
+        "references": [
+          {
+            "title": "Phi-3 Technical Report (Microsoft)",
+            "url": "https://arxiv.org/abs/2404.14219"
+          },
+          {
+            "title": "Phi-4-mini-instruct Model Card (Microsoft)",
+            "url": "https://huggingface.co/microsoft/Phi-4-mini-instruct"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_m6",
+        "question": "Compare SmolLM3-3B, Gemma 3 4B, and Phi-4-mini for a beginner choosing one model. What differentiates them?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests up-to-date, decision-oriented knowledge of the current 3-4B tier.",
+        "preparation_guide": "Map each model to the single scenario where it is the best pick.",
+        "explanation": "SmolLM3-3B is fully open (data and recipe published) with 128K context and dual-mode reasoning — best for transparency and long documents. Gemma 3 4B is multimodal (image + text) with 140+ language coverage and a permissive license — best for vision or multilingual needs. Phi-4-mini (3.8B) leads sub-4B math and reasoning and supports function calling — best for tool-using agents.",
+        "star_framework_tip": "Give one decisive differentiator per model rather than listing every spec.",
+        "common_pitfalls": [
+          "Choosing on raw benchmark averages instead of the requirement (openness, multimodality, reasoning)."
+        ],
+        "references": [
+          {
+            "title": "SmolLM3: a fully open 3B reasoning model (Hugging Face)",
+            "url": "https://huggingface.co/blog/smollm3"
+          },
+          {
+            "title": "Gemma open models (Google DeepMind)",
+            "url": "https://ai.google.dev/gemma"
+          },
+          {
+            "title": "Phi-4-mini-instruct Model Card (Microsoft)",
+            "url": "https://huggingface.co/microsoft/Phi-4-mini-instruct"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_m7",
+        "question": "What is the KV cache, and why does it matter more for SLM deployment than people expect?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Apple",
+          "Qualcomm"
+        ],
+        "core_intent": "Tests awareness that memory limits, not just weights, constrain edge deployment.",
+        "preparation_guide": "Explain how KV-cache memory scales and how it interacts with context length.",
+        "explanation": "The KV cache stores per-token keys and values so attention does not recompute past tokens. Its memory grows linearly with context length, layers, and heads. On memory-constrained edge hardware it can rival or exceed the (quantized) weight footprint at long context, which caps the practical context window even when a model nominally 'supports' 128K. Mitigations include grouped-query attention, quantized KV cache, and sliding-window attention.",
+        "star_framework_tip": "Separate weight memory from cache memory, then explain why long context strains small devices.",
+        "common_pitfalls": [
+          "Assuming the advertised max context is always usable on small hardware."
+        ],
+        "references": [
+          {
+            "title": "llama.cpp (GGUF inference)",
+            "url": "https://github.com/ggerganov/llama.cpp"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_m8",
+        "question": "Define an SLM-to-LLM router or cascade and explain its cost-quality trade-off.",
+        "complexity": "Medium",
+        "companies": [
+          "OpenAI",
+          "NVIDIA",
+          "Cohere"
+        ],
+        "core_intent": "Tests the core pattern for combining small and large models economically.",
+        "preparation_guide": "Describe the routing signal and the two ways routing can go wrong.",
+        "explanation": "A router uses a cheap classifier — or the SLM's own confidence/uncertainty — to decide whether to answer locally or escalate to an LLM. It saves cost and latency on the easy majority of queries while preserving quality on hard ones. The trade-off lives at the threshold: too aggressive and hard queries are misrouted to the SLM (quality drops); too conservative and too much escalates to the LLM (cost rises). Tune to a measured quality SLA.",
+        "star_framework_tip": "Name the routing signal, the savings, and the misrouting failure mode in one structured answer.",
+        "common_pitfalls": [
+          "Running every prompt through the SLM first as a fallback, which adds latency to hard requests."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_m9",
+        "question": "How do you decide whether an SLM is 'good enough' to replace an LLM for a specific task?",
+        "complexity": "Medium",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests evaluation discipline rather than reliance on leaderboard numbers.",
+        "preparation_guide": "Outline a task-specific evaluation rather than citing MMLU.",
+        "explanation": "Build a task-specific eval set with a real metric (exact match, tool-call accuracy, or a rubric/LLM-judge), set explicit quality, latency, and cost budgets, then run the SLM head-to-head against the LLM on that set. Crucially, inspect tail behavior — worst-case and out-of-distribution inputs — not just the average. Capability on your task is what matters, not generic benchmark scores.",
+        "star_framework_tip": "Lead with 'capability-on-task, not leaderboard average,' then describe the eval set and budgets.",
+        "common_pitfalls": [
+          "Deciding based on a model's MMLU or chatbot-arena rank instead of your own task data."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_m10",
+        "question": "Why does task-specific fine-tuning often give a bigger payoff on SLMs than on frontier LLMs?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests understanding of where customization is most cost-effective.",
+        "preparation_guide": "Connect small model size to low tuning cost and high marginal gain on narrow tasks.",
+        "explanation": "A small base is cheap to fine-tune — QLoRA can adapt a 3B model on a single consumer GPU — and a narrow task fills the model's limited capacity efficiently, often letting it match a much larger zero-shot LLM on that task. Frontier LLMs are expensive to tune and already broadly capable, so the marginal quality gain per dollar from tuning them on a narrow task is smaller.",
+        "star_framework_tip": "Frame it as 'low tuning cost + high marginal gain on a narrow slice.'",
+        "common_pitfalls": [
+          "Assuming a fine-tuned SLM beats a general LLM everywhere, rather than only on the tuned task."
+        ],
+        "references": [
+          {
+            "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+            "url": "https://arxiv.org/abs/2305.14314"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_m11",
+        "question": "What is the widely cited industry projection on SLM adoption, and what business drivers explain it?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "Amazon",
+          "NVIDIA"
+        ],
+        "core_intent": "Tests awareness of the commercial momentum behind SLMs.",
+        "preparation_guide": "Know the headline analyst projection and the underlying drivers.",
+        "explanation": "Gartner has projected that by 2027 organizations will use task-specific small models roughly three times more than general-purpose LLMs. The drivers are lower total cost of ownership, data residency and privacy needs, predictable low latency, easier customization, and the explosion of narrow agentic tasks that do not need a frontier model.",
+        "star_framework_tip": "State the projection, then list the cost, compliance, latency, and customization drivers.",
+        "common_pitfalls": [
+          "Quoting the number without being able to justify why enterprises are shifting."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_m12",
+        "question": "Explain the privacy and compliance advantages of SLMs in regulated industries like healthcare and finance.",
+        "complexity": "Medium",
+        "companies": [
+          "Apple",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests understanding of why regulated sectors lead SLM adoption.",
+        "preparation_guide": "Tie local inference to specific compliance and risk-surface benefits.",
+        "explanation": "Running inference locally or inside a private VPC keeps PII and PHI within the trust boundary, which simplifies HIPAA, GDPR, and data-residency compliance, removes the need for third-party data-processing agreements on every prompt, and shrinks the breach surface. The trade-off is that you now own model governance, patching, and ongoing evaluation rather than outsourcing them to an API provider.",
+        "star_framework_tip": "Pair each compliance benefit with the operational responsibility it shifts onto you.",
+        "common_pitfalls": [
+          "Treating local deployment as automatically compliant while ignoring model governance duties."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
           }
         ]
       }
@@ -95,6 +616,198 @@
           {
             "title": "Hybrid LLM-SLM Routing Systems",
             "url": "https://arxiv.org/abs/2401.00000"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_s2",
+        "question": "Design a heterogeneous agentic system that uses multiple specialized SLMs plus a fallback LLM. What components and decision logic are needed?",
+        "complexity": "System Design",
+        "companies": [
+          "NVIDIA",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests ability to operationalize the heterogeneous-agent thesis end to end.",
+        "preparation_guide": "Cover routing, specialization, shared tooling, fallback, and the evaluation loop.",
+        "explanation": "Core components: a router that classifies each subtask; a set of specialized SLMs (one tuned for extraction, one for classification, one for tool-call formatting); a shared tool/function layer; and a fallback LLM for open-ended or novel reasoning. Decision logic routes on intent, input length, and confidence, escalating to the LLM when an SLM's confidence is low. Wrap it in observability and an offline/online eval loop so you can catch regressions and re-tune SLMs as task distributions drift.",
+        "star_framework_tip": "Draw the request path: router -> specialized SLM -> tools -> (confidence gate) -> LLM fallback -> eval/telemetry.",
+        "common_pitfalls": [
+          "Designing one mega-SLM for all subtasks instead of small specialists with a router."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_s3",
+        "question": "You must cut the inference cost of a production LLM agent by ~80% without breaking quality SLAs. Lay out a migration plan to SLMs.",
+        "complexity": "System Design",
+        "companies": [
+          "OpenAI",
+          "Amazon",
+          "NVIDIA"
+        ],
+        "core_intent": "Tests a pragmatic, data-driven approach to SLM adoption under hard constraints.",
+        "preparation_guide": "Emphasize logging real traffic, prioritizing by volume, and gating with evals.",
+        "explanation": "Log and cluster real agent calls by subtask, then identify the high-volume, narrow ones that dominate cost. Collect input/output data for those, fine-tune or distill an SLM per subtask, and A/B test each against the incumbent LLM with explicit quality gates. Route traffic with an LLM fallback for low-confidence cases, then monitor for regressions and expand coverage incrementally. Cost falls as the high-volume tail moves to SLMs while quality-sensitive cases stay on the LLM.",
+        "star_framework_tip": "Sequence it: measure -> prioritize by volume -> collect data -> tune -> gate with evals -> route with fallback -> monitor.",
+        "common_pitfalls": [
+          "Trying to replace every call at once instead of migrating the high-volume narrow tasks first."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_s4",
+        "question": "Architect an on-device assistant for a phone: model choice, quantization, memory budget, context strategy, and update mechanism.",
+        "complexity": "System Design",
+        "companies": [
+          "Apple",
+          "Google",
+          "Samsung"
+        ],
+        "core_intent": "Tests full-stack reasoning about real mobile constraints.",
+        "preparation_guide": "Cover the memory budget, KV-cache strategy, and how the model is updated safely.",
+        "explanation": "Pick a 1-3B model (Llama 3.2 1B/3B, Gemma 3 1B, or SmolLM3) and serve it as a 4-bit GGUF or via the device NPU within a ~1-3 GB budget. Manage long context with a quantized KV cache and sliding-window attention, and add on-device RAG over the user's local data to compensate for limited parametric knowledge. Ship model updates over the air with delta downloads, signature verification, and rollback so a bad model version can be reverted.",
+        "star_framework_tip": "Trace memory: weights + KV cache + app overhead must fit the device budget at target context.",
+        "common_pitfalls": [
+          "Picking a model that fits at short context but blows the memory budget once the KV cache grows."
+        ],
+        "references": [
+          {
+            "title": "Llama 3.2: edge & mobile vision models (Meta)",
+            "url": "https://ai.meta.com/blog/llama-3-2-connect-2024-vision-edge-mobile-devices/"
+          },
+          {
+            "title": "llama.cpp (GGUF inference)",
+            "url": "https://github.com/ggerganov/llama.cpp"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_s5",
+        "question": "How would you build an evaluation and monitoring harness to safely run SLMs in production, given they can silently degrade on edge cases?",
+        "complexity": "System Design",
+        "companies": [
+          "Microsoft",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Tests reliability engineering for small models in production.",
+        "preparation_guide": "Combine offline evals, online safeguards, and drift detection.",
+        "explanation": "Maintain curated offline task-eval sets and run them as regression gates on every model swap. Online, use shadow or canary deployment, capture confidence and uncertainty signals to trigger automatic escalation or fallback, and detect input drift versus the tuning distribution. Sample outputs for human review and alert when key metrics move. The goal is to catch silent quality loss before users feel it, since SLMs fail quietly rather than crashing.",
+        "star_framework_tip": "Layer defenses: offline regression gates, online canary + fallback, drift detection, human sampling.",
+        "common_pitfalls": [
+          "Relying only on a one-time pre-launch eval and assuming quality holds as inputs drift."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_s6",
+        "question": "Discuss the security threat-model differences between shipping model weights to the edge and serving from a controlled cloud.",
+        "complexity": "Hard",
+        "companies": [
+          "Apple",
+          "NVIDIA",
+          "Microsoft"
+        ],
+        "core_intent": "Tests awareness that on-device deployment changes the attack surface, not just the cost profile.",
+        "preparation_guide": "Contrast weight-exposure risks at the edge with data-egress risks in the cloud.",
+        "explanation": "At the edge, weights are physically in users' hands, so risks include model extraction and theft, tampering, adversarial inputs, an unverified supply chain of GGUF files, and the lack of central patching. Mitigations include signed and attested model artifacts, secure enclaves where available, and fast OTA updates — though true secrecy of shipped weights is hard. In the cloud you keep central control and patching but expose prompt data in transit and concentrate an endpoint attack surface.",
+        "star_framework_tip": "Frame it as 'edge protects data but exposes weights; cloud protects weights but exposes data.'",
+        "common_pitfalls": [
+          "Assuming on-device is strictly more secure because data stays local, ignoring weight theft and tampering."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_s7",
+        "question": "Critique the NVIDIA 'SLMs are the future of agentic AI' position. Where might it be wrong or incomplete?",
+        "complexity": "Hard",
+        "companies": [
+          "OpenAI",
+          "Anthropic",
+          "Google"
+        ],
+        "core_intent": "Tests independent, balanced reasoning rather than repeating a thesis.",
+        "preparation_guide": "Prepare the strongest counterarguments while acknowledging the paper's valid core.",
+        "explanation": "Reasonable counterpoints: complex planning and novel, open-ended reasoning still benefit from large models; orchestrating and maintaining many specialized SLMs adds engineering, evaluation, and ops complexity that can erode the cost win; the capability frontier moves fast, so a 'narrow' task can quietly start needing broader knowledge; and some seemingly narrow tasks actually require world knowledge. The balanced conclusion is heterogeneous systems, not an SLM-only future — which is close to what the paper itself argues.",
+        "star_framework_tip": "Steel-man the position first, then give specific, concrete failure cases, then land on a nuanced synthesis.",
+        "common_pitfalls": [
+          "Either dismissing the paper outright or accepting it uncritically without naming real trade-offs."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_s8",
+        "question": "Design a distillation pipeline to produce a task-specialized SLM from a frontier LLM teacher. What are the stages and failure modes?",
+        "complexity": "System Design",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests end-to-end understanding of how specialized SLMs are actually produced.",
+        "preparation_guide": "Lay out data, training, evaluation, and compression stages plus what can go wrong.",
+        "explanation": "Stages: (1) collect or generate teacher outputs for the target task (soft targets or synthetic data); (2) curate and filter that data for quality and coverage; (3) supervised fine-tune the student on those targets, optionally with on-policy distillation; (4) evaluate the student against the teacher and a held-out task set; (5) quantize for deployment. Failure modes include propagating teacher errors, distribution mismatch between synthetic and real inputs, overfitting to the teacher's style, and eval leakage from synthetic data into the test set.",
+        "star_framework_tip": "Walk the pipeline left to right and attach one realistic failure mode to each stage.",
+        "common_pitfalls": [
+          "Trusting teacher outputs blindly without filtering, so the student inherits the teacher's mistakes."
+        ],
+        "references": [
+          {
+            "title": "Distilling the Knowledge in a Neural Network (Hinton et al.)",
+            "url": "https://arxiv.org/abs/1503.02531"
+          },
+          {
+            "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+            "url": "https://arxiv.org/abs/2305.14314"
+          }
+        ]
+      },
+      {
+        "id": "m1_l1_s9",
+        "question": "Build a total-cost-of-ownership (TCO) model comparing a self-hosted SLM against an LLM API for a high-volume agentic workload.",
+        "complexity": "Hard",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "NVIDIA"
+        ],
+        "core_intent": "Tests the ability to reason about economics beyond per-call price.",
+        "preparation_guide": "Separate fixed vs marginal costs and include non-dollar value like privacy and latency.",
+        "explanation": "An LLM API costs per-token times volume — zero infrastructure and predictable, but it scales linearly with usage and sends data to a third party. A self-hosted SLM carries upfront fine-tuning and amortized GPU or edge infrastructure cost, but near-zero marginal cost per token, offset by ongoing ops, monitoring, and patching effort. Compute a break-even volume where the SLM's fixed cost is repaid, and fold in the value of data residency and predictable latency, which can justify the SLM even before pure dollar break-even.",
+        "star_framework_tip": "Express it as fixed + (marginal x volume) for each option, solve for break-even, then add qualitative value.",
+        "common_pitfalls": [
+          "Comparing only API price per token while ignoring infra, ops, and the privacy/latency value of self-hosting."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (Belcak et al., NVIDIA, 2025)",
+            "url": "https://arxiv.org/abs/2506.02153"
           }
         ]
       }

@@ -23,6 +23,267 @@
             "url": "https://huggingface.co/course/"
           }
         ]
+      },
+      {
+        "id": "slm_fc_j2",
+        "question": "At a high level, what are the stages of the end-to-end SLM development lifecycle?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Hugging Face",
+          "Microsoft"
+        ],
+        "core_intent": "Tests whole-course orientation.",
+        "preparation_guide": "Recall the ordered pipeline stages.",
+        "explanation": "The lifecycle runs: define the task and success metrics; collect, clean, deduplicate, and split data; select a base model; fine-tune (often with LoRA/QLoRA) or train; evaluate for quality and safety; quantize for deployment; audit for bias and safety; serve behind an optimized inference engine; and monitor in production with a feedback loop back to training.",
+        "star_framework_tip": "List the stages in order and note the feedback loop.",
+        "common_pitfalls": [
+          "Presenting training as the whole project and omitting eval, audit, serve, and monitor."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Course",
+            "url": "https://huggingface.co/course/"
+          },
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_j3",
+        "question": "When would you choose a small language model over a large one for a project?",
+        "complexity": "Easy",
+        "companies": [
+          "Meta",
+          "Apple",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the core SLM value proposition.",
+        "preparation_guide": "Recall latency, privacy, cost, and task narrowness.",
+        "explanation": "Choose an SLM when the task is narrow and well-scoped and when latency, privacy, cost, or offline/on-device operation matter more than broad open-ended reasoning. SLMs give predictable low latency, keep data local, and cost far less at scale, which is why they dominate high-volume, regulated, and edge use cases.",
+        "star_framework_tip": "Tie the choice to narrow tasks plus latency/privacy/cost constraints.",
+        "common_pitfalls": [
+          "Assuming a larger model is always better regardless of the task."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_j4",
+        "question": "What is fine-tuning, and why is it far cheaper than pretraining?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests the transfer-learning foundation.",
+        "preparation_guide": "Explain reusing pretrained knowledge.",
+        "explanation": "Fine-tuning adapts a pretrained model to a specific task using a small dataset, rather than learning language from scratch. Because pretraining already encoded grammar, knowledge, and reusable representations, fine-tuning only needs to steer them, so it uses orders of magnitude less data and compute.",
+        "star_framework_tip": "Say pretraining learns language; fine-tuning just steers it cheaply.",
+        "common_pitfalls": [
+          "Thinking fine-tuning relearns language rather than adapting it."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_j5",
+        "question": "What is quantization, and why is it usually required to deploy an SLM on-device?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Intel",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests the key deployment compression step.",
+        "preparation_guide": "Connect precision reduction to memory fit.",
+        "explanation": "Quantization stores weights in lower precision (e.g., INT4/INT8 instead of FP16), shrinking memory roughly 2-4x and speeding memory-bound inference with modest quality loss. It is what lets an SLM fit the tight memory budget of a phone, laptop, or edge device.",
+        "star_framework_tip": "State the memory savings and the on-device fit as the motivation.",
+        "common_pitfalls": [
+          "Confusing quantization with pruning or distillation."
+        ],
+        "references": [
+          {
+            "title": "AWQ: Activation-aware Weight Quantization",
+            "url": "https://arxiv.org/abs/2306.00978"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_j6",
+        "question": "What is LoRA, in one paragraph?",
+        "complexity": "Easy",
+        "companies": [
+          "Microsoft",
+          "Hugging Face",
+          "Google"
+        ],
+        "core_intent": "Tests basic PEFT understanding.",
+        "preparation_guide": "Explain freezing the base and training low-rank adapters.",
+        "explanation": "LoRA (Low-Rank Adaptation) freezes the pretrained weights and injects small trainable low-rank matrices whose product represents the weight update. Only those tiny adapters are trained, which slashes memory (no optimizer state for the base) and produces small, swappable task-specific weights that can be merged back for zero inference overhead.",
+        "star_framework_tip": "Cover frozen base + low-rank adapters + memory and swappability benefits.",
+        "common_pitfalls": [
+          "Believing LoRA also shrinks the base model's memory (only quantization does)."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_j7",
+        "question": "What is instruction fine-tuning, and how does it change a base model?",
+        "complexity": "Easy",
+        "companies": [
+          "OpenAI",
+          "Hugging Face",
+          "Google"
+        ],
+        "core_intent": "Tests SFT understanding.",
+        "preparation_guide": "Contrast text continuation with following instructions.",
+        "explanation": "Instruction fine-tuning trains a base model on (instruction, response) examples so it learns to follow instructions and behave like a helpful assistant, rather than merely continuing text. It uses the model's chat template and typically computes loss only on the response.",
+        "star_framework_tip": "Say it teaches instruction following on top of the pretrained base.",
+        "common_pitfalls": [
+          "Assuming a base model already follows instructions without SFT."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face TRL documentation",
+            "url": "https://huggingface.co/docs/trl"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_j8",
+        "question": "What is retrieval-augmented generation (RAG), and when do you use it instead of fine-tuning?",
+        "complexity": "Easy",
+        "companies": [
+          "Microsoft",
+          "Cohere",
+          "Amazon"
+        ],
+        "core_intent": "Tests the fine-tune-vs-RAG distinction.",
+        "preparation_guide": "Map RAG to knowledge and fine-tuning to behavior.",
+        "explanation": "RAG retrieves relevant documents at query time and puts them in context, so the model answers from supplied evidence instead of memorized facts. Use RAG when the gap is knowledge or freshness, and fine-tuning when the gap is a skill, style, format, or latency; the two are often combined.",
+        "star_framework_tip": "Frame RAG as knowledge-in-context vs fine-tuning as baked-in behavior.",
+        "common_pitfalls": [
+          "Fine-tuning to add facts that RAG would supply more cheaply and freshly."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_j9",
+        "question": "What does perplexity measure, and what are its limits?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests the core intrinsic metric.",
+        "preparation_guide": "Recall the surprise intuition and the task-eval caveat.",
+        "explanation": "Perplexity is the exponential of average per-token cross-entropy on held-out text; lower means the model predicts real text better. It is comparable only across the same tokenizer and data, and low perplexity does not guarantee good task performance, so it must be paired with task evaluation.",
+        "star_framework_tip": "Give the intuition plus the tokenizer and task-eval caveats.",
+        "common_pitfalls": [
+          "Treating low perplexity as proof of good downstream quality."
+        ],
+        "references": [
+          {
+            "title": "Perplexity of fixed-length models (Hugging Face)",
+            "url": "https://huggingface.co/docs/transformers/perplexity"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_j10",
+        "question": "What is a model card, and why does it matter?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests responsible-documentation basics.",
+        "preparation_guide": "Recall contents and the transparency purpose.",
+        "explanation": "A model card documents a model's intended and out-of-scope uses, training data, evaluation results, known limitations and biases, license, and environmental impact. It matters because it enables responsible, informed use, supports accountability and compliance, and reduces harm from misuse.",
+        "star_framework_tip": "List the core sections and the transparency rationale.",
+        "common_pitfalls": [
+          "Reducing a model card to a table of benchmark scores."
+        ],
+        "references": [
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_j11",
+        "question": "Why do language models use subword tokenization rather than words or characters?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Google",
+          "OpenAI"
+        ],
+        "core_intent": "Tests tokenization fundamentals.",
+        "preparation_guide": "Explain the length-vs-vocabulary trade-off.",
+        "explanation": "Word vocabularies explode in size and fail on unseen words; character sequences are very long and slow. Subword tokenization (BPE, WordPiece, Unigram) is the middle ground: a compact vocabulary that can compose any string, handling rare and unseen words while keeping sequences reasonably short.",
+        "star_framework_tip": "Frame subwords as resolving the length-vs-vocabulary trade-off.",
+        "common_pitfalls": [
+          "Assuming tokens are always whole words."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_j12",
+        "question": "What hardware can run a small quantized SLM, and roughly how much memory does a 3B model need at 4-bit?",
+        "complexity": "Easy",
+        "companies": [
+          "Apple",
+          "NVIDIA",
+          "Qualcomm"
+        ],
+        "core_intent": "Tests deployment-footprint intuition.",
+        "preparation_guide": "Recall the weight math plus overhead.",
+        "explanation": "A 3B model at 4-bit needs about 2 GB for weights plus KV-cache and overhead, so roughly 3-4 GB in practice, which fits a modern laptop, an 8 GB consumer GPU, or higher-end phone NPUs. Smaller 1B models fit comfortably on most phones.",
+        "star_framework_tip": "Give the weight estimate then add cache/overhead and name the device tier.",
+        "common_pitfalls": [
+          "Forgetting the KV cache grows with context length on top of the weights."
+        ],
+        "references": [
+          {
+            "title": "Ollama",
+            "url": "https://ollama.com"
+          },
+          {
+            "title": "llama.cpp (GGUF inference)",
+            "url": "https://github.com/ggerganov/llama.cpp"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -45,6 +306,287 @@
           {
             "title": "QLoRA Paper (Dettmers et al.)",
             "url": "https://arxiv.org/abs/2305.14314"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_m2",
+        "question": "Compare LoRA, QLoRA, and full fine-tuning in memory and quality.",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "NVIDIA",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests the fine-tuning method trade-offs.",
+        "preparation_guide": "Explain what each trains and where the base sits.",
+        "explanation": "Full fine-tuning updates every weight with full gradients and optimizer state (heaviest, highest ceiling). LoRA freezes the base and trains small adapters, collapsing optimizer memory while the base sits in its loaded precision. QLoRA additionally loads the base in 4-bit NF4, cutting the base footprint so large models fine-tune on a single consumer GPU, at a small quality cost.",
+        "star_framework_tip": "Contrast trainable scope and base precision across the three.",
+        "common_pitfalls": [
+          "Claiming LoRA reduces base memory when only QLoRA's quantization does."
+        ],
+        "references": [
+          {
+            "title": "LoRA: Low-Rank Adaptation of LLMs (Hu et al.)",
+            "url": "https://arxiv.org/abs/2106.09685"
+          },
+          {
+            "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+            "url": "https://arxiv.org/abs/2305.14314"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_m3",
+        "question": "How do you decide whether an SLM is good enough to replace an LLM for a specific task?",
+        "complexity": "Medium",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests evaluation discipline.",
+        "preparation_guide": "Emphasize task-specific eval over leaderboards.",
+        "explanation": "Build a representative, contamination-checked eval set with a real metric (exact match, tool-call accuracy, or a rubric/judge), set quality, latency, and cost budgets, and run the SLM head-to-head against the LLM, inspecting tail and out-of-distribution behavior. Capability on your task, not generic benchmark averages, decides it.",
+        "star_framework_tip": "Lead with capability-on-task and describe the eval set and budgets.",
+        "common_pitfalls": [
+          "Deciding from MMLU or arena rank instead of your task data."
+        ],
+        "references": [
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_m4",
+        "question": "How do continuous batching and a paged KV cache raise serving throughput?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Tests core serving optimizations.",
+        "preparation_guide": "Explain per-iteration scheduling and fragmentation-free memory.",
+        "explanation": "Continuous batching admits and evicts requests every token iteration so the GPU stays saturated instead of waiting for a fixed batch's longest sequence. PagedAttention stores the KV cache in non-contiguous pages, eliminating fragmentation and letting far more sequences share memory. Together they multiply throughput under bursty, mixed-length traffic.",
+        "star_framework_tip": "Pair per-iteration batching with paged, fragmentation-free KV memory.",
+        "common_pitfalls": [
+          "Equating continuous batching with just a larger fixed batch size."
+        ],
+        "references": [
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          },
+          {
+            "title": "Efficient Memory Management for LLM Serving (PagedAttention)",
+            "url": "https://arxiv.org/abs/2309.06180"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_m5",
+        "question": "How do you prevent catastrophic forgetting during fine-tuning?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Tests preserving general ability.",
+        "preparation_guide": "List learning-rate, data, method, and eval levers.",
+        "explanation": "Use a small learning rate and few epochs, mix in general or original-task data (rehearsal), prefer PEFT/LoRA so the frozen base preserves knowledge, and optionally anchor important weights (EWC). Continuously evaluate on held-out general benchmarks so forgetting is caught before it ships.",
+        "star_framework_tip": "Group remedies: smaller updates, data replay, PEFT, and general-eval monitoring.",
+        "common_pitfalls": [
+          "Tracking only target-task gains while general ability quietly degrades."
+        ],
+        "references": [
+          {
+            "title": "Overcoming Catastrophic Forgetting (EWC)",
+            "url": "https://arxiv.org/abs/1612.00796"
+          },
+          {
+            "title": "Hugging Face PEFT documentation",
+            "url": "https://huggingface.co/docs/peft"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_m6",
+        "question": "How do you build a leakage-safe evaluation for a domain model?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Amazon",
+          "Microsoft"
+        ],
+        "core_intent": "Tests trustworthy evaluation.",
+        "preparation_guide": "Cover dedup, key-based splits, and decontamination.",
+        "explanation": "Deduplicate first, split by a natural key (document, user, time) so near-duplicates do not cross splits, and reserve a one-touch test set. Decontaminate the eval data against any pretraining corpus using n-gram or hash overlap, use a representative eval set, and report disaggregated metrics over multiple seeds.",
+        "star_framework_tip": "Emphasize dedup-before-split, decontamination, and a one-touch test set.",
+        "common_pitfalls": [
+          "Random splits that leak near-duplicates and inflate scores."
+        ],
+        "references": [
+          {
+            "title": "Deduplicating Training Data Makes LMs Better",
+            "url": "https://arxiv.org/abs/2107.06499"
+          },
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_m7",
+        "question": "What are the trade-offs of 4-bit quantization, and how do you validate it before serving?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Intel",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests quantization judgment.",
+        "preparation_guide": "Balance savings against accuracy and validate with a regression eval.",
+        "explanation": "4-bit quantization cuts memory ~4x and can speed memory-bound decode, at the cost of a small, method- and task-dependent accuracy drop and a dependency on efficient quantized kernels. Validate by running the same eval suite on the pre- and post-quantization models within a tolerance, spot-checking prompts, and measuring on-target latency and memory before approving.",
+        "star_framework_tip": "Pair the memory win with an accuracy caveat and a paired regression eval.",
+        "common_pitfalls": [
+          "Serving a quantized model without a paired quality check."
+        ],
+        "references": [
+          {
+            "title": "AWQ: Activation-aware Weight Quantization",
+            "url": "https://arxiv.org/abs/2306.00978"
+          },
+          {
+            "title": "GPTQ: Accurate Post-Training Quantization",
+            "url": "https://arxiv.org/abs/2210.17323"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_m8",
+        "question": "Explain Grouped-Query Attention and why it matters for SLM deployment.",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Meta",
+          "NVIDIA"
+        ],
+        "core_intent": "Tests a key modern architecture choice.",
+        "preparation_guide": "Connect KV-head sharing to KV-cache size.",
+        "explanation": "GQA groups query heads to share a small number of key/value heads, shrinking the KV cache (which grows with KV heads, layers, and context) while keeping quality close to full multi-head attention. On memory-constrained devices and at long context, that smaller cache is what makes serving feasible, which is why most modern SLMs adopt GQA.",
+        "star_framework_tip": "Tie GQA's KV-head sharing to a smaller cache at long context.",
+        "common_pitfalls": [
+          "Thinking GQA reduces the quadratic attention compute rather than the KV cache."
+        ],
+        "references": [
+          {
+            "title": "GQA: Training Generalized Multi-Query Transformer Models",
+            "url": "https://arxiv.org/abs/2305.13245"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_m9",
+        "question": "How do you estimate training memory and decide whether a model fits a given GPU?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests the training memory budget.",
+        "preparation_guide": "Sum the buckets and leave headroom.",
+        "explanation": "Add weights, gradients, optimizer states (the ~16 bytes/param rule for mixed-precision AdamW: 2+2 for fp16 weights/grads, 4 for fp32 master, 8 for Adam moments) plus an activation estimate from batch, sequence length, hidden size, and layers. Compare against GPU memory minus a fragmentation margin; if it overflows, apply LoRA/QLoRA, checkpointing, smaller batch with accumulation, or sharding.",
+        "star_framework_tip": "Present the additive budget and the levers when it overflows.",
+        "common_pitfalls": [
+          "Budgeting only weights and ignoring optimizer state and activations."
+        ],
+        "references": [
+          {
+            "title": "Decoupled Weight Decay Regularization (AdamW)",
+            "url": "https://arxiv.org/abs/1711.05101"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_m10",
+        "question": "How do you measure bias and toxicity in an SLM, and what are the limits of automated classifiers?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Tests safety measurement.",
+        "preparation_guide": "Cover benchmarks, disaggregation, and classifier bias.",
+        "explanation": "Use bias benchmarks (BBQ, StereoSet) and template-controlled tests reported disaggregated by group, and score toxicity with probing benchmarks plus a classifier. Automated toxicity classifiers have their own biases (over-flagging dialects and reclaimed terms, missing context), so calibrate them against human labels and combine with human review rather than trusting a single score.",
+        "star_framework_tip": "Name benchmarks and disaggregation, then require human calibration of classifiers.",
+        "common_pitfalls": [
+          "Trusting a single toxicity score as objective ground truth."
+        ],
+        "references": [
+          {
+            "title": "BBQ: A Hand-Built Bias Benchmark for QA",
+            "url": "https://arxiv.org/abs/2110.08193"
+          },
+          {
+            "title": "RealToxicityPrompts",
+            "url": "https://arxiv.org/abs/2009.11462"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_m11",
+        "question": "How does supervised fine-tuning relate to preference optimization (DPO/RLHF) in the alignment pipeline?",
+        "complexity": "Medium",
+        "companies": [
+          "OpenAI",
+          "Anthropic",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests the alignment stages.",
+        "preparation_guide": "Sequence imitation then preference learning.",
+        "explanation": "SFT teaches the model to imitate good demonstrations, producing a competent assistant. Preference optimization then refines it with comparative feedback: RLHF trains a reward model and uses RL, while DPO optimizes directly on preference pairs without a separate reward model. SFT comes first because preference methods work best from a model that already follows instructions.",
+        "star_framework_tip": "Order SFT (imitate) then preference optimization (rank), contrasting RLHF and DPO.",
+        "common_pitfalls": [
+          "Applying DPO/RLHF to a base model with no SFT stage."
+        ],
+        "references": [
+          {
+            "title": "Direct Preference Optimization (Rafailov et al.)",
+            "url": "https://arxiv.org/abs/2305.18290"
+          },
+          {
+            "title": "Training LMs to Follow Instructions with Human Feedback (InstructGPT)",
+            "url": "https://arxiv.org/abs/2203.02155"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_m12",
+        "question": "How does the mixture of data sources affect a domain-specific model, and how do you control it?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Amazon",
+          "Meta"
+        ],
+        "core_intent": "Tests data-mixture design.",
+        "preparation_guide": "Explain sampling weights and per-domain validation.",
+        "explanation": "Concatenating sources by raw size lets the largest dominate; instead assign sampling weights (or temperature-based sampling) so important smaller domains are seen enough, treating the mixture as a tunable hyperparameter validated with per-domain evaluation. The right mixture balances coverage against over-sampling tiny sources and strongly shapes downstream behavior.",
+        "star_framework_tip": "Frame the mixture as tunable sampling weights validated per domain.",
+        "common_pitfalls": [
+          "Letting the biggest source dominate purely by byte count."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Datasets documentation",
+            "url": "https://huggingface.co/docs/datasets"
           }
         ]
       }
@@ -71,6 +613,287 @@
           {
             "title": "vLLM Production Documentation",
             "url": "https://docs.vllm.ai/"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_s2",
+        "question": "Design a heterogeneous agentic system that uses specialized SLMs with an LLM fallback.",
+        "complexity": "System Design",
+        "companies": [
+          "NVIDIA",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the agentic SLM architecture.",
+        "preparation_guide": "Cover router, specialists, tools, fallback, and evaluation.",
+        "explanation": "Use a router to classify each subtask, specialized SLMs tuned for narrow steps (extraction, classification, tool-call formatting), a shared tool layer, and an LLM fallback for open-ended or novel reasoning, escalating on low SLM confidence. Wrap it in observability and an eval loop so specialists can be re-tuned as task distributions drift. This captures most cost savings while preserving quality on hard cases.",
+        "star_framework_tip": "Draw router -> specialized SLMs -> tools -> confidence gate -> LLM fallback -> eval.",
+        "common_pitfalls": [
+          "Building one large SLM for everything instead of small specialists behind a router."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_s3",
+        "question": "Design an SLM-to-LLM router/cascade that cuts cost while meeting a quality SLA.",
+        "complexity": "System Design",
+        "companies": [
+          "OpenAI",
+          "NVIDIA",
+          "Amazon"
+        ],
+        "core_intent": "Tests cost-quality routing.",
+        "preparation_guide": "Explain the routing signal and threshold tuning.",
+        "explanation": "Route on a cheap classifier or the SLM's own confidence: answer the easy majority locally and escalate hard or low-confidence queries to an LLM. Tune the threshold against a measured quality SLA, balancing misrouting hard queries to the SLM (quality drop) against over-escalating (cost). Monitor per-segment quality and cost, and adjust as traffic shifts.",
+        "star_framework_tip": "Center on the routing signal and threshold tuned to a quality SLA.",
+        "common_pitfalls": [
+          "Running every prompt through the SLM first, adding latency to hard requests."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_s4",
+        "question": "Architect an on-device SLM assistant: model, quantization, memory, context, and updates.",
+        "complexity": "System Design",
+        "companies": [
+          "Apple",
+          "Google",
+          "Qualcomm"
+        ],
+        "core_intent": "Tests edge deployment design.",
+        "preparation_guide": "Cover the full on-device stack.",
+        "explanation": "Choose a 1-3B model served as 4-bit GGUF or via the NPU within a ~1-3 GB budget, manage long context with a quantized KV cache and sliding-window attention, and add on-device RAG over user data. Deliver signed, delta-downloaded model updates with rollback, warm the model to hide load latency, and degrade to a smaller model on low-end hardware. Validate p95/p99 latency on the real device.",
+        "star_framework_tip": "Trace weights + KV cache + overhead against the device budget, then updates.",
+        "common_pitfalls": [
+          "Picking a model that fits at short context but overflows once the KV cache grows."
+        ],
+        "references": [
+          {
+            "title": "llama.cpp (GGUF inference)",
+            "url": "https://github.com/ggerganov/llama.cpp"
+          },
+          {
+            "title": "Ollama",
+            "url": "https://ollama.com"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_s5",
+        "question": "Design a comprehensive pre-deployment safety audit for a fine-tuned SLM.",
+        "complexity": "System Design",
+        "companies": [
+          "Anthropic",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests end-to-end safety evaluation.",
+        "preparation_guide": "Cover the risk suites, thresholds, and a gate.",
+        "explanation": "Run versioned suites for bias (BBQ/StereoSet, disaggregated), toxicity (probing plus a calibrated classifier), jailbreak resistance (manual plus automated red-teaming), privacy leakage (extraction probes), and truthfulness (e.g., TruthfulQA). Define thresholds and a go/no-go gate, capture failures with examples, require sign-off, and re-run on every model change with production monitoring.",
+        "star_framework_tip": "Enumerate the risk suites, thresholds, disaggregation, and a sign-off gate.",
+        "common_pitfalls": [
+          "Auditing only toxicity and declaring the model safe."
+        ],
+        "references": [
+          {
+            "title": "Red Teaming Language Models (Perez et al.)",
+            "url": "https://arxiv.org/abs/2202.03286"
+          },
+          {
+            "title": "TruthfulQA: Measuring How Models Mimic Human Falsehoods",
+            "url": "https://arxiv.org/abs/2109.07958"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_s6",
+        "question": "Design a system to serve dozens of task-specific LoRA adapters on shared infrastructure.",
+        "complexity": "System Design",
+        "companies": [
+          "NVIDIA",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests multi-adapter serving.",
+        "preparation_guide": "Cover a shared base plus swappable adapters and batching.",
+        "explanation": "Keep one base model resident in GPU memory and store adapters separately, hot-swapping or batching requests across different adapters with a serving stack that supports it. Maintain an adapter registry with versioning and a base fallback. This amortizes the costly base across tenants and makes adding a task a few-megabyte deployment instead of a full model.",
+        "star_framework_tip": "Center on one resident base plus versioned, swappable adapters with multi-adapter batching.",
+        "common_pitfalls": [
+          "Serving a separate merged full model per task and exhausting GPU memory."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face PEFT documentation",
+            "url": "https://huggingface.co/docs/peft"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_s7",
+        "question": "Build a total-cost-of-ownership model comparing a self-hosted SLM against an LLM API at high volume.",
+        "complexity": "System Design",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "NVIDIA"
+        ],
+        "core_intent": "Tests deployment economics.",
+        "preparation_guide": "Separate fixed vs marginal cost and add qualitative value.",
+        "explanation": "An LLM API costs per-token times volume: zero infrastructure, predictable, but scaling linearly and sending data out. A self-hosted SLM carries upfront fine-tuning and amortized infrastructure cost with near-zero marginal token cost, offset by ops and monitoring effort. Compute the break-even volume where the SLM's fixed cost is repaid, and fold in the value of data residency and predictable latency, which can justify the SLM before pure dollar break-even.",
+        "star_framework_tip": "Express each as fixed + marginal x volume, solve break-even, add qualitative value.",
+        "common_pitfalls": [
+          "Comparing only per-token API price while ignoring infra, ops, and privacy value."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_s8",
+        "question": "Design a continuous-improvement retraining loop with guardrails against feedback poisoning.",
+        "complexity": "System Design",
+        "companies": [
+          "Amazon",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests closing the lifecycle loop safely.",
+        "preparation_guide": "Cover feedback collection, curation, retraining, and gates.",
+        "explanation": "Collect feedback (ratings, corrections, escalations, flagged failures) and drift signals; when thresholds trip, assemble a curated, deduplicated, decontaminated training increment with human review to avoid poisoning, then retrain or fine-tune. Pass the new model through the same eval, audit, and quantization gates, canary it, and promote only on improvement with rollback. Add general-ability checks each cycle to catch forgetting.",
+        "star_framework_tip": "Close the loop feedback -> curate -> retrain -> gates -> canary -> promote, with anti-poisoning review.",
+        "common_pitfalls": [
+          "Retraining directly on raw production outputs and amplifying errors and bias."
+        ],
+        "references": [
+          {
+            "title": "Deduplicating Training Data Makes LMs Better",
+            "url": "https://arxiv.org/abs/2107.06499"
+          },
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_s9",
+        "question": "Design a distillation pipeline to produce a task-specialized SLM from a frontier LLM teacher.",
+        "complexity": "System Design",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests knowledge-distillation design.",
+        "preparation_guide": "Cover data, training, evaluation, and failure modes.",
+        "explanation": "Generate or collect teacher outputs (soft targets or synthetic data) for the task, curate and filter them for quality and coverage, supervised fine-tune the student (optionally with on-policy distillation), evaluate against the teacher and a held-out set, and quantize for deployment. Guard against propagating teacher errors, synthetic-real distribution mismatch, style overfitting, and eval leakage from synthetic data.",
+        "star_framework_tip": "Walk the pipeline left to right and attach a failure mode to each stage.",
+        "common_pitfalls": [
+          "Training on unfiltered teacher outputs so the student inherits its mistakes."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          },
+          {
+            "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+            "url": "https://arxiv.org/abs/2305.14314"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_s10",
+        "question": "Design a self-healing production deployment with rollback triggers beyond latency.",
+        "complexity": "System Design",
+        "companies": [
+          "Amazon",
+          "NVIDIA",
+          "Microsoft"
+        ],
+        "core_intent": "Tests robust production guardrails.",
+        "preparation_guide": "Broaden triggers and observability.",
+        "explanation": "Add triggers beyond latency: quality regression on a live canary eval, safety spikes (toxicity, refusal, jailbreak signals), error-rate and cost-per-request thresholds, and drift alarms. Instrument end-to-end observability (TTFT/TPOT tracing, per-tenant metrics, output-quality sampling, safety classifiers) feeding an automated policy that can throttle, roll back, or fall back to a safe model, with circuit-breakers and runbooks.",
+        "star_framework_tip": "Enumerate quality/safety/cost/drift triggers plus tracing and automated rollback/fallback.",
+        "common_pitfalls": [
+          "Rolling back on latency alone while quality or safety regressions go undetected."
+        ],
+        "references": [
+          {
+            "title": "Red Teaming Language Models (Perez et al.)",
+            "url": "https://arxiv.org/abs/2202.03286"
+          },
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_s11",
+        "question": "Given a 200ms p99 latency SLA at high QPS, what levers do you pull and how do you validate?",
+        "complexity": "Hard",
+        "companies": [
+          "NVIDIA",
+          "Amazon",
+          "Microsoft"
+        ],
+        "core_intent": "Tests SLA-driven serving design.",
+        "preparation_guide": "List levers across model, serving, and hardware, then validation.",
+        "explanation": "Use a small/quantized model, a continuous-batching engine with paged KV cache, chunked prefill and prefix caching to cut TTFT, and possibly speculative decoding to speed decode; right-size GPUs and autoscale on queue depth with admission control to protect the tail. Load-test at target QPS under realistic prompt-length distributions, measuring p50/p95/p99 rather than the mean, and tune until p99 sits safely under 200ms with headroom.",
+        "star_framework_tip": "Combine model + serving + hardware levers, then load-test the tail at target QPS.",
+        "common_pitfalls": [
+          "Tuning to average latency while p99 keeps violating the SLA."
+        ],
+        "references": [
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          },
+          {
+            "title": "Fast Inference via Speculative Decoding (Leviathan et al.)",
+            "url": "https://arxiv.org/abs/2211.17192"
+          }
+        ]
+      },
+      {
+        "id": "slm_fc_s12",
+        "question": "Design an organization-wide model registry and governance gate for third-party and fine-tuned SLMs.",
+        "complexity": "System Design",
+        "companies": [
+          "Microsoft",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Tests model governance at scale.",
+        "preparation_guide": "Cover provenance, automated checks, and promotion gates.",
+        "explanation": "Ingest every model through a registry recording source, revision hash, license, and lineage. Before promotion, run an automated gate: enforce safetensors, scan for remote code, validate config against expected limits, run capability and safety evals, and generate a versioned model card. Sign and release only models that pass, with per-variant traceability, audit trails, and rollback, so both third-party and fine-tuned variants stay compliant.",
+        "star_framework_tip": "Walk ingest -> automated checks -> evals -> sign/approve -> serve, with lineage and rollback.",
+        "common_pitfalls": [
+          "Letting teams pull arbitrary checkpoints straight into production with no gate."
+        ],
+        "references": [
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          },
+          {
+            "title": "Hugging Face Model Cards",
+            "url": "https://huggingface.co/docs/hub/model-cards"
           }
         ]
       }

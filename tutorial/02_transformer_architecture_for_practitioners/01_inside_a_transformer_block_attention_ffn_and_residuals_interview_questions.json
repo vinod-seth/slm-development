@@ -24,6 +24,106 @@
             "url": "https://arxiv.org/abs/1706.03762"
           }
         ]
+      },
+      {
+        "id": "m2_l1_j2",
+        "question": "What is multi-head attention, and why use several heads instead of one large attention?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "OpenAI"
+        ],
+        "core_intent": "Checks understanding of why attention is split into heads.",
+        "preparation_guide": "Explain parallel subspaces and what heads specialize in.",
+        "explanation": "Multi-head attention runs several attention operations in parallel, each on a lower-dimensional projection of the input, then concatenates the results. Different heads can attend to different relationships (syntax, position, coreference) at once, giving richer representations than a single head of the same total width.",
+        "star_framework_tip": "Frame heads as parallel views of different relationships, then concatenated.",
+        "common_pitfalls": [
+          "Thinking more heads always help regardless of head dimension."
+        ],
+        "references": [
+          {
+            "title": "Attention Is All You Need (Vaswani et al.)",
+            "url": "https://arxiv.org/abs/1706.03762"
+          }
+        ]
+      },
+      {
+        "id": "m2_l1_j3",
+        "question": "What is the feed-forward network (FFN/MLP) in a transformer block, and roughly what share of parameters does it hold?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "NVIDIA"
+        ],
+        "core_intent": "Tests awareness that the FFN, not attention, holds most parameters.",
+        "preparation_guide": "Know the two-layer expand/contract structure and the ~2/3 parameter share.",
+        "explanation": "Each block has a position-wise FFN: a linear layer that expands the hidden size (commonly ~4x), a nonlinearity, and a linear layer that contracts it back. The FFN typically holds roughly two-thirds of a transformer's non-embedding parameters, so it is where much of the model's stored knowledge lives.",
+        "star_framework_tip": "State the expand-nonlinearity-contract shape and that it dominates parameter count.",
+        "common_pitfalls": [
+          "Assuming attention holds most of the parameters."
+        ],
+        "references": [
+          {
+            "title": "Attention Is All You Need (Vaswani et al.)",
+            "url": "https://arxiv.org/abs/1706.03762"
+          },
+          {
+            "title": "GLU Variants Improve Transformer (SwiGLU, Shazeer)",
+            "url": "https://arxiv.org/abs/2002.05202"
+          }
+        ]
+      },
+      {
+        "id": "m2_l1_j4",
+        "question": "What is a residual (skip) connection, and why is it essential for deep transformers?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests understanding of gradient flow in deep nets.",
+        "preparation_guide": "Connect residuals to gradient flow and trainability.",
+        "explanation": "A residual connection adds a sublayer's input to its output (x + sublayer(x)), giving gradients a direct path back through the network. This prevents vanishing gradients and lets very deep transformers train stably; without residuals, deep stacks are extremely hard to optimize.",
+        "star_framework_tip": "Emphasize the gradient highway that keeps deep stacks trainable.",
+        "common_pitfalls": [
+          "Confusing residual connections with normalization layers."
+        ],
+        "references": [
+          {
+            "title": "Attention Is All You Need (Vaswani et al.)",
+            "url": "https://arxiv.org/abs/1706.03762"
+          },
+          {
+            "title": "On Layer Normalization in the Transformer Architecture",
+            "url": "https://arxiv.org/abs/2002.04745"
+          }
+        ]
+      },
+      {
+        "id": "m2_l1_j5",
+        "question": "What is positional encoding, and why do transformers need it?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "OpenAI"
+        ],
+        "core_intent": "Checks awareness that attention is order-agnostic.",
+        "preparation_guide": "Explain why a bag-of-tokens needs position information, and name a modern scheme.",
+        "explanation": "Self-attention treats inputs as an unordered set, so position must be injected explicitly. Early transformers added sinusoidal or learned absolute embeddings; most modern SLMs use Rotary Position Embedding (RoPE), which encodes relative position by rotating query/key vectors and generalizes better to longer contexts.",
+        "star_framework_tip": "Say attention is order-blind, then name RoPE as the modern fix.",
+        "common_pitfalls": [
+          "Assuming the model infers order without any positional signal."
+        ],
+        "references": [
+          {
+            "title": "RoFormer: Rotary Position Embedding (RoPE)",
+            "url": "https://arxiv.org/abs/2104.09864"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -49,6 +149,114 @@
             "url": "https://arxiv.org/abs/2305.13245"
           }
         ]
+      },
+      {
+        "id": "m2_l1_m2",
+        "question": "Summarize the MHA -> MQA -> GQA spectrum and the KV-cache trade-off each makes.",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Meta",
+          "NVIDIA"
+        ],
+        "core_intent": "Tests the full design space behind attention efficiency.",
+        "preparation_guide": "Describe how many KV heads each uses and the resulting trade-off.",
+        "explanation": "Multi-Head Attention gives every query head its own key/value head (best quality, largest KV cache). Multi-Query Attention shares a single KV head across all query heads (smallest cache, some quality loss). Grouped-Query Attention groups query heads to share a few KV heads, capturing most of MQA's memory savings with near-MHA quality, which is why most modern SLMs adopt it.",
+        "star_framework_tip": "Lay it out as a quality-vs-KV-memory continuum with GQA as the sweet spot.",
+        "common_pitfalls": [
+          "Treating MQA and GQA as identical."
+        ],
+        "references": [
+          {
+            "title": "GQA: Training Generalized Multi-Query Transformer Models",
+            "url": "https://arxiv.org/abs/2305.13245"
+          },
+          {
+            "title": "Fast Transformer Decoding: One Write-Head (MQA, Shazeer)",
+            "url": "https://arxiv.org/abs/1911.02150"
+          }
+        ]
+      },
+      {
+        "id": "m2_l1_m3",
+        "question": "Why is self-attention quadratic in sequence length, and what does that imply for SLM context windows?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the core scaling limitation of attention.",
+        "preparation_guide": "Explain the NxN score matrix and its memory/compute cost.",
+        "explanation": "Attention compares every token with every other token, producing an N x N score matrix, so compute and memory grow with the square of sequence length N. For SLMs on small hardware this caps practical context length and motivates techniques like FlashAttention, sliding-window attention, and GQA to keep long contexts affordable.",
+        "star_framework_tip": "Anchor on the N x N matrix, then connect to the context-window ceiling on small devices.",
+        "common_pitfalls": [
+          "Confusing the quadratic attention cost with the linear KV-cache growth."
+        ],
+        "references": [
+          {
+            "title": "Attention Is All You Need (Vaswani et al.)",
+            "url": "https://arxiv.org/abs/1706.03762"
+          },
+          {
+            "title": "FlashAttention (Dao et al.)",
+            "url": "https://arxiv.org/abs/2205.14135"
+          }
+        ]
+      },
+      {
+        "id": "m2_l1_m4",
+        "question": "What does RoPE do, and why is it preferred over learned absolute position embeddings in modern SLMs?",
+        "complexity": "Medium",
+        "companies": [
+          "Meta",
+          "Google",
+          "Alibaba"
+        ],
+        "core_intent": "Tests understanding of rotary embeddings.",
+        "preparation_guide": "Explain relative encoding and length extrapolation.",
+        "explanation": "RoPE rotates the query and key vectors by an angle proportional to position, so the attention score depends on the relative distance between tokens rather than absolute indices. This encodes relative position naturally, adds no parameters, and extrapolates to longer sequences better than learned absolute embeddings, which is why it dominates modern SLMs and enables context-scaling tricks.",
+        "star_framework_tip": "Stress relative-position encoding and better length generalization.",
+        "common_pitfalls": [
+          "Believing RoPE adds trainable position parameters."
+        ],
+        "references": [
+          {
+            "title": "RoFormer: Rotary Position Embedding (RoPE)",
+            "url": "https://arxiv.org/abs/2104.09864"
+          }
+        ]
+      },
+      {
+        "id": "m2_l1_m5",
+        "question": "Why do modern SLMs favor Pre-LN with RMSNorm and SwiGLU over the original Post-LN + ReLU design?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Meta",
+          "Mistral AI"
+        ],
+        "core_intent": "Tests knowledge of the modern transformer recipe.",
+        "preparation_guide": "Connect each choice to stability or quality.",
+        "explanation": "Pre-LN (normalize before each sublayer) yields more stable gradients and removes the need for learning-rate warmup tricks that Post-LN needs. RMSNorm drops the mean-centering of LayerNorm for a cheaper, equally effective normalization. SwiGLU, a gated activation, improves quality per parameter over plain ReLU. Together they make small models train more stably and perform better.",
+        "star_framework_tip": "Attribute each component to its benefit: stability, efficiency, quality.",
+        "common_pitfalls": [
+          "Assuming these are interchangeable cosmetic choices."
+        ],
+        "references": [
+          {
+            "title": "On Layer Normalization in the Transformer Architecture",
+            "url": "https://arxiv.org/abs/2002.04745"
+          },
+          {
+            "title": "Root Mean Square Layer Normalization (RMSNorm)",
+            "url": "https://arxiv.org/abs/1910.07467"
+          },
+          {
+            "title": "GLU Variants Improve Transformer (SwiGLU, Shazeer)",
+            "url": "https://arxiv.org/abs/2002.05202"
+          }
+        ]
       }
     ],
     "senior": [
@@ -72,6 +280,87 @@
           {
             "title": "PyTorch nn.MultiheadAttention",
             "url": "https://pytorch.org/docs/stable/generated/torch.nn.MultiheadAttention.html"
+          }
+        ]
+      },
+      {
+        "id": "m2_l1_s2",
+        "question": "Explain FlashAttention: what makes it faster and more memory-efficient without changing the attention math?",
+        "complexity": "Hard",
+        "companies": [
+          "NVIDIA",
+          "Google",
+          "Meta"
+        ],
+        "core_intent": "Tests deep understanding of IO-aware attention.",
+        "preparation_guide": "Explain tiling, online softmax, and avoiding the full N x N matrix in HBM.",
+        "explanation": "FlashAttention computes exact attention but never materializes the full N x N score matrix in slow GPU memory. It tiles the computation into blocks that fit in fast on-chip SRAM and uses an online softmax to accumulate results, making it IO-bound rather than memory-bound. The result is large speedups and memory that scales linearly in sequence length, with identical outputs to standard attention.",
+        "star_framework_tip": "Center on 'same math, fewer slow-memory reads/writes via tiling + online softmax.'",
+        "common_pitfalls": [
+          "Claiming FlashAttention approximates attention or changes results."
+        ],
+        "references": [
+          {
+            "title": "FlashAttention (Dao et al.)",
+            "url": "https://arxiv.org/abs/2205.14135"
+          },
+          {
+            "title": "FlashAttention-2 (Dao)",
+            "url": "https://arxiv.org/abs/2307.08691"
+          }
+        ]
+      },
+      {
+        "id": "m2_l1_s3",
+        "question": "Walk through the tensor shapes and data flow through one decoder block, from input embeddings to output.",
+        "complexity": "System Design",
+        "companies": [
+          "Google",
+          "Meta",
+          "OpenAI"
+        ],
+        "core_intent": "Tests precise mechanical understanding of a block.",
+        "preparation_guide": "Trace shapes through embedding, attention, FFN, residuals, and norms.",
+        "explanation": "Input tokens map to embeddings of shape (batch, seq, d_model). Pre-norm is applied, then Q/K/V projections reshape into heads; scaled dot-product attention with a causal mask produces an attention output projected back to d_model and added to the residual. A second pre-norm feeds the FFN (expand to ~4x, activation, contract), whose output is again added to the residual. The block preserves (batch, seq, d_model) so blocks stack uniformly.",
+        "star_framework_tip": "Narrate the shapes at each step and note the residual adds preserve dimensionality.",
+        "common_pitfalls": [
+          "Losing track of the head reshape or where the causal mask applies."
+        ],
+        "references": [
+          {
+            "title": "Attention Is All You Need (Vaswani et al.)",
+            "url": "https://arxiv.org/abs/1706.03762"
+          }
+        ]
+      },
+      {
+        "id": "m2_l1_s4",
+        "question": "How do GQA, SwiGLU, RMSNorm, RoPE, and tied embeddings specifically benefit small models? Give the design rationale.",
+        "complexity": "Hard",
+        "companies": [
+          "Meta",
+          "Google",
+          "Mistral AI"
+        ],
+        "core_intent": "Tests synthesis of architectural choices for the SLM regime.",
+        "preparation_guide": "Tie each component to an SLM-specific constraint (memory, stability, capacity).",
+        "explanation": "GQA shrinks the KV cache, which is precious on small devices at long context. SwiGLU improves quality per parameter, important when the parameter budget is tiny. RMSNorm and Pre-LN keep small models stable and warmup-free. RoPE adds no parameters and aids length generalization. Tied input/output embeddings reclaim the large embedding matrix that is a big fraction of a small model. Each choice maximizes capability per parameter and per byte.",
+        "star_framework_tip": "Frame all five as ways to maximize capability per parameter and per byte of memory.",
+        "common_pitfalls": [
+          "Listing the features without connecting them to small-model constraints."
+        ],
+        "references": [
+          {
+            "title": "GQA: Training Generalized Multi-Query Transformer Models",
+            "url": "https://arxiv.org/abs/2305.13245"
+          },
+          {
+            "title": "GLU Variants Improve Transformer (SwiGLU, Shazeer)",
+            "url": "https://arxiv.org/abs/2002.05202"
+          },
+          {
+            "title": "Root Mean Square Layer Normalization (RMSNorm)",
+            "url": "https://arxiv.org/abs/1910.07467"
           }
         ]
       }

@@ -23,6 +23,102 @@
             "url": "https://huggingface.co/docs/transformers/perplexity"
           }
         ]
+      },
+      {
+        "id": "m3_l3_j2",
+        "question": "What does the F1 score measure, and when is it preferred over plain accuracy?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Amazon",
+          "Microsoft"
+        ],
+        "core_intent": "Tests a core classification metric.",
+        "preparation_guide": "Define F1 and the imbalanced-data motivation.",
+        "explanation": "F1 is the harmonic mean of precision and recall, rewarding a model only when it is both accurate on its positive predictions and catches most true positives. It is preferred over accuracy on imbalanced data, where a model can score high accuracy by always predicting the majority class while failing the minority class.",
+        "star_framework_tip": "Define F1 via precision/recall and give the class-imbalance reason.",
+        "common_pitfalls": [
+          "Reporting accuracy on a skewed dataset and overstating performance."
+        ],
+        "references": [
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
+      },
+      {
+        "id": "m3_l3_j3",
+        "question": "What is the difference between intrinsic evaluation (perplexity) and extrinsic (task) evaluation?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the two evaluation families.",
+        "preparation_guide": "Contrast modeling quality with task usefulness.",
+        "explanation": "Intrinsic metrics like perplexity measure how well the model predicts held-out text, independent of any application. Extrinsic evaluation measures performance on a downstream task (QA accuracy, summarization quality, tool-call success). Low perplexity is necessary but not sufficient: a model can predict text well yet still fail a specific task.",
+        "star_framework_tip": "Pair intrinsic (perplexity) with extrinsic (task) and note the gap between them.",
+        "common_pitfalls": [
+          "Treating low perplexity as proof of good task performance."
+        ],
+        "references": [
+          {
+            "title": "Perplexity of fixed-length models (Hugging Face)",
+            "url": "https://huggingface.co/docs/transformers/perplexity"
+          }
+        ]
+      },
+      {
+        "id": "m3_l3_j4",
+        "question": "Why are n-gram metrics like BLEU and ROUGE limited for evaluating open-ended generation?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "Amazon"
+        ],
+        "core_intent": "Tests awareness of metric blind spots.",
+        "preparation_guide": "Explain surface overlap vs meaning.",
+        "explanation": "BLEU and ROUGE measure overlap of word n-grams with reference texts, so they reward surface similarity but miss meaning: a correct paraphrase with different words scores low, and a fluent but wrong answer can score high. They work best when valid outputs closely match references and poorly for open-ended generation with many acceptable answers.",
+        "star_framework_tip": "Stress surface-overlap blindness to paraphrase and meaning.",
+        "common_pitfalls": [
+          "Using ROUGE alone to judge open-ended chat or reasoning quality."
+        ],
+        "references": [
+          {
+            "title": "ROUGE: A Package for Automatic Evaluation of Summaries (Lin)",
+            "url": "https://aclanthology.org/W04-1013/"
+          },
+          {
+            "title": "BLEU: a Method for Automatic Evaluation (Papineni et al.)",
+            "url": "https://aclanthology.org/P02-1040/"
+          }
+        ]
+      },
+      {
+        "id": "m3_l3_j5",
+        "question": "What is a held-out test set, and why must you never tune on it?",
+        "complexity": "Easy",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Amazon"
+        ],
+        "core_intent": "Tests evaluation integrity.",
+        "preparation_guide": "Explain unbiased estimation and overfitting to the test set.",
+        "explanation": "A held-out test set is data the model and your tuning never touch, used once to estimate real-world performance. Tuning on it (choosing hyperparameters or checkpoints by test score) leaks information and overfits the metric, producing optimistic numbers that do not generalize. Use validation data for tuning and reserve the test set for a final, single evaluation.",
+        "star_framework_tip": "Say it gives an unbiased estimate that tuning would contaminate.",
+        "common_pitfalls": [
+          "Selecting the best checkpoint by test-set score and reporting it as generalization."
+        ],
+        "references": [
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -48,6 +144,110 @@
             "url": "https://huggingface.co/spaces/evaluate-metric/rouge"
           }
         ]
+      },
+      {
+        "id": "m3_l3_m2",
+        "question": "How do you compute perplexity correctly over documents longer than the context window?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Hugging Face",
+          "Meta"
+        ],
+        "core_intent": "Tests a common evaluation pitfall.",
+        "preparation_guide": "Explain the sliding-window/stride approach.",
+        "explanation": "Split long text into overlapping windows with a fixed stride and score only the new (non-overlapping) tokens in each window, so every token is predicted with adequate left context. Averaging negative log-likelihood over those scored tokens and exponentiating gives a comparable perplexity. A non-overlapping split penalizes tokens at window starts that lack context.",
+        "star_framework_tip": "Describe strided windows scoring only fresh tokens to give fair context.",
+        "common_pitfalls": [
+          "Chopping text into independent chunks and inflating perplexity at chunk boundaries."
+        ],
+        "references": [
+          {
+            "title": "Perplexity of fixed-length models (Hugging Face)",
+            "url": "https://huggingface.co/docs/transformers/perplexity"
+          }
+        ]
+      },
+      {
+        "id": "m3_l3_m3",
+        "question": "How do ROUGE and BLEU differ in orientation, and when is each the conventional choice?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Meta",
+          "Amazon"
+        ],
+        "core_intent": "Tests precise metric understanding.",
+        "preparation_guide": "Contrast recall-leaning vs precision-leaning use.",
+        "explanation": "ROUGE is recall-oriented (how much of the reference content the output covers) and is conventional for summarization, where coverage matters; ROUGE-L uses longest common subsequence. BLEU is precision-oriented with a brevity penalty (how much of the output matches the reference) and is conventional for machine translation. Both are surface-overlap metrics with the usual paraphrase blind spots.",
+        "star_framework_tip": "Map ROUGE->summarization/recall and BLEU->translation/precision.",
+        "common_pitfalls": [
+          "Using BLEU for summarization or ignoring ROUGE's recall orientation."
+        ],
+        "references": [
+          {
+            "title": "ROUGE: A Package for Automatic Evaluation of Summaries (Lin)",
+            "url": "https://aclanthology.org/W04-1013/"
+          },
+          {
+            "title": "BLEU: a Method for Automatic Evaluation (Papineni et al.)",
+            "url": "https://aclanthology.org/P02-1040/"
+          }
+        ]
+      },
+      {
+        "id": "m3_l3_m4",
+        "question": "What do embedding-based metrics (e.g., BERTScore) and model-graded evaluation add over n-gram metrics?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests semantic evaluation methods.",
+        "preparation_guide": "Explain semantic similarity and rubric grading.",
+        "explanation": "BERTScore compares contextual embeddings of candidate and reference tokens, capturing semantic similarity so valid paraphrases score well where BLEU/ROUGE fail. Model-graded (LLM-as-judge) evaluation uses a capable model to score outputs against a rubric, handling open-ended tasks with no single reference. Both add meaning-awareness but cost more and introduce their own biases that must be controlled.",
+        "star_framework_tip": "Pair semantic embeddings/rubric grading with the cost-and-bias caveat.",
+        "common_pitfalls": [
+          "Trusting model-graded scores without checking judge bias and consistency."
+        ],
+        "references": [
+          {
+            "title": "BERTScore: Evaluating Text Generation with BERT",
+            "url": "https://arxiv.org/abs/1904.09675"
+          },
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
+      },
+      {
+        "id": "m3_l3_m5",
+        "question": "How do you evaluate an instruction-tuned SLM, and what are the common pitfalls?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Tests evaluation of chat/instruction models.",
+        "preparation_guide": "Cover exact match, rubric/LLM-judge, and formatting traps.",
+        "explanation": "Use task-appropriate metrics: exact match or tool-call accuracy for structured tasks, and rubric-based or LLM-as-judge scoring for open-ended responses, over a representative prompt set with the correct chat template. Pitfalls include forgetting the chat template, judging on the average while ignoring tail failures, prompt-format sensitivity, and contamination of the eval set into training.",
+        "star_framework_tip": "Match metric to task type and warn about template, tails, and contamination.",
+        "common_pitfalls": [
+          "Evaluating an instruct model without applying its chat template."
+        ],
+        "references": [
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          },
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
       }
     ],
     "senior": [
@@ -68,6 +268,75 @@
           "Relying exclusively on validation loss, which does not correlate with final text generation quality."
         ],
         "references": []
+      },
+      {
+        "id": "m3_l3_s2",
+        "question": "Design a robust evaluation harness that reports results with statistical confidence.",
+        "complexity": "System Design",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests rigor beyond a single number.",
+        "preparation_guide": "Cover seeds, intervals, fixed prompts, and contamination checks.",
+        "explanation": "Run each evaluation across multiple seeds and decoding settings, report means with confidence intervals or standard errors, and use paired comparisons when ranking checkpoints so differences are tested for significance, not eyeballed. Fix prompts and templates, pin the eval data version, run a contamination check against training data, and store raw per-example outputs for auditing and error analysis.",
+        "star_framework_tip": "Emphasize multiple seeds, confidence intervals, paired tests, and contamination checks.",
+        "common_pitfalls": [
+          "Declaring one checkpoint better from a single-run, single-seed score difference."
+        ],
+        "references": [
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
+      },
+      {
+        "id": "m3_l3_s3",
+        "question": "What are the pitfalls of LLM-as-a-judge evaluation, and how do you mitigate them?",
+        "complexity": "Hard",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Anthropic"
+        ],
+        "core_intent": "Tests critical use of model-graded evaluation.",
+        "preparation_guide": "Enumerate judge biases and concrete controls.",
+        "explanation": "Judges show position bias (favoring the first or longer answer), self-preference (favoring outputs from similar models), verbosity bias, prompt sensitivity, and inconsistency across runs. Mitigate by randomizing answer order, using clear rubrics with reference answers, averaging multiple judgments, calibrating against human labels on a sample, and reporting agreement rates rather than treating the judge as ground truth.",
+        "star_framework_tip": "List the biases and pair each with a control, ending with human calibration.",
+        "common_pitfalls": [
+          "Treating an LLM judge's scores as objective ground truth."
+        ],
+        "references": [
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
+      },
+      {
+        "id": "m3_l3_s4",
+        "question": "Build a regression-testing evaluation gate for model checkpoints in CI.",
+        "complexity": "System Design",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests operationalizing evaluation, extending the existing senior question.",
+        "preparation_guide": "Cover fixed suites, thresholds, and pass/fail automation.",
+        "explanation": "Maintain versioned eval suites (capability, safety, format adherence) and run them automatically on each candidate checkpoint, comparing against the current production model and absolute thresholds. Fail the gate on regressions beyond a tolerance, surface per-suite diffs and example-level failures, and require sign-off before promotion. Pin data and judge versions so results are comparable over time, and keep artifacts for audit.",
+        "star_framework_tip": "Walk fixed suites -> compare vs baseline/thresholds -> fail on regression -> sign-off.",
+        "common_pitfalls": [
+          "Promoting a checkpoint on aggregate gains while a key sub-suite silently regressed."
+        ],
+        "references": [
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
       }
     ]
   }

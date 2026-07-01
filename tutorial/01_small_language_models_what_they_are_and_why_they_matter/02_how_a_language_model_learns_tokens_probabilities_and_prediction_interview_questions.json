@@ -46,6 +46,175 @@
             "url": "https://pytorch.org/docs/stable/generated/torch.nn.functional.softmax.html"
           }
         ]
+      },
+      {
+        "id": "m1_l2_j3",
+        "question": "What is a token, and why don't language models operate directly on whole words or single characters?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Google",
+          "OpenAI"
+        ],
+        "core_intent": "Checks the foundational unit the model actually sees.",
+        "preparation_guide": "Be able to explain the word/character/subword spectrum and the trade-off subwords solve.",
+        "explanation": "A token is a subword unit the model reads as one symbol. Pure word-level vocabularies explode in size and fail on unseen words; pure character-level sequences become very long and slow. Subword tokenization (BPE, WordPiece, Unigram) is the middle ground: a compact vocabulary that still represents any string by composing pieces, handling rare and unseen words gracefully.",
+        "star_framework_tip": "Frame it as a length-vs-vocabulary trade-off that subwords resolve.",
+        "common_pitfalls": [
+          "Saying tokens are always whole words."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Tokenizers documentation",
+            "url": "https://huggingface.co/docs/tokenizers"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_j4",
+        "question": "What is the difference between BPE, WordPiece, and Unigram/SentencePiece tokenization?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Hugging Face",
+          "Meta"
+        ],
+        "core_intent": "Tests awareness of the main subword algorithms and how they build vocabularies.",
+        "preparation_guide": "Know the one-line mechanism behind each algorithm.",
+        "explanation": "BPE starts from characters and iteratively merges the most frequent adjacent pair. WordPiece merges the pair that most increases training-data likelihood. Unigram starts from a large candidate vocabulary and prunes tokens probabilistically, keeping the most useful. SentencePiece is a library that runs BPE or Unigram on raw bytes/characters, making it language-agnostic and whitespace-aware.",
+        "star_framework_tip": "Pair each name with its selection rule (frequency, likelihood gain, probabilistic pruning).",
+        "common_pitfalls": [
+          "Treating SentencePiece as a separate algorithm rather than a framework."
+        ],
+        "references": [
+          {
+            "title": "Neural Machine Translation of Rare Words with Subword Units (BPE, Sennrich et al.)",
+            "url": "https://arxiv.org/abs/1508.07909"
+          },
+          {
+            "title": "Subword Regularization / Unigram LM (Kudo)",
+            "url": "https://arxiv.org/abs/1804.10959"
+          },
+          {
+            "title": "SentencePiece (Kudo & Richardson)",
+            "url": "https://arxiv.org/abs/1808.06226"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_j5",
+        "question": "What are special tokens such as BOS, EOS, PAD, and UNK, and why do they matter?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Confirms understanding of control tokens that structure sequences.",
+        "preparation_guide": "Know the role of each special token and how chat templates extend them.",
+        "explanation": "Special tokens mark structure the raw text doesn't: BOS/EOS bound a sequence, PAD fills batches to equal length, and UNK stands in for anything outside the vocabulary. Instruction and chat models add role tokens (system/user/assistant) via a chat template. Getting these wrong (e.g., missing EOS) causes models to run on or never stop generating.",
+        "star_framework_tip": "Tie each token to a concrete failure that occurs when it's mishandled.",
+        "common_pitfalls": [
+          "Forgetting that padding must be masked so it doesn't affect the loss."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_j6",
+        "question": "What does 'next-token prediction' mean as a training objective?",
+        "complexity": "Easy",
+        "companies": [
+          "OpenAI",
+          "Google",
+          "Meta"
+        ],
+        "core_intent": "Tests the core self-supervised objective behind language models.",
+        "preparation_guide": "Be able to state the objective and that it needs no labels.",
+        "explanation": "At each position the model outputs a probability distribution over the vocabulary for the next token, and training adjusts weights to raise the probability of the token that actually came next, using cross-entropy loss. It is self-supervised: the text itself provides the targets, so no manual labels are needed.",
+        "star_framework_tip": "State it as 'predict the next token, maximize its likelihood, via cross-entropy.'",
+        "common_pitfalls": [
+          "Calling it supervised learning that needs labeled data."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_j7",
+        "question": "What is the role of the softmax function in turning the model's logits into a prediction?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Checks understanding of how raw scores become probabilities.",
+        "preparation_guide": "Know that softmax exponentiates and normalizes logits.",
+        "explanation": "The model's final layer outputs raw scores (logits), one per vocabulary token. Softmax exponentiates each logit and divides by the sum, producing a probability distribution that is non-negative and sums to one. Decoding then selects a token from this distribution (greedily or by sampling).",
+        "star_framework_tip": "Mention that softmax preserves ranking but makes the values comparable probabilities.",
+        "common_pitfalls": [
+          "Confusing logits (pre-softmax) with probabilities (post-softmax)."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_j8",
+        "question": "Compare greedy decoding, top-k, top-p (nucleus), and temperature at a high level.",
+        "complexity": "Easy",
+        "companies": [
+          "OpenAI",
+          "Google",
+          "Anthropic"
+        ],
+        "core_intent": "Tests knowledge of the common decoding controls.",
+        "preparation_guide": "Know what each control changes about token selection.",
+        "explanation": "Greedy decoding always picks the highest-probability token: deterministic but often repetitive. Temperature rescales the logits before softmax, flattening (high) or sharpening (low) the distribution. Top-k restricts sampling to the k most likely tokens. Top-p (nucleus) keeps the smallest set of tokens whose cumulative probability reaches p, so the candidate set adapts to how confident the model is.",
+        "star_framework_tip": "Group them as: greedy (no randomness), temperature (reshape), top-k/top-p (truncate the tail).",
+        "common_pitfalls": [
+          "Thinking temperature and top-p are interchangeable rather than complementary."
+        ],
+        "references": [
+          {
+            "title": "The Curious Case of Neural Text Degeneration (nucleus/top-p, Holtzman et al.)",
+            "url": "https://arxiv.org/abs/1904.09751"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_j9",
+        "question": "What is perplexity, and what does a lower value indicate?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "Hugging Face"
+        ],
+        "core_intent": "Checks the most common intrinsic language-model metric.",
+        "preparation_guide": "Connect perplexity to cross-entropy and 'surprise.'",
+        "explanation": "Perplexity is the exponential of the average per-token cross-entropy on held-out text. Intuitively it measures how 'surprised' the model is by real text, or roughly how many equally likely choices it is averaging over per token. Lower perplexity means the model predicts the text better. It is useful for comparing models on the same data and tokenizer, but it does not directly measure task quality.",
+        "star_framework_tip": "Give the intuition (average branching factor) and the caveat that it is tokenizer-dependent.",
+        "common_pitfalls": [
+          "Comparing perplexity across models that use different tokenizers or test sets."
+        ],
+        "references": [
+          {
+            "title": "Perplexity of fixed-length models (Hugging Face)",
+            "url": "https://huggingface.co/docs/transformers/perplexity"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -71,6 +240,144 @@
             "url": "https://pytorch.org/docs/stable/generated/torch.multinomial.html"
           }
         ]
+      },
+      {
+        "id": "m1_l2_m2",
+        "question": "Why does vocabulary size involve a specific trade-off for Small Language Models?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Hugging Face",
+          "Microsoft"
+        ],
+        "core_intent": "Tests understanding that the embedding/softmax matrices are a large share of a small model's parameters.",
+        "preparation_guide": "Relate vocabulary size to sequence length and to embedding parameters.",
+        "explanation": "A larger vocabulary shortens sequences (fewer tokens per text, cheaper attention) but enlarges the embedding and output-projection matrices, which scale with vocabulary x hidden size. In an SLM with a small hidden size, those matrices can be a large fraction of total parameters, so a big vocabulary 'wastes' capacity. A smaller vocabulary saves parameters but lengthens sequences and raises per-token fragmentation. The sweet spot balances both.",
+        "star_framework_tip": "Quantify it: embedding params = vocab x d_model, then reason about the small-d_model case.",
+        "common_pitfalls": [
+          "Assuming a bigger vocabulary is always better because sequences are shorter."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Tokenizers documentation",
+            "url": "https://huggingface.co/docs/tokenizers"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_m3",
+        "question": "Explain teacher forcing and why training and inference behave differently (exposure bias).",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Meta",
+          "OpenAI"
+        ],
+        "core_intent": "Tests understanding of a key train/inference discrepancy.",
+        "preparation_guide": "Contrast parallel training on ground truth with sequential generation on the model's own outputs.",
+        "explanation": "During training the model is fed the ground-truth previous tokens at every position (teacher forcing), which lets all positions be computed in parallel and stabilizes learning. At inference the model must consume its own generated tokens one at a time, so an early mistake can compound — this gap is exposure bias. Small models, with weaker calibration, are more vulnerable to this drift.",
+        "star_framework_tip": "Name the mechanism, the efficiency benefit, and the resulting inference-time risk.",
+        "common_pitfalls": [
+          "Believing the model sees its own predictions during standard training."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_m4",
+        "question": "How does top-p (nucleus) sampling adapt better than top-k, and when would you still prefer top-k?",
+        "complexity": "Medium",
+        "companies": [
+          "OpenAI",
+          "Anthropic",
+          "Google"
+        ],
+        "core_intent": "Tests nuanced understanding of decoding strategies.",
+        "preparation_guide": "Explain dynamic vs fixed candidate sets.",
+        "explanation": "Top-k always keeps a fixed number of tokens, which can be too few when the model is uncertain (flat distribution) or include junk when it is confident (peaked distribution). Top-p keeps a variable number of tokens whose cumulative probability reaches p, so the candidate set grows when the model is unsure and shrinks when it is confident. Top-k is still useful when you want a hard, predictable cap on candidates or a simpler, cheaper rule.",
+        "star_framework_tip": "Frame it as fixed-size vs probability-mass truncation and match each to a scenario.",
+        "common_pitfalls": [
+          "Stacking top-k and top-p without understanding their combined effect."
+        ],
+        "references": [
+          {
+            "title": "The Curious Case of Neural Text Degeneration (nucleus/top-p, Holtzman et al.)",
+            "url": "https://arxiv.org/abs/1904.09751"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_m5",
+        "question": "What are repetition penalties and no-repeat n-gram constraints, and why do small models need them more?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Google",
+          "Meta"
+        ],
+        "core_intent": "Tests practical mitigation of degenerate generation.",
+        "preparation_guide": "Know the mechanisms and why SLMs degenerate more readily.",
+        "explanation": "A repetition penalty lowers the probability of tokens already generated; a no-repeat n-gram constraint forbids re-emitting any n-gram that already appeared. Both fight the loops and verbatim repetition that decoding can fall into. Small models have weaker long-range modeling and flatter distributions, so they slip into repetition more easily and benefit more from these controls — though too strong a penalty harms fluency.",
+        "star_framework_tip": "Pair the mechanism with its over-application failure (broken fluency).",
+        "common_pitfalls": [
+          "Setting penalties so high that legitimate repeated words are blocked."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_m6",
+        "question": "How does cross-entropy loss relate to log-likelihood and perplexity, and what does the loss curve tell you?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests the link between the training objective and evaluation metrics.",
+        "preparation_guide": "Connect minimizing cross-entropy to maximizing likelihood and to perplexity.",
+        "explanation": "Minimizing average cross-entropy is equivalent to maximizing the log-likelihood of the data, and perplexity is just the exponential of that average loss, so they move together. Watching train vs validation loss reveals learning dynamics: a widening gap signals overfitting, a flat high curve signals underfitting or a bad learning rate, and a smoothly falling validation curve signals healthy training.",
+        "star_framework_tip": "State the math link first (CE = -log-likelihood, perplexity = exp(CE)), then read the curves.",
+        "common_pitfalls": [
+          "Treating decreasing training loss alone as proof of a good model."
+        ],
+        "references": [
+          {
+            "title": "Perplexity of fixed-length models (Hugging Face)",
+            "url": "https://huggingface.co/docs/transformers/perplexity"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_m7",
+        "question": "Why can a tokenizer mismatch between pretraining and fine-tuning silently break a model?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests a common, hard-to-spot failure mode.",
+        "preparation_guide": "Explain how token IDs bind to learned embeddings.",
+        "explanation": "Each token ID indexes a specific learned embedding. If fine-tuning uses a different tokenizer or vocabulary, the same text maps to different IDs, so inputs point at the wrong embeddings and the model's learned associations break — often with no error, just degraded output. Always load the model's own tokenizer, and if you extend the vocabulary, resize and initialize the new embedding rows deliberately.",
+        "star_framework_tip": "Emphasize that the failure is silent: no crash, just quality loss.",
+        "common_pitfalls": [
+          "Mixing a model with a third-party tokenizer because both 'use BPE.'"
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
       }
     ],
     "senior": [
@@ -94,6 +401,133 @@
           {
             "title": "Tokenizer Randomness Paper",
             "url": "https://arxiv.org/abs/2305.10000"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_s2",
+        "question": "A multilingual or code SLM tokenizes some languages far less efficiently ('token inflation'). Explain the cause and the mitigations.",
+        "complexity": "Hard",
+        "companies": [
+          "Google",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Tests understanding of tokenizer fairness and its cost/context implications.",
+        "preparation_guide": "Connect training-corpus composition to fertility and effective context length.",
+        "explanation": "If the tokenizer's vocabulary is trained mostly on English, text in other scripts (e.g., Devanagari, CJK) or unusual code fragments into many byte-level pieces. This inflates token counts, raising cost and latency and shrinking the usable context window for those languages. Mitigations include training a balanced multilingual vocabulary, using byte-level fallback, extending the vocabulary with language-specific tokens (then resizing embeddings), or choosing a model whose tokenizer reports low fertility on your target languages.",
+        "star_framework_tip": "Lead with 'fertility = tokens per word' and show how inflation eats context and budget.",
+        "common_pitfalls": [
+          "Assuming a 128K context window is equal for all languages."
+        ],
+        "references": [
+          {
+            "title": "SentencePiece (Kudo & Richardson)",
+            "url": "https://arxiv.org/abs/1808.06226"
+          },
+          {
+            "title": "Hugging Face Tokenizers documentation",
+            "url": "https://huggingface.co/docs/tokenizers"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_s3",
+        "question": "Design an evaluation to choose a tokenizer and vocabulary size for a domain-specific SLM (e.g., biomedical).",
+        "complexity": "System Design",
+        "companies": [
+          "Google",
+          "Amazon",
+          "Microsoft"
+        ],
+        "core_intent": "Tests a rigorous, measurable approach to tokenizer selection.",
+        "preparation_guide": "Define the metrics and the trade-offs you would measure.",
+        "explanation": "Measure fertility (tokens per word) and out-of-vocabulary behavior on the domain corpus, examine the sequence-length distribution, and tie it to a downstream task metric. Trade vocabulary size against embedding parameters given the model's hidden size. Compare three options head-to-head: the base model's tokenizer, an extended version of it (adding domain tokens), and a freshly trained domain tokenizer — then pick by downstream quality at acceptable parameter cost.",
+        "star_framework_tip": "Structure it as metrics (fertility, OOV, length) plus a head-to-head on a real task.",
+        "common_pitfalls": [
+          "Optimizing fertility alone without checking downstream accuracy."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Tokenizers documentation",
+            "url": "https://huggingface.co/docs/tokenizers"
+          },
+          {
+            "title": "Perplexity of fixed-length models (Hugging Face)",
+            "url": "https://huggingface.co/docs/transformers/perplexity"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_s4",
+        "question": "Explain how the embedding matrix and tied output projection can dominate parameter count at small scale, and the implications.",
+        "complexity": "Hard",
+        "companies": [
+          "Google",
+          "Meta",
+          "NVIDIA"
+        ],
+        "core_intent": "Tests deep understanding of where an SLM's parameters actually go.",
+        "preparation_guide": "Compute embedding parameters and reason about weight tying.",
+        "explanation": "The input embedding matrix has vocabulary x hidden-size parameters, and the output projection is the same shape. At small hidden sizes with a large vocabulary, these can be a substantial share of total parameters — sometimes a third or more in tiny models. Weight tying shares the input and output embeddings to halve that cost and often improves quality. The implication is that vocabulary size is a first-class architectural decision for SLMs, not an afterthought.",
+        "star_framework_tip": "Do the arithmetic for a concrete tiny config to show the fraction is large.",
+        "common_pitfalls": [
+          "Ignoring the embedding/softmax cost when reasoning about SLM size."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_s5",
+        "question": "Walk through constrained / structured decoding (e.g., JSON or grammar-guided) and why it matters for SLMs in agentic pipelines.",
+        "complexity": "System Design",
+        "companies": [
+          "NVIDIA",
+          "OpenAI",
+          "Microsoft"
+        ],
+        "core_intent": "Tests a key reliability technique for small models that must emit machine-readable output.",
+        "preparation_guide": "Explain logit masking against a grammar/schema and the SLM-specific payoff.",
+        "explanation": "Constrained decoding masks the logits at each step so only tokens valid under a grammar or schema can be sampled, guaranteeing parseable output such as well-formed JSON or a function call. This matters most for SLMs because small models are less reliable at format adherence, so enforcing structure at decode time turns an unreliable generator into a dependable component. Tools include grammar-based samplers in llama.cpp and libraries like Outlines.",
+        "star_framework_tip": "Describe the per-step mask and frame it as 'making format failures impossible, not just rare.'",
+        "common_pitfalls": [
+          "Relying on prompt instructions alone to get valid JSON from a small model."
+        ],
+        "references": [
+          {
+            "title": "Outlines — structured/constrained generation",
+            "url": "https://github.com/dottxt-ai/outlines"
+          }
+        ]
+      },
+      {
+        "id": "m1_l2_s6",
+        "question": "How would you debug a model producing fluent but factually wrong or looping text, separating decoding issues from model issues?",
+        "complexity": "Hard",
+        "companies": [
+          "Google",
+          "Anthropic",
+          "Amazon"
+        ],
+        "core_intent": "Tests systematic diagnosis across the generation stack.",
+        "preparation_guide": "Provide an ordered checklist that isolates the layer at fault.",
+        "explanation": "Work from cheapest to deepest: first check decoding settings (temperature, top-p, repetition penalty) and the prompt/chat template, then confirm the tokenizer matches the model. If looping persists, it is likely a decoding or calibration issue; add repetition penalties or constrained decoding. If outputs are fluent but wrong, measure perplexity and task metrics — that points to a capability or knowledge gap, which RAG or fine-tuning addresses, not decoding tweaks.",
+        "star_framework_tip": "Order the checks so you rule out cheap decoding causes before blaming the model.",
+        "common_pitfalls": [
+          "Retraining the model when the real fix was a decoding parameter or template bug."
+        ],
+        "references": [
+          {
+            "title": "The Curious Case of Neural Text Degeneration (nucleus/top-p, Holtzman et al.)",
+            "url": "https://arxiv.org/abs/1904.09751"
+          },
+          {
+            "title": "Hugging Face Transformers documentation",
+            "url": "https://huggingface.co/docs/transformers"
           }
         ]
       }

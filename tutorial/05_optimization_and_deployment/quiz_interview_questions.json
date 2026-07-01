@@ -18,6 +18,75 @@
           "Claiming GGUF is only used for server deployments."
         ],
         "references": []
+      },
+      {
+        "id": "m5_quiz_j2",
+        "question": "What does INT4 buy you over INT8, and what does it cost?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Intel",
+          "Hugging Face"
+        ],
+        "core_intent": "Reviews the quantization bit-width trade-off.",
+        "preparation_guide": "Recall memory savings vs accuracy.",
+        "explanation": "INT4 roughly halves the model size again versus INT8 (about 4x smaller than FP16), enabling larger models on smaller hardware, but it typically incurs a somewhat larger accuracy drop, so it needs good methods (AWQ/GPTQ/k-quants) and task validation.",
+        "star_framework_tip": "Pair extra memory savings with the larger accuracy risk.",
+        "common_pitfalls": [
+          "Assuming INT4 is free of accuracy cost."
+        ],
+        "references": [
+          {
+            "title": "AWQ: Activation-aware Weight Quantization",
+            "url": "https://arxiv.org/abs/2306.00978"
+          }
+        ]
+      },
+      {
+        "id": "m5_quiz_j3",
+        "question": "Why use a dedicated inference server instead of a plain web framework for serving?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Hugging Face",
+          "Amazon"
+        ],
+        "core_intent": "Reviews serving infrastructure.",
+        "preparation_guide": "Recall batching and KV-cache management.",
+        "explanation": "Dedicated engines add continuous batching, paged KV-cache memory management, optimized kernels, and streaming, giving far higher GPU utilization and throughput than a one-request-at-a-time framework wrapper.",
+        "star_framework_tip": "List batching + KV management + kernels as the differentiators.",
+        "common_pitfalls": [
+          "Putting model.generate behind Flask for production load."
+        ],
+        "references": [
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          }
+        ]
+      },
+      {
+        "id": "m5_quiz_j4",
+        "question": "What is time-to-first-token (TTFT), and what phase dominates it?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Reviews latency metrics.",
+        "preparation_guide": "Recall TTFT and the prefill phase.",
+        "explanation": "TTFT is the delay before the first output token appears; it is dominated by the prefill phase, where the model processes the entire prompt to build the KV cache. Long prompts and large models raise TTFT.",
+        "star_framework_tip": "Define TTFT and attribute it to prefill.",
+        "common_pitfalls": [
+          "Confusing TTFT with the inter-token (decode) latency."
+        ],
+        "references": [
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -37,6 +106,75 @@
           "Stating that PagedAttention quantizes model weights."
         ],
         "references": []
+      },
+      {
+        "id": "m5_quiz_m2",
+        "question": "Why does continuous batching improve GPU utilization compared to static batching?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Reviews throughput optimization.",
+        "preparation_guide": "Recall per-iteration scheduling.",
+        "explanation": "Continuous batching admits new requests and evicts finished ones every iteration, so the GPU stays saturated instead of idling while a static batch waits for its longest sequence to finish. Under mixed-length, bursty traffic this sharply raises throughput.",
+        "star_framework_tip": "Tie utilization to per-iteration admission/eviction.",
+        "common_pitfalls": [
+          "Equating continuous batching with simply using a bigger fixed batch."
+        ],
+        "references": [
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          }
+        ]
+      },
+      {
+        "id": "m5_quiz_m3",
+        "question": "How do you estimate KV-cache memory, and why does it limit batch size and context length?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Reviews the serving memory constraint.",
+        "preparation_guide": "Relate cache size to layers, heads, and sequence length.",
+        "explanation": "KV-cache memory scales with the number of layers, KV heads, head dimension, sequence length, and concurrent sequences (times two for keys and values, times bytes per element). Because it grows with both context length and concurrency, it competes with weights for GPU memory and caps how many requests and how long a context a server can run at once.",
+        "star_framework_tip": "Give the scaling factors and explain the concurrency/context cap.",
+        "common_pitfalls": [
+          "Budgeting only for weights and ignoring KV-cache growth."
+        ],
+        "references": [
+          {
+            "title": "Efficient Memory Management for LLM Serving (PagedAttention)",
+            "url": "https://arxiv.org/abs/2309.06180"
+          }
+        ]
+      },
+      {
+        "id": "m5_quiz_m4",
+        "question": "What is the trade-off of quantizing a model for serving?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Hugging Face",
+          "Amazon"
+        ],
+        "core_intent": "Reviews quantization in serving.",
+        "preparation_guide": "Balance memory/throughput vs accuracy/kernels.",
+        "explanation": "Quantization shrinks weight memory, freeing room for a larger KV cache and more concurrency and often speeding memory-bound decode, at the cost of a small accuracy drop and dependence on efficient quantized kernels for the target GPU. Validate both quality and measured throughput before relying on the speedup.",
+        "star_framework_tip": "Pair the memory/throughput win with the accuracy and kernel caveats.",
+        "common_pitfalls": [
+          "Assuming quantization always speeds serving regardless of kernel support."
+        ],
+        "references": [
+          {
+            "title": "AWQ: Activation-aware Weight Quantization",
+            "url": "https://arxiv.org/abs/2306.00978"
+          }
+        ]
       }
     ],
     "senior": [
@@ -57,6 +195,56 @@
           "Suggesting a single large model instance without scaling or load balancing."
         ],
         "references": []
+      },
+      {
+        "id": "m5_quiz_s2",
+        "question": "Design an edge deployment of an SLM on CPU-only hardware under a latency budget.",
+        "complexity": "System Design",
+        "companies": [
+          "Intel",
+          "Apple",
+          "Qualcomm"
+        ],
+        "core_intent": "Synthesizes quantization and edge serving.",
+        "preparation_guide": "Cover model size, format, runtime, and memory.",
+        "explanation": "Choose a small (1-3B) model quantized to 4-bit GGUF, run it on a CPU-optimized runtime like llama.cpp with tuned thread count, keep context short with a quantized KV cache to fit memory, and warm the model to avoid cold-start latency. Validate p95/p99 latency on the actual device and provide a smaller fallback model for low-end hardware, with signed delta updates and rollback.",
+        "star_framework_tip": "Walk size/quantization -> CPU runtime/threads -> memory -> on-device latency validation.",
+        "common_pitfalls": [
+          "Validating latency on a beefy dev machine instead of the target device."
+        ],
+        "references": [
+          {
+            "title": "llama.cpp (GGUF inference)",
+            "url": "https://github.com/ggerganov/llama.cpp"
+          }
+        ]
+      },
+      {
+        "id": "m5_quiz_s3",
+        "question": "Given a 200ms p99 latency SLA at high QPS, what levers do you pull and how do you validate?",
+        "complexity": "Hard",
+        "companies": [
+          "NVIDIA",
+          "Amazon",
+          "Microsoft"
+        ],
+        "core_intent": "Synthesizes the chapter into an SLA design.",
+        "preparation_guide": "List levers across model, serving, and hardware, then validation.",
+        "explanation": "Use a small/quantized model, a continuous-batching engine with paged KV cache, chunked prefill and prefix caching to cut TTFT, and possibly speculative decoding to speed decode; right-size GPUs and autoscale on queue depth with admission control to protect the tail. Validate with a load test at target QPS measuring p50/p95/p99 (not the mean), under realistic prompt-length distributions, and tune until p99 sits safely under 200ms with headroom.",
+        "star_framework_tip": "Combine model + serving + hardware levers, then load-test the tail at target QPS.",
+        "common_pitfalls": [
+          "Tuning to the average latency while p99 keeps violating the SLA."
+        ],
+        "references": [
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          },
+          {
+            "title": "Fast Inference via Speculative Decoding (Leviathan et al.)",
+            "url": "https://arxiv.org/abs/2211.17192"
+          }
+        ]
       }
     ]
   }

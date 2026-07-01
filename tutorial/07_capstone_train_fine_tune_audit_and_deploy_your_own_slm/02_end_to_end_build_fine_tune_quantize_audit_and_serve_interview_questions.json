@@ -18,6 +18,98 @@
           "Skipping safety evaluations or quantization stages in deployment descriptions."
         ],
         "references": []
+      },
+      {
+        "id": "m7_l2_j2",
+        "question": "Why is the model evaluated both before and after quantization in the pipeline?",
+        "complexity": "Easy",
+        "companies": [
+          "NVIDIA",
+          "Hugging Face",
+          "Amazon"
+        ],
+        "core_intent": "Tests understanding of quantization as a risk step.",
+        "preparation_guide": "Explain the regression check quantization requires.",
+        "explanation": "Evaluation before quantization establishes the fine-tuned model's true quality; evaluation after confirms that compression did not degrade it beyond an acceptable margin. Since quantization can silently drop accuracy, the after-check is a regression gate that decides whether the compressed model is safe to serve or needs a higher bit-width.",
+        "star_framework_tip": "Frame the post-quantization eval as a regression gate against the pre-quant baseline.",
+        "common_pitfalls": [
+          "Quantizing and serving without re-evaluating the compressed model."
+        ],
+        "references": [
+          {
+            "title": "AWQ: Activation-aware Weight Quantization",
+            "url": "https://arxiv.org/abs/2306.00978"
+          }
+        ]
+      },
+      {
+        "id": "m7_l2_j3",
+        "question": "What does the 'audit' stage mean in the pipeline, and why does it run before serving?",
+        "complexity": "Easy",
+        "companies": [
+          "Anthropic",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests where safety fits in the pipeline.",
+        "preparation_guide": "Explain safety/bias checks as a pre-serve gate.",
+        "explanation": "The audit stage runs safety and responsibility checks (bias, toxicity, jailbreak resistance, leakage, hallucination) on the final model. It runs before serving because catching harmful behavior in production is far costlier and riskier than catching it in a gate, so a failing audit blocks release until mitigated.",
+        "star_framework_tip": "Position the audit as a pre-serving safety gate that can block release.",
+        "common_pitfalls": [
+          "Treating safety auditing as an optional post-launch afterthought."
+        ],
+        "references": [
+          {
+            "title": "Red Teaming Language Models (Perez et al.)",
+            "url": "https://arxiv.org/abs/2202.03286"
+          }
+        ]
+      },
+      {
+        "id": "m7_l2_j4",
+        "question": "What artifacts should the end-to-end pipeline produce?",
+        "complexity": "Easy",
+        "companies": [
+          "Microsoft",
+          "Hugging Face",
+          "Amazon"
+        ],
+        "core_intent": "Tests deliverable awareness.",
+        "preparation_guide": "List the traceable outputs.",
+        "explanation": "The pipeline should output the fine-tuned checkpoint (or adapter), the quantized deployment model, an evaluation report (quality plus safety/audit results), a model card documenting intended use and limitations, and versioned configs/data lineage. Together these make the release reproducible, auditable, and safe to hand off.",
+        "star_framework_tip": "Enumerate checkpoint, quantized model, eval/audit report, model card, and lineage.",
+        "common_pitfalls": [
+          "Producing only the model file with no eval report or model card."
+        ],
+        "references": [
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          }
+        ]
+      },
+      {
+        "id": "m7_l2_j5",
+        "question": "Why add monitoring after deployment, and what do you monitor?",
+        "complexity": "Easy",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests post-deployment operations.",
+        "preparation_guide": "List operational and quality signals.",
+        "explanation": "Models can degrade as real inputs drift from the training distribution, and infrastructure can fail, so monitoring is essential. Track operational signals (latency p50/p95/p99, throughput, error rate, cost) and quality/safety signals (output quality samples, drift, refusal and toxicity rates, user feedback), alerting when they cross thresholds so you can roll back or retrain.",
+        "star_framework_tip": "Split operational metrics from quality/safety/drift signals.",
+        "common_pitfalls": [
+          "Deploying and assuming quality stays constant without monitoring drift."
+        ],
+        "references": [
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -37,6 +129,102 @@
           "Launching the server without checking if the quantization step succeeded."
         ],
         "references": []
+      },
+      {
+        "id": "m7_l2_m2",
+        "question": "How do you validate that quantization did not break the model before serving it?",
+        "complexity": "Medium",
+        "companies": [
+          "NVIDIA",
+          "Hugging Face",
+          "Amazon"
+        ],
+        "core_intent": "Tests the quantization regression workflow.",
+        "preparation_guide": "Describe a paired quality/latency comparison.",
+        "explanation": "Run the same evaluation suite on the pre- and post-quantization models, comparing task metrics and perplexity within a defined tolerance, and spot-check representative prompts side by side. Also measure on-target latency and memory. If quality regresses beyond tolerance, raise the bit-width or try a better method (AWQ/GPTQ, larger group size) before approving the serve.",
+        "star_framework_tip": "Compare pre/post metrics within tolerance plus on-device latency, then gate.",
+        "common_pitfalls": [
+          "Assuming a small file means acceptable quality without a paired eval."
+        ],
+        "references": [
+          {
+            "title": "AWQ: Activation-aware Weight Quantization",
+            "url": "https://arxiv.org/abs/2306.00978"
+          },
+          {
+            "title": "Perplexity of fixed-length models (Hugging Face)",
+            "url": "https://huggingface.co/docs/transformers/perplexity"
+          }
+        ]
+      },
+      {
+        "id": "m7_l2_m3",
+        "question": "How do you set up CI/CD for an SLM pipeline?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Tests automation and reproducibility.",
+        "preparation_guide": "Cover reproducible builds and automated gates.",
+        "explanation": "Version code, data, and configs; make builds reproducible with pinned environments and seeds; and automate the pipeline so each change triggers training/fine-tuning, evaluation, an audit, and quantization with automated gates that fail on quality or safety regressions. Only artifacts passing every gate are promoted, and the run stores its model card, metrics, and lineage for audit and rollback.",
+        "star_framework_tip": "Automate build -> eval -> audit -> quantize with pass/fail gates and stored lineage.",
+        "common_pitfalls": [
+          "Manually running steps ad hoc with no gates or reproducibility."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Accelerate documentation",
+            "url": "https://huggingface.co/docs/accelerate"
+          }
+        ]
+      },
+      {
+        "id": "m7_l2_m4",
+        "question": "How do you monitor a deployed SLM for drift and quality regression in production?",
+        "complexity": "Medium",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests production quality monitoring.",
+        "preparation_guide": "Describe input/output drift and sampled evaluation.",
+        "explanation": "Track input drift (shifts in prompt distribution versus training), output signals (length, refusal rate, toxicity, confidence), and business/user feedback (thumbs, escalations). Periodically sample production traffic for offline scoring or LLM-as-judge review, and alert when metrics move beyond baselines. Combine automated signals with human review, since silent quality loss rarely triggers errors.",
+        "star_framework_tip": "Pair input/output drift signals with sampled offline scoring and alerts.",
+        "common_pitfalls": [
+          "Watching only latency/error rate while output quality silently degrades."
+        ],
+        "references": [
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
+      },
+      {
+        "id": "m7_l2_m5",
+        "question": "How do you roll out a new model version safely (canary / A-B testing)?",
+        "complexity": "Medium",
+        "companies": [
+          "Amazon",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests safe deployment practice.",
+        "preparation_guide": "Describe gradual rollout with comparison and rollback.",
+        "explanation": "Release the new version to a small traffic slice (canary) or run an A/B test, comparing quality, safety, latency, and cost against the current model on live traffic while it is contained. Ramp up only if metrics hold, and keep an automated rollback trigger on regression. This limits blast radius and gives real-world evidence before full promotion.",
+        "star_framework_tip": "Walk canary/A-B -> compare on live traffic -> ramp or auto-rollback.",
+        "common_pitfalls": [
+          "Swapping the production model globally in one step with no canary."
+        ],
+        "references": [
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
       }
     ],
     "senior": [
@@ -57,6 +245,91 @@
           "Triggering rollbacks based on transient single-request latency spikes."
         ],
         "references": []
+      },
+      {
+        "id": "m7_l2_s2",
+        "question": "Design the full end-to-end MLOps architecture for the capstone, from data to a monitored production service.",
+        "complexity": "System Design",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "NVIDIA"
+        ],
+        "core_intent": "Tests the capstone system design.",
+        "preparation_guide": "Cover the pipeline stages, gates, and feedback loop.",
+        "explanation": "Chain versioned stages: a data pipeline (curate, dedup, decontaminate, version) feeds fine-tuning (LoRA/QLoRA with tracked configs), then automated evaluation and safety audit gates, then quantization with a regression check, then a serving layer (batching engine, autoscaling) with canary rollout. Wrap it in a registry with lineage and rollback, production monitoring for quality/safety/latency/cost, and a feedback loop that funnels flagged production data back into the next training cycle. Every promotion passes automated gates and produces a model card.",
+        "star_framework_tip": "Draw data -> fine-tune -> eval/audit gates -> quantize -> serve/canary -> monitor -> feedback, with a registry.",
+        "common_pitfalls": [
+          "Designing a one-way pipeline with no monitoring or feedback loop back to training."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Accelerate documentation",
+            "url": "https://huggingface.co/docs/accelerate"
+          },
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          },
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          }
+        ]
+      },
+      {
+        "id": "m7_l2_s3",
+        "question": "Extend the self-healing deployment: beyond latency, what quality, safety, and cost triggers and observability do you add?",
+        "complexity": "Hard",
+        "companies": [
+          "Amazon",
+          "NVIDIA",
+          "Microsoft"
+        ],
+        "core_intent": "Tests robust production guardrails.",
+        "preparation_guide": "Broaden rollback triggers and observability.",
+        "explanation": "Add triggers beyond latency: quality regression on a live canary eval, safety spikes (toxicity, refusal, jailbreak signals), error-rate and cost-per-request thresholds, and drift alarms. Instrument end-to-end observability (tracing TTFT/TPOT, per-tenant metrics, output-quality sampling, safety classifiers) feeding an automated policy that can throttle, roll back, or fall back to a safe model. Keep circuit-breakers and clear runbooks so responses are fast and auditable.",
+        "star_framework_tip": "Enumerate quality/safety/cost/drift triggers plus tracing and automated rollback/fallback.",
+        "common_pitfalls": [
+          "Rolling back on latency alone while quality or safety regressions go undetected."
+        ],
+        "references": [
+          {
+            "title": "Red Teaming Language Models (Perez et al.)",
+            "url": "https://arxiv.org/abs/2202.03286"
+          },
+          {
+            "title": "vLLM",
+            "url": "https://github.com/vllm-project/vllm"
+          }
+        ]
+      },
+      {
+        "id": "m7_l2_s4",
+        "question": "Post-deployment, quality slowly degrades. Design a continuous-improvement / retraining loop with feedback data and guardrails.",
+        "complexity": "System Design",
+        "companies": [
+          "Amazon",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests closing the lifecycle loop.",
+        "preparation_guide": "Cover feedback collection, retraining triggers, and safety gates.",
+        "explanation": "Collect feedback signals (user ratings, corrections, escalations, flagged failures) and drift metrics; when they cross thresholds, assemble a curated, deduplicated, decontaminated training increment (with human review to avoid feedback poisoning) and retrain or fine-tune. Run the new model through the same eval, audit, and quantization gates, canary it, and promote only on improvement, keeping rollback. The loop must guard against feedback bias, contamination, and forgetting, with general-ability checks each cycle.",
+        "star_framework_tip": "Close the loop: feedback -> curated increment -> retrain -> gates -> canary -> promote, with anti-poisoning guardrails.",
+        "common_pitfalls": [
+          "Retraining directly on raw production outputs and amplifying errors and bias."
+        ],
+        "references": [
+          {
+            "title": "Deduplicating Training Data Makes LMs Better",
+            "url": "https://arxiv.org/abs/2107.06499"
+          },
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
       }
     ]
   }

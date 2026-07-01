@@ -23,6 +23,98 @@
             "url": "https://huggingface.co/docs/datasets/process"
           }
         ]
+      },
+      {
+        "id": "m3_l1_j2",
+        "question": "What is the Hugging Face Dataset/DatasetDict structure, and how does it differ from loading everything into a pandas DataFrame?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Google",
+          "Amazon"
+        ],
+        "core_intent": "Tests the core data abstraction and why it scales.",
+        "preparation_guide": "Know the Arrow-backed, memory-mapped design.",
+        "explanation": "A Dataset is an Apache Arrow table that is memory-mapped from disk, so rows are read on demand rather than held entirely in RAM; a DatasetDict groups splits (train/validation/test). Unlike a pandas DataFrame, which loads everything into memory, this lets you work with datasets far larger than RAM and share fast columnar access.",
+        "star_framework_tip": "Contrast memory-mapped Arrow with in-memory pandas.",
+        "common_pitfalls": [
+          "Assuming Datasets load fully into RAM like a DataFrame."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Datasets documentation",
+            "url": "https://huggingface.co/docs/datasets"
+          }
+        ]
+      },
+      {
+        "id": "m3_l1_j3",
+        "question": "What is streaming mode in Hugging Face Datasets, and when do you need it?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Amazon",
+          "Microsoft"
+        ],
+        "core_intent": "Tests handling of corpora that do not fit on disk/RAM.",
+        "preparation_guide": "Explain IterableDataset and on-the-fly processing.",
+        "explanation": "Streaming returns an IterableDataset that fetches and processes examples lazily as you iterate, without downloading or materializing the whole dataset. You need it for very large or remote corpora that will not fit locally, accepting that you lose random access and length in exchange for a tiny footprint.",
+        "star_framework_tip": "Say lazy iteration for huge/remote data, with the random-access trade-off.",
+        "common_pitfalls": [
+          "Trying to shuffle or index a streamed dataset like an in-memory one."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Datasets documentation",
+            "url": "https://huggingface.co/docs/datasets"
+          }
+        ]
+      },
+      {
+        "id": "m3_l1_j4",
+        "question": "What is data deduplication, and why does it matter for language-model training quality?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests awareness that duplicates harm training.",
+        "preparation_guide": "Connect duplicates to memorization and wasted compute.",
+        "explanation": "Deduplication removes exact and near-duplicate documents from the corpus. Duplicates cause the model to over-memorize repeated text, waste compute on redundant data, and can leak test content into training. Removing them improves generalization and data efficiency, which matters even more for small models with limited capacity.",
+        "star_framework_tip": "Link dedup to less memorization, better generalization, and leakage prevention.",
+        "common_pitfalls": [
+          "Treating dedup as optional cleanup rather than a quality lever."
+        ],
+        "references": [
+          {
+            "title": "Deduplicating Training Data Makes LMs Better",
+            "url": "https://arxiv.org/abs/2107.06499"
+          }
+        ]
+      },
+      {
+        "id": "m3_l1_j5",
+        "question": "Why do you split data into train, validation, and test sets, and how do you avoid leakage between them?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Amazon",
+          "Microsoft"
+        ],
+        "core_intent": "Tests basic experimental hygiene.",
+        "preparation_guide": "Explain the role of each split and dedup-across-splits.",
+        "explanation": "Train fits the model, validation guides tuning and early stopping, and test gives a final unbiased estimate. Leakage occurs when the same or near-duplicate examples appear across splits, inflating scores. Prevent it by deduplicating before splitting and splitting by a natural key (document, user, time) rather than randomly across near-identical rows.",
+        "star_framework_tip": "Define each split, then stress dedup-before-split and splitting by a stable key.",
+        "common_pitfalls": [
+          "Random row splits that scatter near-duplicates across train and test."
+        ],
+        "references": [
+          {
+            "title": "Deduplicating Training Data Makes LMs Better",
+            "url": "https://arxiv.org/abs/2107.06499"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -42,6 +134,98 @@
           "Forgetting to match pad tokens or hardcoding padding directions."
         ],
         "references": []
+      },
+      {
+        "id": "m3_l1_m2",
+        "question": "How does the Arrow/memory-mapping backend let you process datasets larger than RAM, and how does .map caching fit in?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Tests the mechanics behind scalable processing.",
+        "preparation_guide": "Explain memory mapping and cached transformations.",
+        "explanation": "Arrow stores data columnar on disk and memory-maps it, so the OS pages in only the bytes you touch, keeping RAM use low regardless of dataset size. Transformations via .map are written to a new cached Arrow file on disk (and reused on rerun), so multi-step pipelines stay out-of-core and reproducible without reprocessing.",
+        "star_framework_tip": "Tie memory mapping to low RAM and .map caching to reproducible out-of-core pipelines.",
+        "common_pitfalls": [
+          "Believing .map holds all transformed data in memory."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Datasets documentation",
+            "url": "https://huggingface.co/docs/datasets"
+          }
+        ]
+      },
+      {
+        "id": "m3_l1_m3",
+        "question": "How do you tokenize and 'pack' raw text into fixed-length blocks for causal language-model pretraining?",
+        "complexity": "Medium",
+        "companies": [
+          "Meta",
+          "Google",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests the standard pretraining data preparation.",
+        "preparation_guide": "Describe concatenate-then-chunk and why it avoids waste.",
+        "explanation": "Tokenize all documents, concatenate the token streams (with separators/EOS between documents), then split the long stream into equal blocks of the context length. This 'packing' eliminates padding waste and keeps every position useful, maximizing tokens-per-step. The last partial block is dropped or padded, and attention is typically allowed to cross document boundaries unless you mask them.",
+        "star_framework_tip": "Walk concatenate -> chunk and note it removes padding waste.",
+        "common_pitfalls": [
+          "Padding each short document separately and wasting most positions."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Datasets documentation",
+            "url": "https://huggingface.co/docs/datasets"
+          }
+        ]
+      },
+      {
+        "id": "m3_l1_m4",
+        "question": "Describe a quality-filtering pipeline for a raw web corpus intended for SLM training.",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Meta",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests practical corpus curation.",
+        "preparation_guide": "List heuristic filters, dedup, and decontamination.",
+        "explanation": "A typical pipeline applies language and length filters, heuristic quality rules (symbol/word ratios, boilerplate and template removal), perplexity or classifier-based quality scoring, PII scrubbing, exact and near-duplicate removal, and benchmark decontamination. For small models, aggressive quality filtering often beats sheer volume because limited capacity should be spent on clean, informative text.",
+        "star_framework_tip": "Order the stages and note that for SLMs quality beats raw quantity.",
+        "common_pitfalls": [
+          "Filtering for length only and skipping dedup and decontamination."
+        ],
+        "references": [
+          {
+            "title": "Deduplicating Training Data Makes LMs Better",
+            "url": "https://arxiv.org/abs/2107.06499"
+          }
+        ]
+      },
+      {
+        "id": "m3_l1_m5",
+        "question": "How do you handle imbalanced or mixed-source training data (e.g., several domains of very different sizes)?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Amazon",
+          "Meta"
+        ],
+        "core_intent": "Tests data-mixture design.",
+        "preparation_guide": "Explain sampling weights / temperature mixing.",
+        "explanation": "Rather than concatenating sources by their raw sizes, assign sampling weights so under-represented but important domains are seen enough; temperature-based sampling upweights smaller sources by raising their probabilities toward uniform. The mixture is a tunable hyperparameter validated against per-domain evaluation, balancing coverage against over-sampling tiny sources.",
+        "star_framework_tip": "Frame the data mixture as tunable sampling weights validated per domain.",
+        "common_pitfalls": [
+          "Letting the largest source dominate purely by its byte count."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Datasets documentation",
+            "url": "https://huggingface.co/docs/datasets"
+          }
+        ]
       }
     ],
     "senior": [
@@ -65,6 +249,83 @@
           {
             "title": "Hugging Face Datasets Streaming",
             "url": "https://huggingface.co/docs/datasets/stream"
+          }
+        ]
+      },
+      {
+        "id": "m3_l1_s2",
+        "question": "Design a decontamination process that ensures evaluation benchmarks do not leak into pretraining data.",
+        "complexity": "System Design",
+        "companies": [
+          "Google",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Tests rigorous leakage prevention at scale.",
+        "preparation_guide": "Describe n-gram/hash overlap detection against eval sets.",
+        "explanation": "Build a registry of all evaluation examples, then scan the training corpus for overlap using normalized n-gram matching or hashing (e.g., MinHash/LSH for near-duplicates), removing or flagging any training document that shares a long n-gram with an eval item. Run it as a gate before tokenization, log what was removed for auditability, and re-check whenever new benchmarks are added.",
+        "star_framework_tip": "Center on normalized n-gram/hash overlap as a pre-tokenization gate with an audit log.",
+        "common_pitfalls": [
+          "Checking only exact string matches and missing paraphrased or near-duplicate leakage."
+        ],
+        "references": [
+          {
+            "title": "Deduplicating Training Data Makes LMs Better",
+            "url": "https://arxiv.org/abs/2107.06499"
+          }
+        ]
+      },
+      {
+        "id": "m3_l1_s3",
+        "question": "Architect a reproducible, versioned data pipeline from raw to tokenized, with caching and lineage.",
+        "complexity": "System Design",
+        "companies": [
+          "Amazon",
+          "Microsoft",
+          "Google"
+        ],
+        "core_intent": "Tests data engineering for trustworthy training.",
+        "preparation_guide": "Cover staged artifacts, versioning, and lineage tracking.",
+        "explanation": "Stage the pipeline as raw -> cleaned -> filtered/deduped -> tokenized, persisting each stage as a versioned, content-hashed artifact (DVC or the Hub) so any run is reproducible. Make transforms deterministic and cached, record the config and code commit that produced each artifact, and capture lineage so a final checkpoint can be traced back to exact inputs. Add a small validation step (counts, schema, contamination check) between stages.",
+        "star_framework_tip": "Present staged, hashed artifacts plus lineage from checkpoint back to raw inputs.",
+        "common_pitfalls": [
+          "Mutating data in place so past results can never be reproduced."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Datasets documentation",
+            "url": "https://huggingface.co/docs/datasets"
+          },
+          {
+            "title": "Datasheets for Datasets (Gebru et al.)",
+            "url": "https://arxiv.org/abs/1803.09010"
+          }
+        ]
+      },
+      {
+        "id": "m3_l1_s4",
+        "question": "What are the benefits and risks of generating synthetic training data from a teacher LLM for a domain SLM?",
+        "complexity": "Hard",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests judgment on synthetic data, a major current trend.",
+        "preparation_guide": "Balance the upside against contamination, bias, and collapse risks.",
+        "explanation": "Synthetic data lets you cover rare cases, control format, and distill a teacher's reasoning into a small model cheaply (the approach behind Phi-style models). Risks include propagating the teacher's errors and biases, benchmark contamination if the teacher saw test data, distribution narrowing, and model-collapse if synthetic data dominates. Mitigate with filtering, mixing real data, diversity controls, and decontamination, and evaluate on truly held-out real data.",
+        "star_framework_tip": "Pair each benefit with its risk and end with the mitigations and real-data eval.",
+        "common_pitfalls": [
+          "Training on teacher outputs without filtering, so the student inherits its flaws."
+        ],
+        "references": [
+          {
+            "title": "Small Language Models are the Future of Agentic AI (NVIDIA)",
+            "url": "https://arxiv.org/abs/2506.02153"
+          },
+          {
+            "title": "Deduplicating Training Data Makes LMs Better",
+            "url": "https://arxiv.org/abs/2107.06499"
           }
         ]
       }

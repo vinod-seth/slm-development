@@ -18,6 +18,75 @@
           "Believing that dynamic padding improves model accuracy (it only improves computational throughput)."
         ],
         "references": []
+      },
+      {
+        "id": "m3_quiz_j2",
+        "question": "Why is deduplicating training data important for language-model quality?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "Hugging Face"
+        ],
+        "core_intent": "Reviews data dedup.",
+        "preparation_guide": "Recall memorization, efficiency, and leakage.",
+        "explanation": "Duplicates make the model over-memorize repeated text, waste compute, and can leak test content into training; removing them improves generalization and data efficiency, which matters most for small-capacity models.",
+        "star_framework_tip": "State the three harms duplicates cause.",
+        "common_pitfalls": [
+          "Calling dedup optional cleanup."
+        ],
+        "references": [
+          {
+            "title": "Deduplicating Training Data Makes LMs Better",
+            "url": "https://arxiv.org/abs/2107.06499"
+          }
+        ]
+      },
+      {
+        "id": "m3_quiz_j3",
+        "question": "What does perplexity measure, in plain terms?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Reviews the core LM metric.",
+        "preparation_guide": "Recall the surprise/branching intuition.",
+        "explanation": "Perplexity is the exponential of the average per-token cross-entropy on held-out text; intuitively it is how surprised the model is by real text, with lower meaning better prediction. It is comparable only across the same data and tokenizer.",
+        "star_framework_tip": "Give the intuition plus the same-tokenizer caveat.",
+        "common_pitfalls": [
+          "Comparing perplexity across different tokenizers."
+        ],
+        "references": [
+          {
+            "title": "Perplexity of fixed-length models (Hugging Face)",
+            "url": "https://huggingface.co/docs/transformers/perplexity"
+          }
+        ]
+      },
+      {
+        "id": "m3_quiz_j4",
+        "question": "Why keep a validation set separate from the test set?",
+        "complexity": "Easy",
+        "companies": [
+          "Microsoft",
+          "Amazon",
+          "Google"
+        ],
+        "core_intent": "Reviews split hygiene.",
+        "preparation_guide": "Recall tuning vs final estimate.",
+        "explanation": "Validation guides tuning and checkpoint selection, while the test set is touched once for an unbiased final estimate; tuning on the test set leaks information and overstates generalization.",
+        "star_framework_tip": "Separate 'tune on validation' from 'measure once on test.'",
+        "common_pitfalls": [
+          "Selecting checkpoints by test score."
+        ],
+        "references": [
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -37,6 +106,79 @@
           "Not shifting logits when calculating cross-entropy loss in manual loops, leading to high training error."
         ],
         "references": []
+      },
+      {
+        "id": "m3_quiz_m2",
+        "question": "Why does the effective batch size (with gradient accumulation) matter when tuning the learning rate?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "NVIDIA",
+          "Microsoft"
+        ],
+        "core_intent": "Synthesizes batching and optimization.",
+        "preparation_guide": "Connect effective batch to gradient noise and LR.",
+        "explanation": "Gradient accumulation makes the effective batch larger than the physical batch, which reduces gradient noise and typically supports (and may require) a higher, well-warmed learning rate. Tuning the learning rate against the physical batch alone misjudges the optimization dynamics, since the optimizer steps on the accumulated effective batch.",
+        "star_framework_tip": "Tie effective batch to gradient noise and the appropriate learning rate.",
+        "common_pitfalls": [
+          "Setting the learning rate from the physical batch and ignoring accumulation."
+        ],
+        "references": [
+          {
+            "title": "Decoupled Weight Decay Regularization (AdamW)",
+            "url": "https://arxiv.org/abs/1711.05101"
+          }
+        ]
+      },
+      {
+        "id": "m3_quiz_m3",
+        "question": "To choose between two summarization checkpoints, how would you combine perplexity and ROUGE, and what are their limits?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Meta",
+          "Amazon"
+        ],
+        "core_intent": "Synthesizes intrinsic and task metrics.",
+        "preparation_guide": "Explain using both plus a semantic/human check.",
+        "explanation": "Perplexity indicates general modeling quality but not summarization usefulness, while ROUGE measures content overlap with reference summaries but misses paraphrase and faithfulness. Use ROUGE as the task signal, perplexity as a sanity check, and add a semantic metric (BERTScore) or human/LLM-judged faithfulness review before deciding, since neither alone captures factual correctness.",
+        "star_framework_tip": "Combine ROUGE (task) + perplexity (sanity) + a semantic/faithfulness check.",
+        "common_pitfalls": [
+          "Picking the checkpoint with lower perplexity regardless of summary quality."
+        ],
+        "references": [
+          {
+            "title": "ROUGE: A Package for Automatic Evaluation of Summaries (Lin)",
+            "url": "https://aclanthology.org/W04-1013/"
+          },
+          {
+            "title": "BERTScore: Evaluating Text Generation with BERT",
+            "url": "https://arxiv.org/abs/1904.09675"
+          }
+        ]
+      },
+      {
+        "id": "m3_quiz_m4",
+        "question": "How does data contamination inflate evaluation scores, and how do you detect it?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Meta"
+        ],
+        "core_intent": "Synthesizes leakage and evaluation.",
+        "preparation_guide": "Explain memorized test data and overlap detection.",
+        "explanation": "If evaluation examples (or near-duplicates) appear in training data, the model can recall rather than generalize, inflating scores and masking real weaknesses. Detect it by scanning training data for n-gram or hash overlap with eval sets, checking suspiciously high scores on memorization-prone items, and comparing against freshly created held-out examples.",
+        "star_framework_tip": "Link memorized eval data to inflated scores and name overlap detection.",
+        "common_pitfalls": [
+          "Trusting high benchmark scores without a contamination check."
+        ],
+        "references": [
+          {
+            "title": "Deduplicating Training Data Makes LMs Better",
+            "url": "https://arxiv.org/abs/2107.06499"
+          }
+        ]
       }
     ],
     "senior": [
@@ -57,6 +199,60 @@
           "Confusing clipping gradients with weight decay configurations."
         ],
         "references": []
+      },
+      {
+        "id": "m3_quiz_s2",
+        "question": "Design an end-to-end path from raw corpus to a trained, evaluated checkpoint with leakage controls.",
+        "complexity": "System Design",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Amazon"
+        ],
+        "core_intent": "Synthesizes the whole module.",
+        "preparation_guide": "Sequence the stages with decontamination before training and rigorous eval after.",
+        "explanation": "Curate and clean the corpus, deduplicate, and decontaminate against all eval sets before tokenizing and packing. Train with a sensible schedule, mixed precision, checkpointing, and best-model selection on validation. Evaluate the final checkpoint with task metrics plus perplexity, multiple seeds and confidence intervals, and a final contamination re-check, retaining per-example outputs. Each stage gates the next.",
+        "star_framework_tip": "Present clean -> dedup -> decontaminate -> train -> rigorous eval as gated stages.",
+        "common_pitfalls": [
+          "Running evaluation without a decontamination gate, invalidating the numbers."
+        ],
+        "references": [
+          {
+            "title": "Deduplicating Training Data Makes LMs Better",
+            "url": "https://arxiv.org/abs/2107.06499"
+          },
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
+      },
+      {
+        "id": "m3_quiz_s3",
+        "question": "Explain why low perplexity does not guarantee good downstream or task performance.",
+        "complexity": "Hard",
+        "companies": [
+          "Google",
+          "Meta",
+          "Microsoft"
+        ],
+        "core_intent": "Synthesizes intrinsic vs extrinsic evaluation.",
+        "preparation_guide": "Explain the mismatch between modeling and tasks.",
+        "explanation": "Perplexity rewards predicting the next token of generic text, which does not directly measure reasoning, instruction following, factual accuracy, or formatting. A model can have low perplexity yet fail a task because the task needs capabilities the metric does not probe, or because evaluation requires a specific output format. Always confirm with task-specific, contamination-checked evaluation.",
+        "star_framework_tip": "Contrast token prediction with task capabilities and require task eval.",
+        "common_pitfalls": [
+          "Shipping a model on perplexity alone without task validation."
+        ],
+        "references": [
+          {
+            "title": "Perplexity of fixed-length models (Hugging Face)",
+            "url": "https://huggingface.co/docs/transformers/perplexity"
+          },
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          }
+        ]
       }
     ]
   }

@@ -23,6 +23,106 @@
             "url": "https://www.anthropic.com/index/red-teaming-language-models"
           }
         ]
+      },
+      {
+        "id": "m6_l1_j2",
+        "question": "What is bias in a language model, and where does it come from?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests the basic concept and source of bias.",
+        "preparation_guide": "Connect bias to training data and types of harm.",
+        "explanation": "Model bias is systematic unfairness in outputs, such as stereotyping or unequal quality across groups. It mainly comes from training data that reflects historical and social biases, plus modeling and sampling choices. Harms include representational harms (stereotypes, demeaning content) and allocational harms (unequal performance affecting decisions).",
+        "star_framework_tip": "Name the data source and distinguish representational from allocational harm.",
+        "common_pitfalls": [
+          "Treating bias as a bug to patch rather than a property of the data and pipeline."
+        ],
+        "references": [
+          {
+            "title": "BBQ: A Hand-Built Bias Benchmark for QA",
+            "url": "https://arxiv.org/abs/2110.08193"
+          }
+        ]
+      },
+      {
+        "id": "m6_l1_j3",
+        "question": "What is toxicity in model outputs, and what tools or benchmarks measure it?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests practical toxicity evaluation.",
+        "preparation_guide": "Name a classifier and a benchmark.",
+        "explanation": "Toxicity is content that is rude, hateful, harassing, or otherwise harmful. It is commonly measured by scoring generations with a toxicity classifier (e.g., Perspective API or open detoxify-style models) and by benchmarks like RealToxicityPrompts that probe how easily a model produces toxic continuations.",
+        "star_framework_tip": "Pair a scoring tool with a probing benchmark.",
+        "common_pitfalls": [
+          "Assuming a single classifier is ground truth for toxicity."
+        ],
+        "references": [
+          {
+            "title": "RealToxicityPrompts",
+            "url": "https://arxiv.org/abs/2009.11462"
+          },
+          {
+            "title": "Perspective API",
+            "url": "https://perspectiveapi.com"
+          }
+        ]
+      },
+      {
+        "id": "m6_l1_j4",
+        "question": "What is the difference between intrinsic and extrinsic bias measurement?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests the two families of bias metrics.",
+        "preparation_guide": "Contrast embedding associations with task outcomes.",
+        "explanation": "Intrinsic measures probe the model's internal representations or word associations directly (e.g., association tests on embeddings). Extrinsic measures evaluate bias in downstream task behavior, such as accuracy gaps across demographic groups or stereotyped answers on a QA benchmark. Extrinsic measures better reflect real-world impact, while intrinsic ones are cheaper but less predictive.",
+        "star_framework_tip": "Map intrinsic->internal associations, extrinsic->task outcomes, and note the impact gap.",
+        "common_pitfalls": [
+          "Reporting only an intrinsic score and claiming the deployed system is fair."
+        ],
+        "references": [
+          {
+            "title": "Semantics derived automatically from corpora contain human-like biases (WEAT)",
+            "url": "https://www.science.org/doi/10.1126/science.aal4230"
+          },
+          {
+            "title": "BBQ: A Hand-Built Bias Benchmark for QA",
+            "url": "https://arxiv.org/abs/2110.08193"
+          }
+        ]
+      },
+      {
+        "id": "m6_l1_j5",
+        "question": "Why do small language models still need safety auditing, even though they are small?",
+        "complexity": "Easy",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Meta"
+        ],
+        "core_intent": "Tests that size does not exempt a model from safety work.",
+        "preparation_guide": "Explain that capability, not size, drives risk in deployment.",
+        "explanation": "Small models still learn biases and can generate toxic, unsafe, or misleading content, and they are often deployed widely and on-device where oversight is weaker. Being small can even mean weaker calibration and easier jailbreaks. Safety auditing scales with deployment impact and capability, not parameter count.",
+        "star_framework_tip": "Tie the need to deployment reach and capability, not model size.",
+        "common_pitfalls": [
+          "Assuming small models are inherently safe and skip auditing."
+        ],
+        "references": [
+          {
+            "title": "Red Teaming Language Models (Perez et al.)",
+            "url": "https://arxiv.org/abs/2202.03286"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -42,6 +142,110 @@
           "Failing to handle classifier service connection errors, causing generation pipeline crashes."
         ],
         "references": []
+      },
+      {
+        "id": "m6_l1_m2",
+        "question": "Compare bias benchmarks such as BBQ, StereoSet, and WEAT: what does each measure, and what are their limits?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests knowledge of standard bias evaluations.",
+        "preparation_guide": "Summarize each benchmark and a key limitation.",
+        "explanation": "WEAT measures stereotyped associations in static embeddings via association tests. StereoSet probes whether a model prefers stereotypical over anti-stereotypical completions while staying coherent. BBQ is a question-answering benchmark testing whether models fall back on social stereotypes, especially under ambiguity. Limits include narrow demographic coverage, cultural specificity, gameability, and weak correlation with real downstream harm, so they are signals, not verdicts.",
+        "star_framework_tip": "Give one line per benchmark plus the shared limitation of narrow, gameable coverage.",
+        "common_pitfalls": [
+          "Treating a single benchmark score as proof a model is unbiased."
+        ],
+        "references": [
+          {
+            "title": "BBQ: A Hand-Built Bias Benchmark for QA",
+            "url": "https://arxiv.org/abs/2110.08193"
+          },
+          {
+            "title": "StereoSet: Measuring Stereotypical Bias",
+            "url": "https://arxiv.org/abs/2004.09456"
+          },
+          {
+            "title": "Semantics derived automatically from corpora contain human-like biases (WEAT)",
+            "url": "https://www.science.org/doi/10.1126/science.aal4230"
+          }
+        ]
+      },
+      {
+        "id": "m6_l1_m3",
+        "question": "What is a safety alignment dataset / refusal training, and how does it work?",
+        "complexity": "Medium",
+        "companies": [
+          "OpenAI",
+          "Anthropic",
+          "Google"
+        ],
+        "core_intent": "Tests how models learn safe behavior.",
+        "preparation_guide": "Explain demonstrations and preferences for safe responses.",
+        "explanation": "A safety alignment dataset contains examples of harmful or sensitive prompts paired with appropriate responses (helpful refusals, safe completions, or de-escalation). Through SFT and preference optimization, the model learns to recognize such prompts and respond safely while staying helpful on benign ones. The challenge is teaching the boundary without making the model over-refuse legitimate requests.",
+        "star_framework_tip": "Describe paired safe-response data via SFT/preference tuning and the over-refusal risk.",
+        "common_pitfalls": [
+          "Assuming a blocklist of words substitutes for learned safe behavior."
+        ],
+        "references": [
+          {
+            "title": "Training LMs to Follow Instructions with Human Feedback (InstructGPT)",
+            "url": "https://arxiv.org/abs/2203.02155"
+          },
+          {
+            "title": "Constitutional AI: Harmlessness from AI Feedback",
+            "url": "https://arxiv.org/abs/2212.08073"
+          }
+        ]
+      },
+      {
+        "id": "m6_l1_m4",
+        "question": "How do you measure a model's jailbreak resilience systematically?",
+        "complexity": "Medium",
+        "companies": [
+          "OpenAI",
+          "Anthropic",
+          "Microsoft"
+        ],
+        "core_intent": "Tests evaluation of adversarial robustness.",
+        "preparation_guide": "Describe an attack suite plus success scoring.",
+        "explanation": "Assemble a suite of known jailbreak techniques (role-play, prompt injection, encoding tricks, persona attacks) and harmful intents, run them against the model, and score the attack success rate with a harm classifier or human review. Track success by category and severity, include automatically generated adversarial variants for coverage, and re-run as new attacks emerge, reporting resilience as a rate rather than a binary.",
+        "star_framework_tip": "Pair a categorized attack suite with success-rate scoring and ongoing refresh.",
+        "common_pitfalls": [
+          "Testing a few hand-picked prompts and declaring the model jailbreak-proof."
+        ],
+        "references": [
+          {
+            "title": "Red Teaming Language Models (Perez et al.)",
+            "url": "https://arxiv.org/abs/2202.03286"
+          }
+        ]
+      },
+      {
+        "id": "m6_l1_m5",
+        "question": "What is the safety-helpfulness trade-off (over-refusal), and how do you measure it?",
+        "complexity": "Medium",
+        "companies": [
+          "Anthropic",
+          "OpenAI",
+          "Google"
+        ],
+        "core_intent": "Tests awareness that safety can harm usefulness.",
+        "preparation_guide": "Explain false-refusal measurement alongside harm rate.",
+        "explanation": "Tightening safety can cause a model to refuse benign requests (over-refusal), hurting usefulness. You measure both sides: harmful-output rate on adversarial prompts and false-refusal rate on a set of benign-but-sensitive-looking prompts. The goal is to lower harm without inflating false refusals, tuning the boundary and reporting both metrics rather than optimizing one in isolation.",
+        "star_framework_tip": "Stress measuring harm rate and false-refusal rate together.",
+        "common_pitfalls": [
+          "Maximizing refusals to minimize harm while crippling legitimate use."
+        ],
+        "references": [
+          {
+            "title": "Constitutional AI: Harmlessness from AI Feedback",
+            "url": "https://arxiv.org/abs/2212.08073"
+          }
+        ]
       }
     ],
     "senior": [
@@ -65,6 +269,83 @@
           {
             "title": "Direct Preference Optimization (Rafailov et al.)",
             "url": "https://arxiv.org/abs/2305.18290"
+          }
+        ]
+      },
+      {
+        "id": "m6_l1_s2",
+        "question": "Design an automated red-teaming pipeline for an SLM.",
+        "complexity": "System Design",
+        "companies": [
+          "Anthropic",
+          "OpenAI",
+          "Microsoft"
+        ],
+        "core_intent": "Tests scalable adversarial evaluation.",
+        "preparation_guide": "Cover attack generation, scoring, coverage, and feedback.",
+        "explanation": "Use a generator (templated attacks plus an LLM producing adversarial prompts across harm categories) to create a large, diverse attack set, run it against the target model, and score outputs with harm/toxicity classifiers and human spot-checks. Track coverage across categories and severities, feed discovered failures back into safety training, and run the pipeline continuously and on every release. Keep humans in the loop for novel or high-severity cases.",
+        "star_framework_tip": "Walk generate -> attack -> classify/score -> feed failures back, with coverage tracking.",
+        "common_pitfalls": [
+          "Relying on a static, hand-written prompt list that never expands."
+        ],
+        "references": [
+          {
+            "title": "Red Teaming Language Models (Perez et al.)",
+            "url": "https://arxiv.org/abs/2202.03286"
+          }
+        ]
+      },
+      {
+        "id": "m6_l1_s3",
+        "question": "Compare RLHF, DPO, and Constitutional AI for safety-aligning an SLM. Which is most resource-efficient?",
+        "complexity": "Hard",
+        "companies": [
+          "Anthropic",
+          "OpenAI",
+          "Google"
+        ],
+        "core_intent": "Tests the safety-alignment method landscape, extending the existing question.",
+        "preparation_guide": "Contrast feedback source and training cost.",
+        "explanation": "RLHF trains a reward model from human preferences and optimizes the policy with RL: powerful but complex and compute-heavy. DPO optimizes directly on preference pairs without a separate reward model or RL loop, making it simpler and more resource-efficient, which suits SLMs. Constitutional AI reduces human labeling by using AI feedback against a written set of principles to generate preference data. For small models, DPO (optionally with AI-generated preferences, CAI-style) is usually the most efficient path.",
+        "star_framework_tip": "Compare feedback source and pipeline complexity, then recommend DPO for SLM efficiency.",
+        "common_pitfalls": [
+          "Assuming full RLHF is required when DPO achieves similar alignment more cheaply."
+        ],
+        "references": [
+          {
+            "title": "Direct Preference Optimization (Rafailov et al.)",
+            "url": "https://arxiv.org/abs/2305.18290"
+          },
+          {
+            "title": "Training LMs to Follow Instructions with Human Feedback (InstructGPT)",
+            "url": "https://arxiv.org/abs/2203.02155"
+          },
+          {
+            "title": "Constitutional AI: Harmlessness from AI Feedback",
+            "url": "https://arxiv.org/abs/2212.08073"
+          }
+        ]
+      },
+      {
+        "id": "m6_l1_s4",
+        "question": "Design a continuous safety monitoring system for a deployed SLM.",
+        "complexity": "System Design",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Amazon"
+        ],
+        "core_intent": "Tests post-deployment safety operations.",
+        "preparation_guide": "Cover online detection, drift, new attacks, and response.",
+        "explanation": "Monitor production traffic with toxicity/harm classifiers on inputs and outputs, sample and human-review flagged interactions, and track metrics over time to catch drift or new jailbreak patterns. Maintain an updatable bl<…>filter and rapid-mitigation path (system-prompt patches, refusals, routing to a safer model), an incident-response runbook, and a feedback loop that turns new failures into red-team cases and safety-training data. Log for audit and respect privacy.",
+        "star_framework_tip": "Combine online classifiers + human review + drift tracking + a fast mitigation/IR loop.",
+        "common_pitfalls": [
+          "Treating safety as a one-time pre-launch check with no production monitoring."
+        ],
+        "references": [
+          {
+            "title": "Red Teaming Language Models (Perez et al.)",
+            "url": "https://arxiv.org/abs/2202.03286"
           }
         ]
       }

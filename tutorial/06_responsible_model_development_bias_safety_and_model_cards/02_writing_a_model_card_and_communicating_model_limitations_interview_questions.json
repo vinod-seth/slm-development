@@ -23,6 +23,102 @@
             "url": "https://arxiv.org/abs/1810.03993"
           }
         ]
+      },
+      {
+        "id": "m6_l2_j2",
+        "question": "What sections does a model card typically contain?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests the standard documentation structure.",
+        "preparation_guide": "Recall the core sections.",
+        "explanation": "A model card typically covers model details (architecture, version, owners), intended and out-of-scope uses, training data and procedure, evaluation results (ideally disaggregated), limitations and risks, ethical considerations, and license/usage terms. The aim is enough transparency for someone to decide whether and how to use the model responsibly.",
+        "star_framework_tip": "List the core sections and frame them as 'enough to decide responsible use.'",
+        "common_pitfalls": [
+          "Documenting only metrics and omitting intended use and limitations."
+        ],
+        "references": [
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          },
+          {
+            "title": "Hugging Face Model Cards",
+            "url": "https://huggingface.co/docs/hub/model-cards"
+          }
+        ]
+      },
+      {
+        "id": "m6_l2_j3",
+        "question": "What is a Datasheet for Datasets, and how does it differ from a model card?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests dataset-level documentation.",
+        "preparation_guide": "Contrast documenting data vs documenting a model.",
+        "explanation": "A datasheet documents a dataset: its motivation, composition, collection process, preprocessing, consent, and recommended uses. A model card documents a trained model: its intended use, performance, and limitations. Datasheets help users understand the data a model learned from; the two are complementary parts of responsible documentation.",
+        "star_framework_tip": "Say datasheet = data provenance, model card = model behavior; they complement.",
+        "common_pitfalls": [
+          "Conflating dataset documentation with model documentation."
+        ],
+        "references": [
+          {
+            "title": "Datasheets for Datasets (Gebru et al.)",
+            "url": "https://arxiv.org/abs/1803.09010"
+          }
+        ]
+      },
+      {
+        "id": "m6_l2_j4",
+        "question": "Why document intended use and out-of-scope use in a model card?",
+        "complexity": "Easy",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests the purpose of use statements.",
+        "preparation_guide": "Explain guiding safe use and limiting misuse.",
+        "explanation": "Stating intended use tells users where the model was validated and is likely to work, while out-of-scope use warns against contexts where it may fail or cause harm (e.g., high-stakes decisions it was not built for). This guides responsible adoption, sets expectations, and reduces foreseeable misuse and liability.",
+        "star_framework_tip": "Tie use statements to setting expectations and preventing foreseeable misuse.",
+        "common_pitfalls": [
+          "Leaving use undefined so the model is applied to unsafe high-stakes tasks."
+        ],
+        "references": [
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          }
+        ]
+      },
+      {
+        "id": "m6_l2_j5",
+        "question": "What license and usage information should a model card include, and why does it matter?",
+        "complexity": "Easy",
+        "companies": [
+          "Hugging Face",
+          "Microsoft",
+          "Meta"
+        ],
+        "core_intent": "Tests legal/usage transparency.",
+        "preparation_guide": "Explain that license governs permitted use.",
+        "explanation": "The card should state the model's license, any use restrictions or acceptable-use policy, the license/terms of the training data where relevant, and attribution requirements. This matters because the license determines whether you may use the model commercially, redistribute it, or fine-tune it, and ignoring it creates legal and compliance risk.",
+        "star_framework_tip": "List license + restrictions + data terms and tie them to permitted use.",
+        "common_pitfalls": [
+          "Assuming any public model is free for commercial use without checking the license."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Model Cards",
+            "url": "https://huggingface.co/docs/hub/model-cards"
+          }
+        ]
       }
     ],
     "mid_level": [
@@ -43,6 +139,102 @@
           "Only reporting GPU power, ignoring CPU memory, cooling, and grid efficiency metrics."
         ],
         "references": []
+      },
+      {
+        "id": "m6_l2_m2",
+        "question": "Why should evaluation results be reported disaggregated by group rather than only as aggregates?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Amazon"
+        ],
+        "core_intent": "Tests responsible metric reporting.",
+        "preparation_guide": "Explain how averages hide subgroup failures.",
+        "explanation": "A high average can mask large performance gaps across demographic groups, languages, or input types, so a model that looks good overall may fail specific users badly. Disaggregated reporting (per-group metrics, slices, worst-case) surfaces those gaps so they can be addressed and so users understand where the model is and is not reliable.",
+        "star_framework_tip": "Stress that aggregates hide subgroup failures that disaggregation reveals.",
+        "common_pitfalls": [
+          "Reporting one overall score and missing a severe per-group disparity."
+        ],
+        "references": [
+          {
+            "title": "Holistic Evaluation of Language Models (HELM)",
+            "url": "https://arxiv.org/abs/2211.09110"
+          },
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          }
+        ]
+      },
+      {
+        "id": "m6_l2_m3",
+        "question": "How do you document known limitations and failure modes in a way that is actually useful?",
+        "complexity": "Medium",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests effective limitation reporting.",
+        "preparation_guide": "Explain concrete, actionable disclosure.",
+        "explanation": "Be specific and actionable: name the conditions where the model degrades (domains, languages, long context, ambiguous inputs), give representative failure examples, quantify where possible, and state recommended mitigations or guardrails. Vague statements like 'may produce errors' are useless; concrete, reproducible limitations let users design safe systems around the model.",
+        "star_framework_tip": "Favor specific, exemplified, quantified limitations with mitigations over vague caveats.",
+        "common_pitfalls": [
+          "Writing a generic 'the model may be wrong' disclaimer that helps no one."
+        ],
+        "references": [
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          }
+        ]
+      },
+      {
+        "id": "m6_l2_m4",
+        "question": "What structured metadata makes a model card support reproducibility and discoverability?",
+        "complexity": "Medium",
+        "companies": [
+          "Hugging Face",
+          "Google",
+          "Microsoft"
+        ],
+        "core_intent": "Tests machine-readable documentation.",
+        "preparation_guide": "Explain the value of structured card metadata.",
+        "explanation": "Beyond prose, a card should carry structured metadata: base model, license tag, languages, datasets used, evaluation results in a parseable form, library/framework and versions, and intended-task tags. This machine-readable metadata powers search and filtering on hubs, enables automated compliance checks, and helps others reproduce results by pinning the exact components.",
+        "star_framework_tip": "Tie structured tags to discoverability, automated checks, and reproducibility.",
+        "common_pitfalls": [
+          "Putting everything in free text so nothing can be queried or verified automatically."
+        ],
+        "references": [
+          {
+            "title": "Hugging Face Model Cards",
+            "url": "https://huggingface.co/docs/hub/model-cards"
+          }
+        ]
+      },
+      {
+        "id": "m6_l2_m5",
+        "question": "How do you document data provenance, licensing, and consent considerations for the training data?",
+        "complexity": "Medium",
+        "companies": [
+          "Google",
+          "Microsoft",
+          "Hugging Face"
+        ],
+        "core_intent": "Tests data-transparency duties.",
+        "preparation_guide": "Cover sources, licenses, PII, and consent.",
+        "explanation": "Record where the data came from, each source's license and any usage restrictions, how it was collected and filtered, whether it contains personal data and how that was handled, and any consent or opt-out considerations. This provenance supports legal compliance, lets users assess bias and contamination risk, and is increasingly required by regulation and downstream auditors.",
+        "star_framework_tip": "List sources + licenses + PII/consent handling as the provenance record.",
+        "common_pitfalls": [
+          "Listing dataset names without their licenses or PII handling."
+        ],
+        "references": [
+          {
+            "title": "Datasheets for Datasets (Gebru et al.)",
+            "url": "https://arxiv.org/abs/1803.09010"
+          }
+        ]
       }
     ],
     "senior": [
@@ -63,6 +255,87 @@
           "Hardcoding metric values in template files instead of parsing logs programmatically."
         ],
         "references": []
+      },
+      {
+        "id": "m6_l2_s2",
+        "question": "How would you map model documentation to governance frameworks like the NIST AI RMF or the EU AI Act?",
+        "complexity": "Hard",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Amazon"
+        ],
+        "core_intent": "Tests compliance-aware documentation.",
+        "preparation_guide": "Connect card contents to framework requirements.",
+        "explanation": "Treat the model card and datasheet as evidence for governance controls: document intended purpose and risk classification (EU AI Act tiers), data governance and bias testing, evaluation and robustness results, human-oversight and limitations, and monitoring/incident plans, mapping each to NIST AI RMF functions (Govern, Map, Measure, Manage). Keep records versioned and auditable so a compliance reviewer can trace a deployed model to its testing and approvals.",
+        "star_framework_tip": "Map card sections to framework controls and keep them as versioned, auditable evidence.",
+        "common_pitfalls": [
+          "Writing documentation that satisfies no specific control or auditor need."
+        ],
+        "references": [
+          {
+            "title": "NIST AI Risk Management Framework",
+            "url": "https://www.nist.gov/itl/ai-risk-management-framework"
+          },
+          {
+            "title": "EU AI Act overview",
+            "url": "https://artificialintelligenceact.eu"
+          },
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          }
+        ]
+      },
+      {
+        "id": "m6_l2_s3",
+        "question": "What transparency artifacts and disclosures would you produce for an SLM used in a high-stakes domain (healthcare or finance)?",
+        "complexity": "System Design",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Amazon"
+        ],
+        "core_intent": "Tests documentation for regulated, high-impact use.",
+        "preparation_guide": "Cover validation, limitations, oversight, and monitoring disclosures.",
+        "explanation": "Beyond a standard card, provide domain-specific validation evidence (performance on representative, disaggregated clinical/financial cases), explicit out-of-scope and contraindicated uses, required human-oversight and escalation procedures, known failure modes with severity, data provenance and privacy handling, versioning, and a post-deployment monitoring and incident-response plan. The disclosures must let domain experts and regulators judge fitness and residual risk.",
+        "star_framework_tip": "Lead with disaggregated domain validation plus oversight, limitations, and monitoring disclosures.",
+        "common_pitfalls": [
+          "Shipping a generic card into a regulated workflow without domain validation evidence."
+        ],
+        "references": [
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          },
+          {
+            "title": "NIST AI Risk Management Framework",
+            "url": "https://www.nist.gov/itl/ai-risk-management-framework"
+          }
+        ]
+      },
+      {
+        "id": "m6_l2_s4",
+        "question": "How do you communicate model uncertainty and limitations to non-technical stakeholders without over- or under-claiming?",
+        "complexity": "Hard",
+        "companies": [
+          "Microsoft",
+          "Google",
+          "Amazon"
+        ],
+        "core_intent": "Tests responsible communication.",
+        "preparation_guide": "Balance honesty, clarity, and actionability.",
+        "explanation": "Translate metrics into concrete, decision-relevant statements (what the model does well, where it fails, and the consequence), use plain language and examples rather than raw scores, quantify confidence honestly with ranges, and pair every limitation with a recommended safeguard. Avoid both hype ('it just works') and vague doom ('it might be wrong'); the goal is an accurate mental model that supports good decisions.",
+        "star_framework_tip": "Give concrete capability/limit statements with safeguards, avoiding hype and vagueness.",
+        "common_pitfalls": [
+          "Either overselling reliability or burying stakeholders in caveats they cannot act on."
+        ],
+        "references": [
+          {
+            "title": "Model Cards for Model Reporting (Mitchell et al.)",
+            "url": "https://arxiv.org/abs/1810.03993"
+          }
+        ]
       }
     ]
   }
